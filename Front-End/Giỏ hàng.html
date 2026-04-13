@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giỏ Hàng - Farm2Home</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="Giỏ hàng.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="../Media/Logo.png" alt="Farm2Home">
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-toggle="collapse" data-target="#navbarMain">
+        <i class="fas fa-bars" style="color:#183a1d;"></i>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
+          <li class="nav-item active"><a class="nav-link" href="#">Trang Chủ</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Sản Phẩm</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Về Chúng Tôi</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
+        </ul>
+
+        <div class="nav-right-actions mt-2 mt-lg-0">
+          <a href="#" class="action-icon">
+            <i class="far fa-bell"></i>
+            <span class="icon-badge">3</span>
+          </a>
+          <a href="#" class="action-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="icon-badge" id="cart-count">4</span>
+          </a>
+          <div class="nav-divider d-none d-lg-block"></div>
+          <a href="#" class="action-icon user-avatar-icon">
+            <i class="far fa-user"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="cart-main">
+    <div class="container">
+      <div class="row">
+
+        <!-- LEFT: CART ITEMS -->
+        <div class="col-12 col-lg-8 mb-4 mb-lg-0">
+          <h1 class="cart-page-title mb-4">
+            Giỏ hàng của bạn
+            <small class="cart-page-count">(4 sản phẩm)</small>
+          </h1>
+
+          <div id="cart-items">
+
+            <!-- Product 1 -->
+            <div class="cart-item" data-price="18000" data-qty="2" data-unit="bó">
+              <div class="row no-gutters align-items-start">
+                <div class="col-auto pr-3">
+                  <input type="checkbox" checked class="item-checkbox">
+                </div>
+
+                <div class="col-auto pr-3">
+                  <img src="Media/raumuong.jpg" alt="Rau Muống Hữu Cơ Đà Lạt" class="cart-item-img">
+                </div>
+
+                <div class="col">
+                  <div class="cart-item-info">
+                    <div class="cart-item-header">
+                      <div>
+                        <p class="cart-item-name">Rau Muống Hữu Cơ Đà Lạt</p>
+                        <p class="cart-item-origin"><i class="fas fa-map-marker-alt"></i> Đà Lạt, Lâm Đồng</p>
+                      </div>
+                      <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="cart-item-footer row align-items-center">
+                      <div class="col-12 col-sm-auto mb-2 mb-sm-0">
+                        <div class="qty-control">
+                          <button class="qty-minus"><i class="fas fa-minus"></i></button>
+                          <span class="qty-display">2</span>
+                          <button class="qty-plus"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm text-sm-right">
+                        <div class="cart-item-price">
+                          <p class="unit-price">18.000đ / bó</p>
+                          <p class="item-total">36.000đ</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="cart-item" data-price="45000" data-qty="1" data-unit="kg">
+              <div class="row no-gutters align-items-start">
+                <div class="col-auto pr-3">
+                  <input type="checkbox" class="item-checkbox">
+                </div>
+
+                <div class="col-auto pr-3">
+                  <img src="Media/thanhlong.png" alt="Thanh Long Ruột Đỏ Bình Thuận" class="cart-item-img">
+                </div>
+
+                <div class="col">
+                  <div class="cart-item-info">
+                    <div class="cart-item-header">
+                      <div>
+                        <p class="cart-item-name">Thanh Long Ruột Đỏ Bình Thuận</p>
+                        <p class="cart-item-origin"><i class="fas fa-map-marker-alt"></i> Bình Thuận</p>
+                      </div>
+                      <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="cart-item-footer row align-items-center">
+                      <div class="col-12 col-sm-auto mb-2 mb-sm-0">
+                        <div class="qty-control">
+                          <button class="qty-minus"><i class="fas fa-minus"></i></button>
+                          <span class="qty-display">1</span>
+                          <button class="qty-plus"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm text-sm-right">
+                        <div class="cart-item-price">
+                          <p class="unit-price">45.000đ / kg</p>
+                          <p class="item-total">45.000đ</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="cart-item" data-price="28000" data-qty="2" data-unit="kg">
+              <div class="row no-gutters align-items-start">
+                <div class="col-auto pr-3">
+                  <input type="checkbox" class="item-checkbox">
+                </div>
+
+                <div class="col-auto pr-3">
+                  <img src="Media/khoaimat.png" alt="Khoai Lang Mật Đà Lạt" class="cart-item-img">
+                </div>
+
+                <div class="col">
+                  <div class="cart-item-info">
+                    <div class="cart-item-header">
+                      <div>
+                        <p class="cart-item-name">Khoai Lang Mật Đà Lạt</p>
+                        <p class="cart-item-origin"><i class="fas fa-map-marker-alt"></i> Lâm Đồng</p>
+                      </div>
+                      <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="cart-item-footer row align-items-center">
+                      <div class="col-12 col-sm-auto mb-2 mb-sm-0">
+                        <div class="qty-control">
+                          <button class="qty-minus"><i class="fas fa-minus"></i></button>
+                          <span class="qty-display">2</span>
+                          <button class="qty-plus"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm text-sm-right">
+                        <div class="cart-item-price">
+                          <p class="unit-price">28.000đ / kg</p>
+                          <p class="item-total">56.000đ</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="cart-item" data-price="320000" data-qty="1" data-unit="hộp">
+              <div class="row no-gutters align-items-start">
+                <div class="col-auto pr-3">
+                  <input type="checkbox" class="item-checkbox">
+                </div>
+
+                <div class="col-auto pr-3">
+                  <img src="Media/linhchi.png" alt="Nấm Linh Chi Đỏ Hữu Cơ" class="cart-item-img">
+                </div>
+
+                <div class="col">
+                  <div class="cart-item-info">
+                    <div class="cart-item-header">
+                      <div>
+                        <p class="cart-item-name">Nấm Linh Chi Đỏ Hữu Cơ</p>
+                        <p class="cart-item-origin"><i class="fas fa-check-circle"></i> Sản phẩm hữu cơ</p>
+                      </div>
+                      <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+
+                    <div class="cart-item-footer row align-items-center">
+                      <div class="col-12 col-sm-auto mb-2 mb-sm-0">
+                        <div class="qty-control">
+                          <button class="qty-minus"><i class="fas fa-minus"></i></button>
+                          <span class="qty-display">1</span>
+                          <button class="qty-plus"><i class="fas fa-plus"></i></button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-sm text-sm-right">
+                        <div class="cart-item-price">
+                          <p class="unit-price">320.000đ / hộp</p>
+                          <p class="item-total">320.000đ</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <a href="#" class="back-link mt-3">
+            <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
+          </a>
+        </div>
+
+        <!-- RIGHT: SUMMARY -->
+        <div class="col-12 col-lg-4">
+          <div class="summary-sticky mt-4 mt-lg-0">
+
+            <div class="summary-card">
+              <h2 class="summary-title">Tóm tắt đơn hàng</h2>
+
+              <!-- Coupon -->
+              <div class="mb-4">
+                <label class="summary-label-small">Mã giảm giá</label>
+                <div class="row no-gutters coupon-row">
+                  <div class="col-12 col-sm">
+                    <input class="coupon-input" placeholder="Nhập mã..." type="text">
+                  </div>
+                  <div class="col-12 col-sm-auto mt-2 mt-sm-0">
+                    <button class="btn-coupon w-100">Áp dụng</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Breakdown -->
+              <div class="summary-breakdown">
+                <div class="summary-row">
+                  <span id="summary-label">Tạm tính (0 món)</span>
+                  <span id="summary-subtotal">0đ</span>
+                </div>
+                <div class="summary-row">
+                  <span>Phí vận chuyển</span>
+                  <span id="summary-shipping">30.000đ</span>
+                </div>
+              </div>
+
+              <!-- Total -->
+              <div class="summary-total-row">
+                <span class="summary-total-label">Tổng cộng</span>
+                <span class="summary-total-value" id="summary-total">30.000đ</span>
+              </div>
+
+              <button class="btn-checkout">Tiến hành thanh toán</button>
+            </div>
+
+            <!-- Trust badges -->
+            <div class="trust-badges mt-3">
+              <div class="trust-badge">
+                <i class="fas fa-certificate"></i>
+                <span>VietGAP</span>
+              </div>
+              <div class="trust-badge">
+                <i class="fas fa-leaf"></i>
+                <span>OCOP</span>
+              </div>
+              <div class="trust-badge">
+                <i class="fas fa-truck"></i>
+                <span>Giao 24h</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-custom">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
+          <img src="../Media/Logo-trang.png" alt="Farm2Home" class="footer-logo mb-3">
+          <p class="footer-desc">
+            Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn,
+            để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
+          </p>
+          <form class="subscribe-form">
+            <div class="row no-gutters subscribe-row">
+              <div class="col-12 col-sm">
+                <input type="email" class="form-control subscribe-input" placeholder="Email của bạn...">
+              </div>
+              <div class="col-12 col-sm-auto mt-2 mt-sm-0">
+                <button type="button" class="btn btn-subscribe w-100">Đăng ký</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-6 col-md-3 col-lg-3 mb-4 mb-md-0">
+          <h5>Liên kết</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Trang Chủ</a></li>
+            <li><a href="#">Sản Phẩm</a></li>
+            <li><a href="#">Về Chúng Tôi</a></li>
+            <li><a href="#">Liên Hệ</a></li>
+            <li><a href="#">Chính Sách Bảo Mật</a></li>
+            <li><a href="#">Điều Khoản Sử Dụng</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-md-3 col-lg-4">
+          <h5>Liên hệ</h5>
+          <ul class="list-unstyled mb-4">
+            <li><i class="fas fa-phone-alt"></i> 1800 6868</li>
+            <li><i class="far fa-envelope"></i> support@farm2home.vn</li>
+            <li><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Huệ, Quận 1, TP.HCM</li>
+          </ul>
+          <div>
+            <span class="footer-badge">VietGAP</span>
+            <span class="footer-badge">GlobalGAP</span>
+            <span class="footer-badge">OCOP</span>
+            <span class="footer-badge">ISO 22000</span>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="footer-divider">
+
+      <div class="row align-items-center footer-bottom">
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <div class="social-icons text-center text-md-left">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 mb-3 mb-md-0 text-center">
+          &copy; 2026 Farm2Home. Tất cả quyền được bảo lưu.
+        </div>
+
+        <div class="col-12 col-md-4 text-center text-md-right">
+          <span>Thanh toán an toàn:</span>
+          <span class="footer-badge ml-1" style="font-size:.75rem;">MoMo</span>
+          <span class="footer-badge" style="font-size:.75rem;">VNPay</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="Giỏ hàng.js"></script>
+</body>
+</html>
