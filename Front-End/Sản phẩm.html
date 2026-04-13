@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm - Farm2Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="Sản phẩm.css">
+</head>
+<body>
+   
+        <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <img src="Media/Logo.png" alt="Farm2Home"> <!--chèn ảnh logo-->
+                </a>
+                
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav1">
+                    <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color: #183a1d;"></i></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav1">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Trang Chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Sản Phẩm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Liên Hệ</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="nav-right-actions">
+                        <a href="#" class="action-icon">
+                            <i class="far fa-bell"></i>
+                            <span class="icon-badge">0</span>
+                        </a>
+                        <a href="#" class="action-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="icon-badge">0</span>
+                        </a>
+                        
+                        <div class="nav-divider"></div>
+                        
+                        <a href="#" class="btn-login">Đăng Nhập</a>
+                        <button class="btn btn-register">Đăng Ký</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+    <section class="search-banner py-5">
+        <div class="container text-center">
+            <h2 class="text-white mb-4">Tất cả sản phẩm nông sản sạch</h2>
+            <div class="search-box mx-auto position-relative" style="max-width: 600px;">
+                <input type="text" class="form-control rounded-pill py-3 ps-5" placeholder="Tìm kiếm rau củ, trái cây, đặc sản...">
+                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-5">
+        <div class="row">
+            <aside class="col-lg-3">
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Danh mục</h6>
+                    <div class="list-group sidebar-list">
+                        <a href="#" class="list-group-item active">Tất cả sản phẩm</a>
+                        <a href="#" class="list-group-item">Rau Xanh (48)</a>
+                        <a href="#" class="list-group-item">Củ Quả (35)</a>
+                        <a href="#" class="list-group-item">Trái Cây (62)</a>
+                        <a href="#" class="list-group-item">Đặc sản OCOP (29)</a>
+                        <a href="#" class="list-group-item">Thực phẩm hữu cơ (24)</a>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Vùng sản xuất</h6>
+                    <div class="list-group sidebar-list">
+                        <a href="#" class="list-group-item active">Tất cả vùng</a>
+                        <a href="#" class="list-group-item">Miền Bắc</a>
+                        <a href="#" class="list-group-item">Miền Trung</a>
+                        <a href="#" class="list-group-item">Miền Nam</a>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Tiêu chuẩn</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="vietgap">
+                        <label class="form-check-label" for="vietgap">VietGAP</label>
+                    </div>
+                     <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="vietgap">
+                        <label class="form-check-label" for="GlobalGAP">GlobalGAP</label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="organic" checked>
+                        <label class="form-check-label" for="OCOP">OCOP</label>
+                    </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="vietgap">
+                        <label class="form-check-label" for="organic">Hữu cơ</label>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="text-muted">Hiển thị: 8 sản phẩm</span>
+                    <select class="form-select w-auto rounded-pill">
+                        <option>Mới nhất</option>
+                        <option>Giá thấp đến cao</option>
+                        <option>Giá cao đến thấp</option>
+                    </select>
+                </div>
+
+                <div class="row g-4" id="product-container">
+                    <div class="col-md-4 col-6">
+                        <div class="card h-100 product-card border-0 shadow-sm">
+                            <div class="position-relative">
+                                <span class="badge bg-success position-absolute m-2">Hữu cơ</span>
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">-28%</span>
+                                <img src="Media/1.jpg" class="card-img-top p-3" alt="Rau muống">
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-1"><i class="bi bi-geo-alt"></i> Đà Lạt, Lâm Đồng</p>
+                                <h6 class="product-title">Rau Muống Hữu Cơ Đà Lạt</h6>
+                                <div class="text-warning mb-2 small">
+                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
+                                    <span class="text-muted">(234)</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold text-orange">18.000đ</span>
+                                    <span class="text-muted text-decoration-line-through small">25.000đ</span>
+                                </div>
+                                <button class="btn btn-outline-dark w-100 rounded-pill mt-3 btn-add-cart">
+                                    <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="d-flex align-items-center justify-content-center py-1" style="min-height: 100px;">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination custom-pagination-wrapper mb-0">
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+  <footer class="footer-custom">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
+          <img src="Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
+          <p class="footer-desc">
+            Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn,
+            để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
+          </p>
+          <form class="subscribe-form">
+            <div class="row no-gutters subscribe-row">
+              <div class="col-12 col-sm">
+                <input type="email" class="form-control subscribe-input" placeholder="Email của bạn...">
+              </div>
+              <div class="col-12 col-sm-auto mt-2 mt-sm-0">
+                <button type="button" class="btn btn-subscribe w-100">Đăng ký</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-6 col-md-3 col-lg-3 mb-4 mb-md-0">
+          <h5>Liên kết</h5>
+          <ul class="list-unstyled">
+            <li><a href="#">Trang Chủ</a></li>
+            <li><a href="#">Sản Phẩm</a></li>
+            <li><a href="#">Về Chúng Tôi</a></li>
+            <li><a href="#">Liên Hệ</a></li>
+            <li><a href="#">Chính Sách Bảo Mật</a></li>
+            <li><a href="#">Điều Khoản Sử Dụng</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-md-3 col-lg-4">
+          <h5>Liên hệ</h5>
+          <ul class="list-unstyled mb-4">
+            <li><i class="fas fa-phone-alt"></i> 1800 6868</li>
+            <li><i class="far fa-envelope"></i> support@farm2home.vn</li>
+            <li><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Huệ, Quận 1, TP.HCM</li>
+          </ul>
+          <div>
+            <span class="footer-badge">VietGAP</span>
+            <span class="footer-badge">GlobalGAP</span>
+            <span class="footer-badge">OCOP</span>
+            <span class="footer-badge">ISO 22000</span>
+          </div>
+        </div>
+
+      </div>
+
+      <hr class="footer-divider">
+
+      <div class="row align-items-center footer-bottom">
+        <div class="col-12 col-md-4 mb-3 mb-md-0">
+          <div class="social-icons text-md-left">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-4 mb-3 mb-md-0 text-center">
+          &copy; 2026 Farm2Home. Tất cả quyền được bảo lưu.
+        </div>
+
+        <div class="col-12 col-md-4 text-center text-md-right">
+          <span>Thanh toán an toàn:</span>
+          <span class="footer-badge ml-1" style="font-size:.75rem;">MoMo</span>
+          <span class="footer-badge" style="font-size:.75rem;">VNPay</span>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="Sản phẩm.js"></script>
+</body>
+</html>
