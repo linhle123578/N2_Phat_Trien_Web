@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="position-relative">
                     ${product.tag ? `<span class="badge bg-success position-absolute m-2">${product.tag}</span>` : ''}
                     ${product.discount ? `<span class="badge bg-danger position-absolute top-0 end-0 m-2">${product.discount}</span>` : ''}
-                    <img src="Media/${product.id}.jpg" class="card-img-top p-3" alt="${product.name}">
+                    <img src="../Media/${product.id}.jpg" class="card-img-top p-3" alt="${product.name}">
                 </div>
                 <div class="card-body">
                     <p class="text-muted small mb-1"><i class="bi bi-geo-alt"></i> ${product.location}</p>
