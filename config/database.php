@@ -1,9 +1,5 @@
 <?php
 
 return [
-    'host' => $_ENV['DB_HOST'],
-    'port' => $_ENV['DB_PORT'],
-    'dbname' => $_ENV['DB_NAME'],
-    'user' => $_ENV['DB_USER'],
-    'pass' => $_ENV['DB_PASS']
+    'url' => 'mysql://3YHrkxqAKWynehu.root:BzDRrZAdAT2jLuyd@gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com:4000/db_web_farm2home'
 ];
