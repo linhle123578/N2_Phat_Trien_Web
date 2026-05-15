@@ -1,9 +1,9 @@
 <?php
 
-define("DB_HOST", "localhost");
-
-define("DB_USER", "root");
-
-define("DB_PASS", "");
-
-define("DB_NAME", "db_web_farm2home");
+return [
+    'host' => $_ENV['DB_HOST'],
+    'port' => $_ENV['DB_PORT'],
+    'dbname' => $_ENV['DB_NAME'],
+    'user' => $_ENV['DB_USER'],
+    'pass' => $_ENV['DB_PASS']
+];
