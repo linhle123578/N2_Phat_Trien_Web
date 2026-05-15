@@ -1,16 +1,18 @@
 <?php
 
-$conn = new mysqli(
-    "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
-    "3YHrkxqAKWynehu.root",
-    "6AtFiqD6KByTAAm",
-    "db_web_farm2home",
-    4000
-);
+require_once './core/Database.php';
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$database = new Database();
+
+$conn = $database->connect();
+
+$sql = "SHOW TABLES";
+
+$result = $conn->query($sql);
+
+while($row = $result->fetch_array()) {
+
+    echo $row[0] . "<br>";
+
 }
-
-echo "Connected successfully!";
 ?>
