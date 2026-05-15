@@ -2,33 +2,26 @@
 
 class Database {
 
-    private $host = "localhost";
+    private $conn;
 
-    private $username = "root";
+    public function __construct() {
 
-    private $password = "";
-
-    private $dbname = "db_web_farm2home";
-
-    public $conn;
-
-    public function connect(){
+        $config = require __DIR__ . '/../config/database.php';
 
         $this->conn = new mysqli(
-            $this->host,
-            $this->username,
-            $this->password,
-            $this->dbname
+            $config['host'],
+            $config['user'],
+            $config['pass'],
+            $config['dbname'],
+            $config['port']
         );
 
-        if($this->conn->connect_error){
-
-            die("Kết nối thất bại");
-
+        if ($this->conn->connect_error) {
+            die("Connection failed");
         }
-
-        return $this->conn;
-
     }
 
+    public function connect() {
+        return $this->conn;
+    }
 }
