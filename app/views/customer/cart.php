@@ -119,9 +119,9 @@ $total_items = count($items);
             <?php else: ?>
               <?php foreach ($items as $item):
                 $thanh_tien = $item['unit_price'] * $item['quantity'];
-                $img_src    = !empty($item['product_image'])
-                              ? htmlspecialchars($item['product_image'])
-                              : '../../../Media/no-image.png';
+                $img_src = !empty($item['product_image'])
+          ? "/N2_Phat_Trien_Web/Media/" . htmlspecialchars($item['product_image'])
+          : "/N2_Phat_Trien_Web/Media/no-image.png";
               ?>
 
               <div class="cart-item"
