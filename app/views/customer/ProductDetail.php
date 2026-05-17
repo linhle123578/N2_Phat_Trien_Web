@@ -1,12 +1,23 @@
 <?php
-// 1. Nhúng class Database từ core của bạn
-require_once __DIR__ . '/../core/database.php';
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
-// Khởi tạo và kết nối cơ sở dữ liệu
-$db = new Database();
-$conn = $db->connect(); // Biến $conn này là mysqli object
+mysqli_real_connect(
+    $conn,
+    "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
+    "3YHrkxqAKWynehu.root",
+    "BzDRrZAdAT2jLuyd",
+    "db_web_farm2home",
+    4000,
+    NULL,
+    MYSQLI_CLIENT_SSL
+);
 
-// 2. Lấy product_id từ tham số URL (ví dụ: ProductDetail.php?id=P002)
+if (!$conn) {
+    die("Lỗi kết nối Database: " . mysqli_connect_error());
+}
+
+mysqli_set_charset($conn, "utf8");
 $current_id = isset($_GET['id']) ? $_GET['id'] : '';
 
 if (empty($current_id)) {
@@ -52,14 +63,13 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="ProductDetail.css" rel="stylesheet"/>
-</head>
+    <link href="../../../public/assets/css/ProductDetail.css" rel="stylesheet"/></head>
 <body>
 
 <nav class="navbar navbar-expand-lg custom-navbar">
     <div class="container">
         <a class="navbar-brand" href="Trang_chu.html">
-            <img src="../Media/logo_black.png" alt="Farm2Home" style="max-height:40px;">
+            <img src="../../../Media/logo_black.png" alt="Farm2Home" style="max-height:40px;">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <i class="fas fa-bars" style="color: #183a1d;"></i>
@@ -105,7 +115,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
         <div class="row m-0 container-split">
             <div class="col-lg-5 col-md-6 p-4 left-image-panel">
                 <div class="gallery-main" id="mainImg">
-                    <img src="../Media/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" id="mainImgTag" style="width:100%;height:100%;object-fit:cover;">
+                    <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" id="mainImgTag" style="width:100%;height:100%;object-fit:cover;">
                 </div>
             </div>
 
@@ -161,7 +171,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
                     <div class="product-item">
                         <a href="ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-link">
                             <div class="product-img-wrap">
-                                <img src="../Media/<?= htmlspecialchars($item['product_image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                <img src="../../../Media/<?= htmlspecialchars($item['product_image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </a>
                         <div class="product-info">
@@ -195,7 +205,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
         <div class="row">
             <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
                 <div style="margin-bottom: 12px;">
-                    <img src="../Media/logo_white.png" alt="Farm2Home" style="max-height:40px;">
+                    <img src="../../../Media/logo_white.png" alt="Farm2Home" style="max-height:40px;">
                 </div>
                 <p class="pr-lg-4 mb-4" style="font-size: 0.95rem; line-height: 1.6; color: rgba(254,251,233,0.9);">
                     Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn, để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
@@ -254,6 +264,6 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     </div>
 </footer>
 
-<script src="ProductDetail.js"></script>
+<script src="../../../public/assets/js/ProductDetail.js"></script>
 </body>
 </html>
