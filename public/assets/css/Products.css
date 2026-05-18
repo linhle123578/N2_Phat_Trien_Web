@@ -138,7 +138,7 @@ body {
     color: var(--text-dark);
     line-height: 1.4;
     margin-top: 0px;
-    margin-bottom: 6px;
+    margin-bottom: 0px;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
