@@ -115,7 +115,7 @@ function getPageUrl($p, $cat, $search, $sort) {
     <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <img src="../Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
+                <img src="../../../Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav1">
                 <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color: #183a1d;"></i></span>
@@ -193,7 +193,6 @@ function getPageUrl($p, $cat, $search, $sort) {
                     <?php else: ?>
                         <?php 
                         while ($product = mysqli_fetch_assoc($prod_result)): 
-                            $image_path = "../Media/p" . $product['product_id'] . ".jpg";
                             $is_out_of_stock = ($product['stock'] <= 0);
                             $unit_display = !empty($product['unit']) ? htmlspecialchars($product['unit']) : 'kg';
                         ?>
@@ -203,7 +202,13 @@ function getPageUrl($p, $cat, $search, $sort) {
                                         <?php if ($is_out_of_stock): ?>
                                             <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Hết hàng</span>
                                         <?php endif; ?>
-                                        <img src="<?= $image_path ?>" class="card-img-top p-3" alt="<?= htmlspecialchars($product['product_name']) ?>" onerror="this.src='https://placehold.co/300x300?text=Farm2Home'">
+                                        <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #f8f9fa;">
+                                            <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
+                                                alt="<?= htmlspecialchars($product['product_name']) ?>" 
+                                                class="img-fluid product-thumb" 
+                                                style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+                                                onerror="this.src='https://placehold.co/300x300?text=Farm2Home'">
+                                        </div>                                    
                                     </div>
                                     <div class="card-body d-flex flex-column">
                                         <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
@@ -256,7 +261,7 @@ function getPageUrl($p, $cat, $search, $sort) {
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
-                    <img src="../Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
+                    <img src="../../../Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
                     <p class="footer-desc">Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn.</p>
                 </div>
                 <div class="col-6 col-md-3 col-lg-3">
