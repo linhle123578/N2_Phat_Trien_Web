@@ -57,16 +57,14 @@ function updateQtyButtons(item) {
 function updateSummary() {
     const items = document.querySelectorAll('.cart-item');
     let subtotal = 0;
-    let checkedQty = 0;
-    let checkedItemsCount = 0;
+    // Đếm tổng số loại sản phẩm hiện có trong DOM để update lên badge header
+    const totalItemsCount = items.length; 
 
     items.forEach(item => {
         const checkbox = item.querySelector('.item-checkbox');
         if (checkbox && checkbox.checked) {
             const qty = getItemQty(item);
             subtotal += getItemUnitPrice(item) * qty;
-            checkedQty += qty;
-            checkedItemsCount += 1;
         }
     });
 
@@ -79,7 +77,10 @@ function updateSummary() {
     const summaryTotal = document.getElementById('summary-total');
     const cartCountEl = document.getElementById('cart-count');
 
-    if (summaryLabel) summaryLabel.textContent = 'Tạm tính (' + checkedQty + ' món)';
+    // Chỗ này cũng cập nhật lại chữ "Tạm tính (x món)" dựa vào số lượng sản phẩm được tick
+    const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+    if (summaryLabel) summaryLabel.textContent = 'Tạm tính (' + checkedCount + ' món)';
+    
     if (summarySubtotal) summarySubtotal.textContent = formatVND(subtotal);
     if (summaryShipping) summaryShipping.textContent = subtotal > 0 ? formatVND(shipping) : 'Miễn phí';
     if (summaryTotal) {
@@ -90,8 +91,9 @@ function updateSummary() {
         summaryTotal.classList.add('summary-updated');
     }
 
+    // Cập nhật số lượng trên icon Header
     if (cartCountEl) {
-        cartCountEl.textContent = checkedItemsCount;
+        cartCountEl.textContent = totalItemsCount;
     }
 }
 
@@ -106,26 +108,40 @@ function updateItemAppearance(item) {
 // ── Delete item 
 
 function deleteItem(item) {
-    item.classList.add('removing');
+    if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?')) return;
 
-    const finishDelete = () => {
-        item.removeEventListener('transitionend', onTransitionEnd);
-        if (item.parentNode) item.remove();
-        updateSummary();
-    };
+    // Lấy ID sản phẩm cần xóa
+    const btn = item.querySelector('.delete-btn');
+    const cartItemId = btn ? btn.dataset.id : null;
+    
+    if (!cartItemId) return;
 
-    const onTransitionEnd = (e) => {
-        if (e.target !== item) return;
-        finishDelete();
-    };
+    // SỬA ĐƯỜNG DẪN THÀNH 'Cart.php' (Gọi lại chính file giao diện hiện tại)
+    fetch('Cart.php', { 
+        method : 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body   : 'cart_item_id=' + cartItemId
+    })
+    .then(response => {
+        if (response.ok) {
+            // Xóa thành công thì chạy hiệu ứng trượt và trừ số lượng
+            item.classList.add('removing');
 
-    item.addEventListener('transitionend', onTransitionEnd);
-
-    setTimeout(() => {
-        if (document.body.contains(item)) {
-            finishDelete();
+            const finishDelete = () => {
+                if (item.parentNode) item.remove();
+                updateSummary(); 
+            };
+            
+            setTimeout(finishDelete, 350);
+        } else {
+            // In thẳng mã lỗi ra để biết đường mò (404 là sai đường dẫn, 500 là lỗi DB)
+            alert('Lỗi hệ thống! Mã lỗi: ' + response.status);
         }
-    }, 350);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Lỗi kết nối mạng hoặc server không phản hồi!');
+    });
 }
 
 //  Event delegation 
@@ -180,3 +196,51 @@ document.querySelectorAll('.cart-item').forEach(function(item) {
 });
 
 updateSummary();
+
+// ── Xử lý Submit Form Thanh Toán
+const checkoutForm = document.getElementById('checkout-form');
+
+if (checkoutForm) {
+    checkoutForm.addEventListener('submit', function(e) {
+        const selectedInputsDiv = document.getElementById('selected-inputs');
+        if (!selectedInputsDiv) return;
+
+        // Xóa dữ liệu cũ nếu có
+        selectedInputsDiv.innerHTML = ''; 
+
+        // Tìm tất cả các checkbox sản phẩm ĐANG ĐƯỢC TICK
+        const checkedItems = document.querySelectorAll('.item-checkbox:checked');
+        
+        // Chặn submit nếu chưa chọn món nào
+        if (checkedItems.length === 0) {
+            e.preventDefault();
+            alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!');
+            return;
+        }
+
+        // Lặp qua từng món được chọn, tạo thẻ input ẩn nhét vào form
+        checkedItems.forEach(checkbox => {
+            const cartItem = checkbox.closest('.cart-item');
+            
+            // Lấy ID sản phẩm (Giả định ID nằm ở value của checkbox, vd: <input type="checkbox" value="10">)
+            const productId = checkbox.value; 
+            const qty = getItemQty(cartItem);
+
+            // 1. Tạo thẻ input chứa ID sản phẩm (name="selected[]")
+            const idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'selected[]';
+            idInput.value = productId;
+            selectedInputsDiv.appendChild(idInput);
+
+            // 2. Tạo thẻ input chứa Số lượng tương ứng (name="qty[id]")
+            const qtyInput = document.createElement('input');
+            qtyInput.type = 'hidden';
+            qtyInput.name = `qty[${productId}]`;
+            qtyInput.value = qty;
+            selectedInputsDiv.appendChild(qtyInput);
+        });
+        
+        // Sau khi nhét đủ input ẩn vào DOM, form sẽ tự động submit đi tiếp
+    });
+}
