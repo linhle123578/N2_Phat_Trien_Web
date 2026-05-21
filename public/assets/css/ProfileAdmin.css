@@ -1,0 +1,466 @@
+/* ══════════════════════════════════════════════════
+   ProfileAdmin.css  –  Farm2Home Admin Panel
+   Font: Plus Jakarta Sans  |  Brand: #183a1d
+══════════════════════════════════════════════════ */
+
+:root {
+    --brand-green:   #183a1d;
+    --brand-green-2: #1f4a24;
+    --brand-yellow:  #f5e642;
+    --brand-orange:  #fd7e14;
+    --page-bg:       #fefbe9;
+    --card-bg:       #ffffff;
+    --text-dark:     #1f2937;
+    --text-muted:    #6b7280;
+    --line:          #e5e7eb;
+    --shadow-card:   0 4px 24px rgba(24,58,29,.07);
+    --shadow-sidebar:10px 0 40px rgba(24,58,29,.18);
+    --radius-card:   20px;
+    --radius-input:  12px;
+    --transition:    .2s ease;
+}
+
+/* ── Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    background: var(--page-bg);
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════════
+   SHELL  (sidebar + main side by side)
+══════════════════════════════════════════════════ */
+.pa-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ══════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════ */
+.pa-sidebar {
+    width: 240px;
+    flex: 0 0 240px;
+    background: var(--brand-green);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0 0 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-sidebar);
+    transition: left var(--transition);
+    z-index: 1040;
+}
+
+/* Logo */
+.pa-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.pa-brand img {
+    max-width: 150px;
+    width: 100%;
+    object-fit: contain;
+}
+
+/* Sidebar user card */
+.pa-sidebar-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 16px;
+    background: rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 12px 14px;
+}
+.pa-sidebar-user img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255,255,255,.3);
+    flex-shrink: 0;
+}
+.pa-su-name {
+    font-weight: 700;
+    font-size: .9rem;
+    line-height: 1.2;
+}
+.pa-su-role {
+    font-size: .75rem;
+    color: rgba(255,255,255,.6);
+    margin-top: 2px;
+}
+
+/* Nav links */
+.pa-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 12px;
+    flex: 1;
+}
+.pa-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    color: rgba(255,255,255,.72);
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: .9rem;
+    transition: var(--transition);
+}
+.pa-link i { font-size: 1rem; flex-shrink: 0; }
+.pa-link:hover,
+.pa-link.active {
+    background: rgba(255,255,255,.13);
+    color: #fff;
+    transform: translateX(3px);
+}
+.pa-link.active {
+    background: rgba(255,255,255,.18);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.pa-link-logout {
+    margin-top: auto;
+    color: rgba(255,130,130,.85);
+}
+.pa-link-logout:hover {
+    background: rgba(239,68,68,.15);
+    color: #fca5a5;
+}
+
+/* ══════════════════════════════════════════════════
+   MAIN
+══════════════════════════════════════════════════ */
+.pa-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Topbar ──────────────────────────────────────── */
+.pa-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: #fefbe9;
+    border-bottom: 1px solid var(--line);
+    padding: 16px 28px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(24,58,29,.06);
+}
+
+.pa-page-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--brand-green);
+    margin: 0;
+    line-height: 1.2;
+}
+.pa-page-sub {
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin: 4px 0 0;
+}
+
+.pa-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Bell button */
+.pa-notif-btn {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #eef4ef;
+    border: none;
+    color: var(--brand-green);
+    font-size: 1.05rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.pa-notif-btn:hover { background: #dceede; }
+.pa-notif-dot {
+    position: absolute;
+    top: 9px; right: 9px;
+    width: 8px; height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* Admin card in topbar */
+.pa-admin-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 8px 14px;
+}
+.pa-admin-card img {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
+.pa-ac-name { font-weight: 700; font-size: .88rem; line-height: 1.2; }
+.pa-ac-role { font-size: .72rem; color: var(--text-muted); }
+
+/* Sidebar toggle (mobile) */
+.pa-toggle {
+    background: #eef4ef;
+    border: none;
+    border-radius: 12px;
+    width: 40px; height: 40px;
+    display: grid;
+    place-items: center;
+    font-size: 1.2rem;
+    color: var(--brand-green);
+    cursor: pointer;
+}
+
+/* ── Content ─────────────────────────────────────── */
+.pa-content {
+    padding: 28px;
+    flex: 1;
+}
+
+/* ── Card ─────────────────────────────────────────── */
+.pa-card {
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 28px;
+}
+
+.pa-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+}
+.pa-card-header > i {
+    font-size: 1.35rem;
+    color: var(--brand-green);
+    background: #eef4ef;
+    width: 46px; height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.pa-card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--brand-green);
+    margin: 0 0 4px;
+}
+.pa-card-desc {
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+/* ── Avatar block ─────────────────────────────────── */
+.pa-avatar-wrap {
+    position: relative;
+    display: inline-block;
+}
+.pa-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 20px rgba(24,58,29,.18);
+    display: block;
+    margin: 0 auto;
+}
+.pa-avatar-btn {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 34px;
+    height: 34px;
+    background: var(--brand-green);
+    color: #fff;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: .85rem;
+    border: 2px solid #fff;
+    transition: var(--transition);
+}
+.pa-avatar-btn:hover { background: var(--brand-green-2); transform: scale(1.08); }
+
+.pa-avatar-name {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--text-dark);
+}
+.pa-role-badge {
+    background: #eef4ef;
+    color: var(--brand-green);
+    font-size: .75rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 12px;
+}
+
+/* ── Form inputs ──────────────────────────────────── */
+.pa-label {
+    font-weight: 700;
+    font-size: .82rem;
+    color: #374151;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.pa-input-group .input-group-text {
+    background: #f8fafc;
+    border-color: var(--line);
+    border-right: none;
+    color: var(--text-muted);
+    border-radius: var(--radius-input) 0 0 var(--radius-input);
+    padding: 0 14px;
+}
+.pa-input-group .form-control {
+    border-color: var(--line);
+    border-left: none;
+    border-radius: 0 var(--radius-input) var(--radius-input) 0;
+    padding: .72rem .95rem;
+    font-size: .9rem;
+    box-shadow: none;
+    transition: var(--transition);
+}
+/* When eye button is present, remove right radius from input */
+.pa-input-group .form-control:not(:last-child) {
+    border-right: none;
+    border-radius: 0;
+}
+.pa-input-group .form-control:focus {
+    border-color: rgba(24,58,29,.4);
+    box-shadow: 0 0 0 .2rem rgba(24,58,29,.08);
+    background: #fafffe;
+}
+.pa-input-group .form-control:focus ~ .input-group-text,
+.pa-input-group .input-group-text:has(+ .form-control:focus) {
+    border-color: rgba(24,58,29,.4);
+}
+
+/* Eye toggle button */
+.pa-eye-btn {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-left: none;
+    border-radius: 0 var(--radius-input) var(--radius-input) 0;
+    color: var(--text-muted);
+    padding: 0 14px;
+    font-size: .9rem;
+    transition: var(--transition);
+    box-shadow: none;
+}
+.pa-eye-btn:hover { background: #eef4ef; color: var(--brand-green); }
+
+/* ── Primary button ──────────────────────────────── */
+.pa-btn-primary {
+    background: var(--brand-green);
+    border-color: var(--brand-green);
+    color: #fff;
+    font-weight: 700;
+    font-size: .9rem;
+    padding: .65rem 2rem;
+    transition: var(--transition);
+}
+.pa-btn-primary:hover,
+.pa-btn-primary:focus {
+    background: var(--brand-green-2);
+    border-color: var(--brand-green-2);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(24,58,29,.22);
+}
+.pa-btn-primary:active { transform: translateY(0); }
+
+/* ── Alerts ──────────────────────────────────────── */
+.alert-success {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+    color: #166534;
+}
+.alert-danger {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+/* ══════════════════════════════════════════════════
+   MOBILE OVERLAY
+══════════════════════════════════════════════════ */
+.pa-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 1039;
+}
+.pa-overlay.show { display: block; }
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media (max-width: 991.98px) {
+    .pa-sidebar {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        height: 100vh;
+    }
+    .pa-sidebar.open { left: 0; }
+
+    .pa-topbar { padding: 14px 18px; }
+    .pa-content { padding: 18px; }
+}
+
+@media (max-width: 767.98px) {
+    .pa-content { padding: 14px; }
+    .pa-card { padding: 18px; }
+
+    .pa-admin-card .pa-ac-name,
+    .pa-admin-card .pa-ac-role { display: none; }
+
+    .pa-page-title { font-size: 1.15rem; }
+    .pa-page-sub   { display: none; }
+
+    .pa-avatar { width: 90px; height: 90px; }
+}
