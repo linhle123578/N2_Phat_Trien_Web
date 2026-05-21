@@ -157,10 +157,6 @@ $clean_footer = $footer_matches[0] ?? '';
                   <span id="summary-label">Tạm tính (0 món)</span>
                   <span id="summary-subtotal">0đ</span>
                 </div>
-                <div class="summary-row">
-                  <span>Phí vận chuyển</span>
-                  <span id="summary-shipping">30.000đ</span>
-                </div>
               </div>
 
               <div class="summary-total-row">
