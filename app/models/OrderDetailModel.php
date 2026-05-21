@@ -22,8 +22,8 @@ class OrderDetailModel {
 
         // Kiểm tra kết nối
         if (!$success) {
-            die("Kết nối database thất bại: " . mysqli_connect_error());
-        }
+    throw new Exception("Kết nối database thất bại: " . mysqli_connect_error());
+}
 
         mysqli_set_charset($this->conn, "utf8");
     }
@@ -33,6 +33,36 @@ class OrderDetailModel {
         $stmt = $this->conn->prepare("INSERT INTO order_details (order_id, product_id, price, quantity) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("iiii", $order_id, $product_id, $price, $quantity);
         return $stmt->execute();
+    }
+
+    public function getItemsByOrderId($order_id) {
+        /* JOIN bảng order_details (od) với bảng products (p) 
+           Chú ý: Sửa lại tên cột cho đúng với Database của bạn nếu có khác biệt
+           (VD: p.name, p.image, od.quantity, od.price)
+        */
+        $sql = "SELECT od.quantity, od.price, p.name, p.image 
+                FROM order_details od 
+                JOIN products p ON od.product_id = p.id 
+                WHERE od.order_id = ?";
+                
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $order_id);
+        $stmt->execute();
+        
+        $result = $stmt->get_result();
+        $items = [];
+        
+        while ($row = $result->fetch_assoc()) {
+            // Gán lại key cho khớp với vòng lặp trong file view momopayment.php
+            $items[] = [
+                'name'  => $row['name'],
+                'img'   => $row['image'],   // Lấy cột ảnh từ bảng products
+                'qty'   => $row['quantity'],// Lấy số lượng từ order_details
+                'price' => $row['price']    // Lấy giá từ order_details
+            ];
+        }
+        
+        return $items;
     }
 }
 ?>

@@ -24,27 +24,30 @@ class UserModel {
     }
 
     // Hàm lấy thông tin Khách hàng + Địa chỉ mặc định
-    public function getUserById($id) {
-        $safe_id = $this->conn->real_escape_string($id);
-        
-        // Dùng LEFT JOIN để kết nối bảng customer và address
-        // Dùng CONCAT để nối các cột địa chỉ lại với nhau thành 1 dòng duy nhất
-        // Lọc a.is_default = 1 để chỉ lấy địa chỉ mặc định
-        $sql = "SELECT 
-                    c.full_name AS fullname, 
-                    c.phone, 
-                    CONCAT(a.street_address, ', ', a.ward, ', ', a.district, ', ', a.province) AS address,
-                    a.address_type 
-                FROM customer c
-                LEFT JOIN address a ON c.customer_id = a.customer_id AND a.is_default = 1
-                WHERE c.customer_id = '$safe_id'";
-        
-        $result = $this->conn->query($sql);
-        
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return null; 
+    // Lấy thông tin khách hàng theo customer_id
+    public function getCustomerById($customer_id) {
+        $stmt = $this->conn->prepare("SELECT customer_id, full_name, phone, gender FROM customer WHERE customer_id = ?");
+        $stmt->bind_param("s", $customer_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    // Lấy địa chỉ mặc định của khách hàng (kèm receiver_name)
+    public function getDefaultAddress($customer_id) {
+        $stmt = $this->conn->prepare("SELECT address_id, receiver_name, province, district, ward, street_address FROM address WHERE customer_id = ? AND is_default = 1 LIMIT 1");
+        $stmt->bind_param("s", $customer_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    // Nếu cần lấy tất cả địa chỉ
+    public function getAddresses($customer_id) {
+        $stmt = $this->conn->prepare("SELECT * FROM address WHERE customer_id = ?");
+        $stmt->bind_param("s", $customer_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }
 ?>
