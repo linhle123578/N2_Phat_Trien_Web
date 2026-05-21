@@ -1,6 +1,4 @@
 
-const SHIPPING_FEE = 30000;
-
 // ── Helpers 
 
 function formatVND(amount) {
@@ -68,8 +66,7 @@ function updateSummary() {
         }
     });
 
-    const shipping = subtotal > 0 ? SHIPPING_FEE : 0;
-    const total = subtotal + shipping;
+    const total = subtotal;
 
     const summaryLabel = document.getElementById('summary-label');
     const summarySubtotal = document.getElementById('summary-subtotal');

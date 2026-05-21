@@ -1,0 +1,545 @@
+/* ============================
+   MoMo Payment Page - Farm2Home
+   ============================ */
+
+/* Base */
+.momo-page {
+    background: linear-gradient(0deg, #FDFAE8, #FDFAE8), #FFFFFF;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+    color: #1C1C12;
+}
+
+/* ---- Main layout ---- */
+.momo-main {
+    padding: 90px 0 60px;
+}
+
+/* ---- Header Section ---- */
+.momo-page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    line-height: 48px;
+    color: #022409;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.momo-page-subtitle {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: #424841;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0;
+}
+
+/* ---- Bento Grid ---- */
+.momo-bento {
+    display: grid;
+    grid-template-columns: 1fr 332px;
+    gap: 24px;
+    align-items: start;
+    margin-top: 32px;
+}
+
+/* ---- Left Panel: Order Detail ---- */
+.momo-order-panel {
+    background: #FFFFFF;
+    border: 1px solid rgba(194, 200, 190, 0.15);
+    box-shadow: 0px 10px 40px rgba(28, 28, 18, 0.04);
+    border-radius: 24px;
+    padding: 32px;
+}
+
+.momo-order-heading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(194, 200, 190, 0.15);
+    margin-bottom: 0;
+}
+
+.momo-order-heading .heading-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #022409;
+}
+
+.momo-order-heading h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 28px;
+    color: #022409;
+    margin: 0;
+}
+
+/* Order Items */
+.momo-order-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.momo-order-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(194, 200, 190, 0.12);
+}
+
+.momo-order-item:last-child {
+    border-bottom: none;
+}
+
+.item-img-wrap {
+    width: 64px;
+    height: 64px;
+    background: #F1EEDD;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.item-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 22px;
+    color: #1C1C12;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-meta {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: #424841;
+}
+
+.item-price {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 24px;
+    color: #022409;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+/* Summary block */
+.momo-summary-block {
+    margin-top: 8px;
+    padding-top: 16px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.summary-row .label {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #424841;
+}
+
+.summary-row .value {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #1C1C12;
+}
+
+.summary-divider {
+    border: none;
+    border-top: 2px dashed rgba(194, 200, 190, 0.4);
+    margin: 16px 0;
+}
+
+.summary-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+}
+
+.summary-total-row .total-label {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #1C1C12;
+}
+
+.summary-total-row .total-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 36px;
+    color: #8B5000;
+}
+
+/* ---- Right Panel: QR Code ---- */
+.momo-qr-panel {
+    background: #FFFFFF;
+    border: 1px solid rgba(194, 200, 190, 0.15);
+    box-shadow: 0px 10px 40px rgba(28, 28, 18, 0.04);
+    border-radius: 24px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: sticky;
+    top: 100px;
+}
+
+/* QR Card */
+.qr-card-frame {
+    width: 224px;
+    height: 224px;
+    background: #FFFFFF;
+    border: 1px solid #F5F5F4;
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0px 4px 6px -1px rgba(0, 0, 0, 0.1), 0px 2px 4px -2px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.qr-card-frame img,
+.qr-card-frame canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* QR Placeholder khi chưa có ảnh */
+.qr-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #F8F6EE;
+}
+
+.qr-placeholder .qr-icon {
+    font-size: 48px;
+    opacity: 0.4;
+}
+
+.qr-placeholder p {
+    font-size: 11px;
+    color: #999;
+    text-align: center;
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+}
+
+/* QR loading overlay */
+.qr-loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 2;
+    transition: opacity 0.3s;
+}
+
+.qr-loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.qr-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #E5E7EB;
+    border-top-color: #A7278F;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* QR Instruction text */
+.qr-instruction {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 20px;
+    color: #424841;
+    text-align: center;
+    margin-bottom: 16px;
+    padding: 0 8px;
+}
+
+/* Timer Badge */
+.qr-timer-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(241, 191, 79, 0.2);
+    border-radius: 9999px;
+    width: fit-content;
+}
+
+.qr-timer-badge .timer-icon {
+    font-size: 14px;
+    color: #261A00;
+}
+
+.qr-timer-badge .timer-text {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 24px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #261A00;
+    min-width: 60px;
+    text-align: center;
+}
+
+.qr-timer-badge.expired {
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.qr-timer-badge.expired .timer-text,
+.qr-timer-badge.expired .timer-icon {
+    color: #B91C1C;
+}
+
+/* QR Status overlay */
+.qr-status-overlay {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    z-index: 5;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.qr-status-overlay.show {
+    display: flex;
+}
+
+.qr-status-overlay.success-overlay {
+    background: rgba(2, 36, 9, 0.88);
+}
+
+.qr-status-overlay.expired-overlay {
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.qr-status-overlay .status-icon {
+    font-size: 40px;
+}
+
+.qr-status-overlay .status-msg {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    margin: 0;
+    padding: 0 12px;
+}
+
+.qr-status-overlay.expired-overlay .status-msg {
+    color: #B91C1C;
+}
+
+/* Refresh button */
+.btn-refresh-qr {
+    margin-top: 12px;
+    padding: 8px 20px;
+    background: #022409;
+    color: #C5EDC3;
+    border: none;
+    border-radius: 9999px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    display: none;
+}
+
+.btn-refresh-qr:hover { opacity: 0.85; }
+.btn-refresh-qr.show { display: inline-block; }
+
+/* ---- Action row at bottom ---- */
+.momo-action-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.btn-back-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #424841;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.btn-back-link:hover { color: #022409; }
+
+.btn-back-link .back-arrow {
+    font-size: 14px;
+}
+
+/* ---- Success Modal ---- */
+.momo-success-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s, visibility 0.25s;
+}
+
+.momo-success-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.success-modal-card {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 48px 40px 40px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    transform: translateY(20px);
+    transition: transform 0.25s;
+}
+
+.momo-success-modal.show .success-modal-card {
+    transform: translateY(0);
+}
+
+.success-check-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #022409, #183A1D);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 36px;
+}
+
+.success-modal-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: #022409;
+    margin-bottom: 8px;
+}
+
+.success-modal-sub {
+    font-family: 'Manrope', sans-serif;
+    font-size: 14px;
+    color: #424841;
+    margin-bottom: 4px;
+}
+
+.success-order-id {
+    font-family: 'Liberation Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+    color: #022409;
+    background: #F1EEDD;
+    padding: 6px 16px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 12px 0 28px;
+    letter-spacing: 1px;
+}
+
+.btn-success-home {
+    background: linear-gradient(102deg, #022409 0%, #183A1D 100%);
+    color: #C5EDC3;
+    border: none;
+    border-radius: 9999px;
+    padding: 14px 40px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-success-home:hover { opacity: 0.85; color: #fff; }
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+    .momo-bento {
+        grid-template-columns: 1fr;
+    }
+
+    .momo-qr-panel {
+        position: static;
+    }
+
+    .momo-page-title {
+        font-size: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .momo-page-title { font-size: 26px; }
+    .momo-order-panel, .momo-qr-panel { padding: 20px; }
+    .summary-total-row .total-value { font-size: 22px; }
+}
