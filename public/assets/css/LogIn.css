@@ -1,0 +1,220 @@
+/* ── Không gian tên cô lập để bảo vệ tuyệt đối Header/Footer ── */
+.login-body-content {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #fefbe9;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Wrapper chính tạo khoảng cách dưới Header ── */
+.login-container-wrapper {
+    padding-top: 140px;  
+    padding-bottom: 90px;
+}
+
+/* ── Khối hộp kép chứa cả Ảnh và Form ── */
+.login-split-box {
+    background: #ffffff;
+    border-radius: 16px; 
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
+    overflow: hidden;  
+    max-width: 900px;  
+    margin: 0 auto;
+}
+
+/* ── Bên Trái: Chứa ảnh minh họa LogIn.png ── */
+.login-image-side {
+    background: url('../../../Media/LogIn.png') no-repeat center center;
+    background-size: cover;
+    min-height: 520px;   
+    width: 100%;
+}
+
+/* Bên Phải: Khối chứa Form nhập liệu */
+.login-form-side {
+    padding: 45px 40px;
+}
+
+.form-title {
+    font-weight: 800;
+    color: #183a1d;    
+    font-size: 1.85rem;
+    margin-bottom: 4px;
+}
+
+.form-subtitle {
+    color: #718096;
+    font-size: 0.88rem;
+    margin-bottom: 24px;
+}
+
+/* Thanh lựa chọn Người dùng / Quản lý */
+.role-switcher {
+    display: flex;
+    background-color: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.role-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+/* Tab khi được kích hoạt chọn */
+.role-tab.active {
+    background-color: #ffffff;
+    color: #183a1d;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Các trường thông tin nhập liệu */
+.form-group-custom {
+    margin-bottom: 15px;
+}
+
+.field-label {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: #183a1d;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.input-group-custom {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: #a0aec0;
+    font-size: 0.95rem;
+    z-index: 4;
+}
+
+.field-input {
+    height: 44px;
+    border-radius: 6px !important;
+    border: 1px solid #e2e8f0;
+    background-color: #f7fafc;
+    padding-left: 42px !important;
+    padding-right: 40px !important;
+    font-size: 0.92rem;
+    transition: all 0.2s ease;
+    width: 100%;
+    color: #2d3748;
+}
+
+.field-input:focus {
+    border-color: #183a1d;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(24, 58, 29, 0.08);
+    outline: none;
+}
+
+/* Ẩn hiện mật khẩu */
+.toggle-eye {
+    position: absolute;
+    right: 14px;
+    cursor: pointer;
+    color: #a0aec0;
+    z-index: 5;
+    padding: 2px;
+}
+.toggle-eye:hover {
+    color: #183a1d;
+}
+
+/* Checkbox */
+.custom-control-input:checked ~ .custom-control-label::before {
+    border-color: #183a1d !important;
+    background-color: #183a1d !important;
+}
+
+/* Liên kết */
+.forgot-link-anchor {
+    color: #f0a04b;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+}
+.forgot-link-anchor:hover {
+    color: #d98730;
+    text-decoration: underline;
+}
+
+.text-redirect {
+    color: #718096;
+    font-size: 0.92rem;
+    margin-top: 18px;
+    margin-bottom: 0;
+}
+
+.signup-link-anchor {
+    color: #f0a04b;
+    font-weight: 700;
+    text-decoration: none;
+}
+.signup-link-anchor:hover {
+    color: #d98730;
+    text-decoration: underline;
+}
+
+.invalid-msg {
+    font-size: 0.78rem;
+    color: #e53e3e;
+    margin-top: 4px;
+    font-weight: 500;
+    display: block;
+}
+
+.btn-login-submit {
+    background-color: #183a1d;
+    color: #ffffff;
+    height: 45px;
+    border-radius: 6px; 
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 5px;
+}
+.btn-login-submit:hover {
+    background-color: #112a15;
+}
+
+.btn-back-to-login {
+    background-color: transparent;
+    color: #718096;
+    border: 1px solid #e2e8f0;
+    height: 42px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+.btn-back-to-login:hover {
+    background-color: #f7fafc;
+}
+
+@media (max-width: 767.98px) {
+    .login-image-side {
+        display: none !important;
+    }
+    .login-form-side {
+        padding: 35px 20px;
+    }
+}
