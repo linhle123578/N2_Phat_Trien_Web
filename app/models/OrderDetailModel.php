@@ -4,65 +4,38 @@ class OrderDetailModel {
     private $conn;
 
     public function __construct() {
-        // Khởi tạo kết nối cho database đám mây (yêu cầu SSL)
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
-        
-        // Thực hiện kết nối tới TiDB Cloud
         $success = mysqli_real_connect(
             $this->conn,
-            "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com", // Host
-            "3YHrkxqAKWynehu.root",                                  // User
-            "BzDRrZAdAT2jLuyd",                                      // Password
-            "db_web_farm2home",                                      // Database
-            4000,                                                    // Port
+            "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
+            "3YHrkxqAKWynehu.root",
+            "BzDRrZAdAT2jLuyd",
+            "db_web_farm2home",
+            4000,
             NULL,
             MYSQLI_CLIENT_SSL
         );
-
-        // Kiểm tra kết nối
         if (!$success) {
-    throw new Exception("Kết nối database thất bại: " . mysqli_connect_error());
-}
-
+            die("Kết nối database thất bại: " . mysqli_connect_error());
+        }
         mysqli_set_charset($this->conn, "utf8");
     }
 
-    // Thêm chi tiết cho một đơn hàng
+    /**
+     * Thêm 1 sản phẩm vào orderitem (dùng bảng orderitem theo chuẩn CartModel)
+     */
     public function addDetail($order_id, $product_id, $price, $quantity) {
-        $stmt = $this->conn->prepare("INSERT INTO order_details (order_id, product_id, price, quantity) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("iiii", $order_id, $product_id, $price, $quantity);
-        return $stmt->execute();
-    }
+        $oid   = $this->conn->real_escape_string($order_id);
+        $pid   = $this->conn->real_escape_string($product_id);
+        $p     = (float)$price;
+        $qty   = (int)$quantity;
+        $iid   = 'OI-' . strtoupper(substr(uniqid(), -8));
 
-    public function getItemsByOrderId($order_id) {
-        /* JOIN bảng order_details (od) với bảng products (p) 
-           Chú ý: Sửa lại tên cột cho đúng với Database của bạn nếu có khác biệt
-           (VD: p.name, p.image, od.quantity, od.price)
-        */
-        $sql = "SELECT od.quantity, od.price, p.name, p.image 
-                FROM order_details od 
-                JOIN products p ON od.product_id = p.id 
-                WHERE od.order_id = ?";
-                
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("s", $order_id);
-        $stmt->execute();
-        
-        $result = $stmt->get_result();
-        $items = [];
-        
-        while ($row = $result->fetch_assoc()) {
-            // Gán lại key cho khớp với vòng lặp trong file view momopayment.php
-            $items[] = [
-                'name'  => $row['name'],
-                'img'   => $row['image'],   // Lấy cột ảnh từ bảng products
-                'qty'   => $row['quantity'],// Lấy số lượng từ order_details
-                'price' => $row['price']    // Lấy giá từ order_details
-            ];
-        }
-        
-        return $items;
+        return $this->conn->query(
+            "INSERT INTO orderitem (order_item_id, order_id, product_id, quantity, price)
+             VALUES ('$iid', '$oid', '$pid', $qty, $p)"
+        );
     }
 }
 ?>
