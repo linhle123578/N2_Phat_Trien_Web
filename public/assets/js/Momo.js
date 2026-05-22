@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(r => r.json())
         .then(data => {
-            if (data.paid === true || data.order_status === 'paid') {
+            if (data.paid === true || data.order_status === 'Đang giao') {
                 onPaymentSuccess();
             }
         })

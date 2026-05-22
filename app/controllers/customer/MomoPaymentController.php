@@ -31,7 +31,7 @@ class MomoPaymentController {
             die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Không tìm thấy đơn hàng: " . htmlspecialchars($order_id) . "</h3>");
         }
 
-        $customer_id = $_SESSION['customer_id'] ?? 'CUS003';
+        $customer_id = $_SESSION['customer_id'] ?? 'CUS005';
         if ($order['customer_id'] !== (string)$customer_id) {
             die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Bạn không có quyền xem đơn hàng này.</h3>");
         }
@@ -54,7 +54,7 @@ class MomoPaymentController {
         $order_data = [
             'order_id'     => $order_id,
             'total_amount' => $total_amount,
-            'order_status' => $order['order_status'] ?? 'pending',
+            'order_status' => $order['order_status'] ?? 'Chờ xác nhận',
             'live_mode'    => MOMO_LIVE_MODE,
         ];
 
@@ -73,7 +73,7 @@ class MomoPaymentController {
             return;
         }
 
-        if (in_array($order['order_status'], ['paid', 'confirmed', 'shipping', 'done'])) {
+        if (in_array($order['order_status'], ['Đang giao', 'Hoàn thành'])) {
             echo json_encode(['status' => 'already_paid', 'order_id' => $order_id]);
             return;
         }
@@ -109,23 +109,23 @@ class MomoPaymentController {
             return;
         }
 
-        $order_status = $order['order_status'] ?? 'pending';
+        $order_status = $order['order_status'] ?? 'Chờ xác nhận';
 
         if (MOMO_LIVE_MODE) {
             $momo_result = $this->queryMomoStatus($order_id);
             if ($momo_result && isset($momo_result['resultCode'])) {
                 if ($momo_result['resultCode'] == 0) {
                     $this->orderModel->updateMomoPayment(
-                        $order_id, 'paid',
+                        $order_id, 'Đang giao',
                         $momo_result['transId'] ?? null
                     );
-                    $order_status = 'paid';
+                    $order_status = 'Đang giao';
                     $this->clearCart($order_id);
                 }
             }
         }
 
-        $paid = in_array($order_status, ['paid', 'confirmed', 'shipping', 'done']);
+        $paid = in_array($order_status, ['Đang giao', 'Hoàn thành']);
         echo json_encode([
             'status'       => 'ok',
             'order_status' => $order_status,
@@ -145,7 +145,7 @@ class MomoPaymentController {
             return;
         }
 
-        $ok = $this->orderModel->updateMomoPayment($order_id, 'paid', 'MOCK-TXN-' . strtoupper(substr(uniqid(), -6)));
+        $ok = $this->orderModel->updateMomoPayment($order_id, 'Đang giao', 'MOCK-TXN-' . strtoupper(substr(uniqid(), -6)));
         if ($ok) {
             $this->clearCart($order_id);
             echo json_encode(['status' => 'success', 'order_id' => $order_id, 'message' => 'Mock: thanh toán thành công!']);
@@ -178,10 +178,10 @@ class MomoPaymentController {
         $trans_id    = $data['transId']    ?? null;
 
         if ($result_code === 0) {
-            $this->orderModel->updateMomoPayment($order_id, 'paid', $trans_id);
+            $this->orderModel->updateMomoPayment($order_id, 'Đang giao', $trans_id);
             $this->clearCart($order_id);
         } else {
-            $this->orderModel->updateStatus($order_id, 'cancelled');
+            $this->orderModel->updateStatus($order_id, 'Đã Hủy');
         }
 
         http_response_code(200);
