@@ -30,7 +30,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="/public/assets/css/layout.css">
-    <link rel="stylesheet" href="/public/assets/css/MomoPayment.css">
+    <link rel="stylesheet" href="/public/assets/css/Momo.css">
 
     <script>
         // Truyền dữ liệu đơn hàng sang JS
@@ -176,7 +176,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
 
             <!-- Back link -->
             <div class="momo-action-row">
-                <a href="javascript:history.back()" class="btn-back-link">
+                <a href="/app/controllers/customer/CheckoutController.php" class="btn-back-link">
                     <span class="back-arrow">←</span>
                     Quay lại
                 </a>
