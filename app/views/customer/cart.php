@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 //    exit();
 //}
 
-$customer_id = 'CUS001'; 
+$customer_id = 'CUS003'; // Tạm thời hardcode, sau này sẽ lấy từ session
 $cartModel = new CartModel();
 $items = $cartModel->getCartItems($customer_id);
 $total_items = count($items);
@@ -93,7 +93,7 @@ $clean_footer = $footer_matches[0] ?? '';
               ?>
 
               <div class="cart-item"
-                   data-id="<?= $item['cart_item_id'] ?>"
+                   data-id="<?= $item['product_id'] ?>"
                    data-price="<?= $item['unit_price'] ?>"
                    data-qty="<?= $item['quantity'] ?>"
                    data-stock="<?= $item['stock'] ?>">
