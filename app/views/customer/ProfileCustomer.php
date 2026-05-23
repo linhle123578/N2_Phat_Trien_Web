@@ -17,26 +17,25 @@ mysqli_real_connect(
 mysqli_set_charset($conn, "utf8mb4");
 
 // ── Load customer + account data ─────────────────────────────────────────────
-// Assumes session has customer_id; fallback to CUS001 for demo
-$session_customer_id = $_SESSION['customer_id'] ?? 'CUS001';
+$session_customer_id = $_SESSION['customer_id'] ?? 'CUS005';
 
 $customer = [
     'customer_id'  => $session_customer_id,
-    'full_name'    => 'Nguyễn Thị Hương',
-    'phone'        => '0912 345 678',
-    'gender'       => 'Nữ',
-    'email'        => 'huong.nguyen@gmail.com',
-    'avatar'       => 'user_1.jpg',
-    'account_id'   => 'ACC001',
+    'full_name'    => '',
+    'phone'        => '',
+    'gender'       => '',
+    'email'        => '',
+    'account_id'   => '',
     'orders'       => 0,
 ];
 
 try {
+    // FIX: join đúng theo schema: customer.account_id = account.account_id
     $sql = "
         SELECT c.customer_id, c.full_name, c.phone, c.gender,
-               a.email, a.avatar, a.account_id
+               a.email, a.account_id
         FROM customer c
-        LEFT JOIN account a ON c.customer_id = a.account_id
+        LEFT JOIN account a ON c.account_id = a.account_id
         WHERE c.customer_id = ?
         LIMIT 1
     ";
@@ -50,12 +49,10 @@ try {
         $customer['phone']       = $row['phone']       ?? $customer['phone'];
         $customer['gender']      = $row['gender']      ?? $customer['gender'];
         $customer['email']       = $row['email']       ?? $customer['email'];
-        $customer['avatar']      = $row['avatar']      ?? $customer['avatar'];
         $customer['account_id']  = $row['account_id']  ?? $customer['account_id'];
     }
     mysqli_stmt_close($stmt);
 
-    // Count orders
     $stmt2 = mysqli_prepare($conn, "SELECT COUNT(*) FROM `order` WHERE customer_id = ?");
     mysqli_stmt_bind_param($stmt2, 's', $session_customer_id);
     mysqli_stmt_execute($stmt2);
@@ -63,14 +60,14 @@ try {
     mysqli_stmt_fetch($stmt2);
     $customer['orders'] = (int)$cnt;
     mysqli_stmt_close($stmt2);
-} catch (Exception $e) {
-    // keep fallback
-}
+} catch (Exception $e) {}
 
 // ── Load addresses ────────────────────────────────────────────────────────────
+// FIX: dùng đúng các cột trong DB: province, district, ward, street_address, address_type
 $addresses = [];
 try {
-    $sql_addr = "SELECT address_id, receiver_name, phone, detail, is_default
+    $sql_addr = "SELECT address_id, receiver_name, address_type,
+                        province, district, ward, street_address, is_default
                  FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC";
     $stmt3 = mysqli_prepare($conn, $sql_addr);
     mysqli_stmt_bind_param($stmt3, 's', $session_customer_id);
@@ -98,33 +95,39 @@ function pc_db_connect() {
     return $c;
 }
 
+// Helper: load lại địa chỉ sau POST
+function reload_addresses(string $cid): array {
+    $list = [];
+    try {
+        $c2 = pc_db_connect();
+        $stmt_r = mysqli_prepare($c2,
+            "SELECT address_id, receiver_name, address_type,
+                    province, district, ward, street_address, is_default
+             FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC");
+        mysqli_stmt_bind_param($stmt_r, 's', $cid);
+        mysqli_stmt_execute($stmt_r);
+        $res2 = mysqli_stmt_get_result($stmt_r);
+        while ($r = mysqli_fetch_assoc($res2)) $list[] = $r;
+        mysqli_stmt_close($stmt_r);
+        mysqli_close($c2);
+    } catch (Exception $e) {}
+    return $list;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // ── Save profile ──────────────────────────────────
+    // ── Lưu thông tin cá nhân (không còn avatar) ─────────────────────────────
     if (isset($_POST['save_profile'])) {
-        $fn     = trim($_POST['full_name'] ?? '');
-        $ph     = trim($_POST['phone']     ?? '');
-        $gen    = trim($_POST['gender']    ?? '');
-        $em     = trim($_POST['email']     ?? '');
-        $cid    = $customer['customer_id'];
-        $acct   = $customer['account_id'];
-
-        // Handle avatar upload
-        $avatar_filename = $customer['avatar'];
-        if (!empty($_FILES['avatar']['tmp_name'])) {
-            $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            if (in_array($_FILES['avatar']['type'], $allowed) && $_FILES['avatar']['size'] <= 5 * 1024 * 1024) {
-                $ext = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
-                $new_name = 'avatar_' . $cid . '_' . time() . '.' . $ext;
-                $upload_path = '../../../Media/' . $new_name;
-                if (move_uploaded_file($_FILES['avatar']['tmp_name'], $upload_path)) {
-                    $avatar_filename = $new_name;
-                }
-            }
-        }
+        $fn  = trim($_POST['full_name'] ?? '');
+        $ph  = trim($_POST['phone']     ?? '');
+        $gen = trim($_POST['gender']    ?? '');
+        $em  = trim($_POST['email']     ?? '');
+        $cid = $customer['customer_id'];
+        $acct = $customer['account_id'];
 
         try {
             $c = pc_db_connect();
+
             $stmt = mysqli_prepare($c,
                 "UPDATE customer SET full_name=?, phone=?, gender=? WHERE customer_id=?");
             mysqli_stmt_bind_param($stmt, 'ssss', $fn, $ph, $gen, $cid);
@@ -133,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($acct) {
                 $stmt2 = mysqli_prepare($c,
-                    "UPDATE account SET email=?, avatar=? WHERE account_id=?");
-                mysqli_stmt_bind_param($stmt2, 'sss', $em, $avatar_filename, $acct);
+                    "UPDATE account SET email=? WHERE account_id=?");
+                mysqli_stmt_bind_param($stmt2, 'ss', $em, $acct);
                 mysqli_stmt_execute($stmt2);
                 mysqli_stmt_close($stmt2);
             }
@@ -144,14 +147,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $customer['phone']     = htmlspecialchars($ph);
             $customer['gender']    = htmlspecialchars($gen);
             $customer['email']     = htmlspecialchars($em);
-            $customer['avatar']    = htmlspecialchars($avatar_filename);
             $msg_profile = 'success';
         } catch (Exception $e) {
             $msg_profile = 'error';
         }
     }
 
-    // ── Save password ──────────────────────────────────
+    // ── Đổi mật khẩu ─────────────────────────────────────────────────────────
     if (isset($_POST['save_password'])) {
         $old_pw  = $_POST['old_password']     ?? '';
         $new_pw  = $_POST['new_password']     ?? '';
@@ -165,18 +167,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 $c = pc_db_connect();
-                $sv = mysqli_prepare($c, "SELECT account_password FROM account WHERE account_id=? LIMIT 1");
+                $sv = mysqli_prepare($c,
+                    "SELECT account_password FROM account WHERE account_id=? LIMIT 1");
                 mysqli_stmt_bind_param($sv, 's', $acct);
                 mysqli_stmt_execute($sv);
                 mysqli_stmt_bind_result($sv, $stored_pw);
                 mysqli_stmt_fetch($sv);
                 mysqli_stmt_close($sv);
 
-                if (!$stored_pw || !password_verify($old_pw, $stored_pw)) {
+                if (!$stored_pw || md5($old_pw) !== $stored_pw) {
                     $msg_password = 'wrong_old';
                 } else {
-                    $hashed = password_hash($new_pw, PASSWORD_DEFAULT);
-                    $su = mysqli_prepare($c, "UPDATE account SET account_password=? WHERE account_id=?");
+                    $hashed = md5($new_pw);
+                    $su = mysqli_prepare($c,
+                        "UPDATE account SET account_password=? WHERE account_id=?");
                     mysqli_stmt_bind_param($su, 'ss', $hashed, $acct);
                     mysqli_stmt_execute($su);
                     mysqli_stmt_close($su);
@@ -189,16 +193,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ── Add address ────────────────────────────────────
+    // ── Thêm địa chỉ ─────────────────────────────────────────────────────────
+    // FIX: INSERT đúng các cột DB: province, district, ward, street_address, address_type
     if (isset($_POST['add_address'])) {
-        $r_name   = trim($_POST['receiver_name'] ?? '');
-        $r_phone  = trim($_POST['addr_phone']    ?? '');
-        $r_detail = trim($_POST['addr_detail']   ?? '');
-        $is_def   = isset($_POST['addr_is_default']) ? 1 : 0;
-        $cid      = $customer['customer_id'];
-        $new_id   = 'ADDR_' . uniqid();
+        $r_name    = trim($_POST['receiver_name']   ?? '');
+        $r_phone   = trim($_POST['addr_phone']      ?? '');
+        $addr_type = trim($_POST['addr_type']       ?? 'Nhà');
+        $province  = trim($_POST['addr_province']   ?? '');
+        $district  = trim($_POST['addr_district']   ?? '');
+        $ward      = trim($_POST['addr_ward']       ?? '');
+        $street    = trim($_POST['addr_street']     ?? '');
+        $is_def    = isset($_POST['addr_is_default']) ? 1 : 0;
+        $cid       = $customer['customer_id'];
+        $new_id    = 'ADDR_' . uniqid();
 
-        try {
+        if (empty($r_name) || empty($street)) {
+            $msg_address = 'error';
+        } else {
             $c = pc_db_connect();
             if ($is_def) {
                 $su = mysqli_prepare($c, "UPDATE address SET is_default=0 WHERE customer_id=?");
@@ -207,110 +218,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 mysqli_stmt_close($su);
             }
             $si = mysqli_prepare($c,
-                "INSERT INTO address (address_id, customer_id, receiver_name, phone, detail, is_default) VALUES (?,?,?,?,?,?)");
-            mysqli_stmt_bind_param($si, 'sssssi', $new_id, $cid, $r_name, $r_phone, $r_detail, $is_def);
-            mysqli_stmt_execute($si);
-            mysqli_stmt_close($si);
+                "INSERT INTO address
+                    (address_id, customer_id, receiver_name,
+                     address_type, province, district, ward, street_address, is_default)
+                 VALUES (?,?,?,?,?,?,?,?,?)");
+            if ($si) {
+                mysqli_stmt_bind_param($si, 'ssssssssi',
+                    $new_id, $cid, $r_name,
+                    $addr_type, $province, $district, $ward, $street, $is_def);
+                if (mysqli_stmt_execute($si)) {
+                    $msg_address = 'add_success';
+                } else {
+                    $msg_address = 'db_error:' . mysqli_stmt_error($si);
+                }
+                mysqli_stmt_close($si);
+            } else {
+                $msg_address = 'prepare_error:' . mysqli_error($c);
+            }
             mysqli_close($c);
-            $msg_address = 'add_success';
-        } catch (Exception $e) {
-            $msg_address = 'error';
         }
-        // Reload addresses
-        $addresses = [];
-        try {
-            $c2 = pc_db_connect();
-            $stmt_r = mysqli_prepare($c2, "SELECT address_id, receiver_name, phone, detail, is_default
-                         FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC");
-            mysqli_stmt_bind_param($stmt_r, 's', $cid);
-            mysqli_stmt_execute($stmt_r);
-            $res2 = mysqli_stmt_get_result($stmt_r);
-            while ($r = mysqli_fetch_assoc($res2)) $addresses[] = $r;
-            mysqli_stmt_close($stmt_r);
-            mysqli_close($c2);
-        } catch (Exception $e) {}
+        $addresses = reload_addresses($cid);
     }
 
-    // ── Set default address ────────────────────────────
+    // ── Đặt địa chỉ mặc định ─────────────────────────────────────────────────
     if (isset($_POST['set_default_address'])) {
         $addr_id = trim($_POST['address_id'] ?? '');
         $cid     = $customer['customer_id'];
         try {
             $c = pc_db_connect();
-            $su = mysqli_prepare($c, "UPDATE address SET is_default=0 WHERE customer_id=?");
+            $su = mysqli_prepare($c,
+                "UPDATE address SET is_default=0 WHERE customer_id=?");
             mysqli_stmt_bind_param($su, 's', $cid);
             mysqli_stmt_execute($su);
             mysqli_stmt_close($su);
-            $sd = mysqli_prepare($c, "UPDATE address SET is_default=1 WHERE address_id=? AND customer_id=?");
+            $sd = mysqli_prepare($c,
+                "UPDATE address SET is_default=1 WHERE address_id=? AND customer_id=?");
             mysqli_stmt_bind_param($sd, 'ss', $addr_id, $cid);
             mysqli_stmt_execute($sd);
             mysqli_stmt_close($sd);
             mysqli_close($c);
             $msg_address = 'default_set';
         } catch (Exception $e) {}
-        $addresses = [];
-        try {
-            $c2 = pc_db_connect();
-            $stmt_r = mysqli_prepare($c2, "SELECT address_id, receiver_name, phone, detail, is_default
-                         FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC");
-            mysqli_stmt_bind_param($stmt_r, 's', $cid);
-            mysqli_stmt_execute($stmt_r);
-            $res2 = mysqli_stmt_get_result($stmt_r);
-            while ($r = mysqli_fetch_assoc($res2)) $addresses[] = $r;
-            mysqli_stmt_close($stmt_r);
-            mysqli_close($c2);
-        } catch (Exception $e) {}
+        $addresses = reload_addresses($cid);
     }
 
-    // ── Delete address ─────────────────────────────────
+    // ── Xóa địa chỉ ──────────────────────────────────────────────────────────
     if (isset($_POST['delete_address'])) {
         $addr_id = trim($_POST['address_id'] ?? '');
         $cid     = $customer['customer_id'];
         try {
             $c = pc_db_connect();
-            $sd = mysqli_prepare($c, "DELETE FROM address WHERE address_id=? AND customer_id=?");
+            $sd = mysqli_prepare($c,
+                "DELETE FROM address WHERE address_id=? AND customer_id=?");
             mysqli_stmt_bind_param($sd, 'ss', $addr_id, $cid);
             mysqli_stmt_execute($sd);
             mysqli_stmt_close($sd);
             mysqli_close($c);
             $msg_address = 'delete_success';
         } catch (Exception $e) {}
-        $addresses = [];
-        try {
-            $c2 = pc_db_connect();
-            $stmt_r = mysqli_prepare($c2, "SELECT address_id, receiver_name, phone, detail, is_default
-                         FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC");
-            mysqli_stmt_bind_param($stmt_r, 's', $cid);
-            mysqli_stmt_execute($stmt_r);
-            $res2 = mysqli_stmt_get_result($stmt_r);
-            while ($r = mysqli_fetch_assoc($res2)) $addresses[] = $r;
-            mysqli_stmt_close($stmt_r);
-            mysqli_close($c2);
-        } catch (Exception $e) {}
+        $addresses = reload_addresses($cid);
     }
 }
 
 mysqli_close($conn);
 
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
-?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài khoản của tôi – Farm2Home</title>
+
+// ── Build full address string từ các cột riêng ────────────────────────────────
+function build_full_address(array $addr): string {
+    $parts = array_filter([
+        $addr['street_address'] ?? '',
+        $addr['ward']           ?? '',
+        $addr['district']       ?? '',
+        $addr['province']       ?? '',
+    ]);
+    return implode(', ', $parts);
+}
+
+// ═══════════════════════════════════════════════════════════════
+ob_start();
+include '../../../app/views/layouts/header.php';
+$header_output = ob_get_clean();
+
+$extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../public/assets/css/ProfileCustomer.css">
-</head>
-<body>
+';
+$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
 
-<?php include '../../../app/views/layouts/header.php'; ?>
+echo $header_output;
+?>
 
-<div class="container" style="padding-top: 10px;">
+<div class="container" style="padding-top: 80px;">
 
     <!-- Breadcrumb -->
     <nav class="profile-breadcrumb">
@@ -319,21 +321,44 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
         <span class="current">Tài khoản của tôi</span>
     </nav>
 
-    <!-- Greeting -->
-    <div class="profile-greeting">
-        <img id="greetingAvatar"
-             class="greeting-avatar"
-             src="../../../Media/<?= e($customer['avatar']) ?>"
-             alt="<?= e($customer['full_name']) ?>"
-             onerror="this.src='../../../Media/user_1.jpg'">
-        <div class="greeting-text">
-            <h2>Xin chào, <?= e(explode(' ', $customer['full_name'])[count(explode(' ', $customer['full_name'])) - 1]) ?>!</h2>
-            <p><i class="bi bi-envelope" style="margin-right:4px;"></i><?= e($customer['email']) ?></p>
-        </div>
-    </div>
+    <!-- ════════════ MAIN LAYOUT ════════════ -->
+    <div class="profile-layout">
 
-    <!-- ════════════ MAIN CONTENT (no sidebar) ════════════ -->
-    <div class="profile-main-solo">
+        <!-- ── SIDEBAR ──────────────────────────────────── -->
+        <aside class="profile-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title">MENU TÀI KHOẢN</div>
+                <ul class="sidebar-menu">
+                    <li class="active">
+                        <a href="#">
+                            <i class="bi bi-person-circle"></i>
+                            Thông tin cá nhân
+                        </a>
+                    </li>
+                    <li>
+                        <a href="../../../app/views/customer/OrderHistory.php">
+                            <i class="bi bi-bag-check"></i>
+                            Lịch sử đơn hàng
+                            <?php if ($customer['orders'] > 0): ?>
+                                <span class="sidebar-badge"><?= (int)$customer['orders'] ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                </ul>
+                <div class="sidebar-divider"></div>
+                <div class="sidebar-logout">
+                    <a href="#" id="btnLogout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Đăng xuất
+                    </a>
+
+
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── MAIN CONTENT ─────────────────────────────── -->
+        <div class="profile-main-solo">
 
         <!-- ── Section 1: Personal Info ──────────────────── -->
         <div class="section-card">
@@ -352,32 +377,8 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="" enctype="multipart/form-data">
-                <!-- Avatar + name row -->
-                <div class="profile-top-row">
-                    <div class="profile-avatar-wrap" id="avatarWrap" title="Nhấn để đổi ảnh">
-                        <img id="avatarPreview"
-                             src="../../../Media/<?= e($customer['avatar']) ?>"
-                             alt="<?= e($customer['full_name']) ?>"
-                             onerror="this.src='../../../Media/user_1.jpg'">
-                        <div class="avatar-cam-overlay"><i class="bi bi-camera"></i></div>
-                    </div>
-                    <input type="file" id="avatarFileInput" name="avatar" accept="image/*">
-
-                    <div class="profile-top-info">
-                        <div class="pu-name"><?= e($customer['full_name']) ?></div>
-                        <div class="pu-id">
-                            <i class="bi bi-person-badge"></i>
-                            ID: <?= e($customer['customer_id']) ?>
-                        </div>
-                        <div class="pu-date">
-                            <i class="bi bi-bag-check"></i>
-                            <?= (int)$customer['orders'] ?> đơn hàng
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Form fields -->
+            <form method="POST" action="">
+                <!-- Đã xóa phần avatar theo yêu cầu -->
                 <div class="form-body-pad">
                     <div class="row g-3">
                         <div class="col-sm-6">
@@ -385,7 +386,8 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                             <div class="input-group pc-input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <input type="text" class="form-control" id="fieldName" name="full_name"
-                                       value="<?= e($customer['full_name']) ?>" placeholder="Nhập họ và tên" required>
+                                       value="<?= e($customer['full_name']) ?>"
+                                       placeholder="Nhập họ và tên" required>
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -393,7 +395,8 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                             <div class="input-group pc-input-group">
                                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                                 <input type="text" class="form-control" id="fieldPhone" name="phone"
-                                       value="<?= e($customer['phone']) ?>" placeholder="VD: 0901234567">
+                                       value="<?= e($customer['phone']) ?>"
+                                       placeholder="VD: 0901234567">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -401,7 +404,8 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                             <div class="input-group pc-input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                                 <input type="email" class="form-control" id="fieldEmail" name="email"
-                                       value="<?= e($customer['email']) ?>" placeholder="email@example.com">
+                                       value="<?= e($customer['email']) ?>"
+                                       placeholder="email@example.com">
                             </div>
                         </div>
                         <div class="col-sm-6">
@@ -443,15 +447,17 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
             <?php elseif ($msg_address === 'default_set'): ?>
                 <div class="pc-alert pc-alert-success mx-22 mb-3"><i class="bi bi-check-circle-fill me-2"></i>Đã đặt địa chỉ mặc định.</div>
             <?php elseif ($msg_address === 'error'): ?>
-                <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Có lỗi xảy ra.</div>
+                <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Vui lòng điền đầy đủ thông tin bắt buộc (Người nhận, Số nhà/đường).</div>
+            <?php elseif (str_starts_with($msg_address, 'db_error:') || str_starts_with($msg_address, 'prepare_error:')): ?>
+                <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Lỗi DB: <?= htmlspecialchars($msg_address) ?></div>
             <?php endif; ?>
 
-            <!-- Add address form (hidden by default) -->
+            <!-- FIX: Form thêm địa chỉ khớp với schema DB -->
             <div class="add-addr-form" id="addAddrForm" style="display:none;">
                 <form method="POST" action="">
                     <div class="row g-3">
                         <div class="col-sm-6">
-                            <label class="form-label">Người nhận</label>
+                            <label class="form-label">Người nhận <span class="text-danger">*</span></label>
                             <div class="input-group pc-input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <input type="text" class="form-control" name="receiver_name"
@@ -459,19 +465,47 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                             </div>
                         </div>
                         <div class="col-sm-6">
-                            <label class="form-label">Số điện thoại</label>
+                            <label class="form-label">Loại địa chỉ</label>
                             <div class="input-group pc-input-group">
-                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                <input type="text" class="form-control" name="addr_phone"
-                                       placeholder="Số điện thoại nhận hàng">
+                                <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                                <select class="form-select" name="addr_type"
+                                        style="border-left:none;border-radius:0 var(--radius-input) var(--radius-input) 0;">
+                                    <option value="Nhà">Nhà</option>
+                                    <option value="Văn phòng">Văn phòng</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Tỉnh / Thành phố <span class="text-danger">*</span></label>
+                            <div class="input-group pc-input-group">
+                                <span class="input-group-text"><i class="bi bi-map"></i></span>
+                                <input type="text" class="form-control" name="addr_province"
+                                       placeholder="VD: TP. Hồ Chí Minh" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Quận / Huyện</label>
+                            <div class="input-group pc-input-group">
+                                <span class="input-group-text"><i class="bi bi-signpost-2"></i></span>
+                                <input type="text" class="form-control" name="addr_district"
+                                       placeholder="VD: Quận 1">
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Phường / Xã</label>
+                            <div class="input-group pc-input-group">
+                                <span class="input-group-text"><i class="bi bi-signpost"></i></span>
+                                <input type="text" class="form-control" name="addr_ward"
+                                       placeholder="VD: Phường Bến Nghé">
                             </div>
                         </div>
                         <div class="col-12">
-                            <label class="form-label">Địa chỉ chi tiết</label>
+                            <label class="form-label">Số nhà, tên đường <span class="text-danger">*</span></label>
                             <div class="input-group pc-input-group">
                                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-                                <input type="text" class="form-control" name="addr_detail"
-                                       placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" required>
+                                <input type="text" class="form-control" name="addr_street"
+                                       placeholder="VD: 123 Nguyễn Huệ" required>
                             </div>
                         </div>
                         <div class="col-12 d-flex align-items-center gap-3 flex-wrap">
@@ -490,7 +524,6 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                 </form>
             </div>
 
-            <!-- Address list -->
             <div class="address-list">
                 <?php if (empty($addresses)): ?>
                     <div class="addr-empty">
@@ -505,28 +538,35 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
                         </div>
                         <div class="addr-info">
                             <div class="addr-title"><?= e($addr['receiver_name']) ?></div>
-                            <div class="addr-phone"><?= e($addr['phone']) ?></div>
-                            <div class="addr-text"><?= e($addr['detail']) ?></div>
+                            <?php if (!empty($addr['address_type'])): ?>
+                                <div class="addr-type">
+                                    <span class="badge bg-secondary"><?= e($addr['address_type']) ?></span>
+                                </div>
+                            <?php endif; ?>
+                            <!-- Ghép địa chỉ đầy đủ từ các cột riêng -->
+                            <div class="addr-text"><?= e(build_full_address($addr)) ?></div>
                         </div>
                         <div class="addr-actions">
                             <?php if ($addr['is_default']): ?>
-                                <span class="default-badge"><i class="bi bi-patch-check-fill me-1"></i>Mặc định</span>
+                                <span class="default-badge">
+                                    <i class="bi bi-patch-check-fill me-1"></i>Mặc định
+                                </span>
                             <?php else: ?>
                                 <form method="POST" action="" style="display:inline;">
-                                    <input type="hidden" name="address_id" value="<?= e($addr['address_id']) ?>">
-                                    <button type="submit" name="set_default_address" class="set-default-link">
-                                        Đặt mặc định
+                                    <input type="hidden" name="address_id"
+                                           value="<?= e($addr['address_id']) ?>">
+                                    <button type="submit" name="set_default_address"
+                                            class="set-default-link">Đặt mặc định</button>
+                                </form>
+                                <form method="POST" action="" style="display:inline;"
+                                      onsubmit="return confirm('Bạn có chắc muốn xoá địa chỉ này?')">
+                                    <input type="hidden" name="address_id"
+                                           value="<?= e($addr['address_id']) ?>">
+                                    <button type="submit" name="delete_address"
+                                            class="btn-addr-del" title="Xoá">
+                                        <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
-                            <?php endif; ?>
-                            <?php if (!$addr['is_default']): ?>
-                            <form method="POST" action="" style="display:inline;"
-                                  onsubmit="return confirm('Bạn có chắc muốn xoá địa chỉ này?')">
-                                <input type="hidden" name="address_id" value="<?= e($addr['address_id']) ?>">
-                                <button type="submit" name="delete_address" class="btn-addr-del" title="Xoá">
-                                    <i class="bi bi-trash3"></i>
-                                </button>
-                            </form>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -543,11 +583,17 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
             </div>
 
             <?php if ($msg_password === 'success'): ?>
-                <div class="pc-alert pc-alert-success mx-22 mb-3"><i class="bi bi-check-circle-fill me-2"></i>Đổi mật khẩu thành công!</div>
+                <div class="pc-alert pc-alert-success mx-22 mb-3">
+                    <i class="bi bi-check-circle-fill me-2"></i>Đổi mật khẩu thành công!
+                </div>
             <?php elseif ($msg_password === 'wrong_old'): ?>
-                <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Mật khẩu hiện tại không đúng.</div>
+                <div class="pc-alert pc-alert-danger mx-22 mb-3">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>Mật khẩu hiện tại không đúng.
+                </div>
             <?php elseif ($msg_password === 'error'): ?>
-                <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Mật khẩu không hợp lệ hoặc không khớp (tối thiểu 6 ký tự).</div>
+                <div class="pc-alert pc-alert-danger mx-22 mb-3">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>Mật khẩu không hợp lệ hoặc không khớp (tối thiểu 6 ký tự).
+                </div>
             <?php endif; ?>
 
             <form method="POST" action="">
@@ -596,12 +642,73 @@ function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8')
             </form>
         </div>
 
-    </div><!-- /profile-main-solo -->
-</div><!-- /container -->
+    </div>
+</div>
+
+    </div><!-- /.profile-layout -->
 
 <?php include '../../../app/views/layouts/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
+
+<!-- ── Modal xác nhận đăng xuất (đặt ngoài mọi thứ, trước </body>) ── -->
+<div id="logoutOverlay" style="
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.55);
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#fff;
+        border-radius:18px;
+        padding:36px 28px 28px;
+        max-width:360px;
+        width:90%;
+        box-shadow:0 20px 60px rgba(0,0,0,0.25);
+        text-align:center;
+        font-family:'Plus Jakarta Sans',sans-serif;
+        position:relative;
+        z-index:100000;
+    ">
+        <div style="width:60px;height:60px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:#c0392b;">
+            <i class="bi bi-box-arrow-right"></i>
+        </div>
+        <div style="font-size:1.08rem;font-weight:800;color:#1a2e1c;margin-bottom:8px;">Đăng xuất?</div>
+        <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">Bạn có chắc muốn đăng xuất khỏi tài khoản không?</div>
+        <div style="display:flex;gap:10px;">
+            <button id="btnLogoutCancel" style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;cursor:pointer;font-family:inherit;transition:background .15s;">Huỷ</button>
+            <a href="../../../app/views/customer/logout.php" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var btnLogout       = document.getElementById('btnLogout');
+    var logoutOverlay   = document.getElementById('logoutOverlay');
+    var btnLogoutCancel = document.getElementById('btnLogoutCancel');
+
+    if (btnLogout && logoutOverlay) {
+        btnLogout.addEventListener('click', function (e) {
+            e.preventDefault();
+            logoutOverlay.style.display = 'flex';
+        });
+    }
+    if (btnLogoutCancel && logoutOverlay) {
+        btnLogoutCancel.addEventListener('click', function () {
+            logoutOverlay.style.display = 'none';
+        });
+    }
+    if (logoutOverlay) {
+        logoutOverlay.addEventListener('click', function (e) {
+            if (e.target === logoutOverlay) logoutOverlay.style.display = 'none';
+        });
+    }
+});
+</script>
 </body>
 </html>
