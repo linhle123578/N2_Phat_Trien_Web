@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const LIVE_MODE    = ORDER_DATA.live_mode     || false;
     const CONTROLLER   = '/app/controllers/customer/MomoPaymentController.php';
 
-    // ---- Thời gian QR còn hiệu lực (15 phút) ----
-    const QR_DURATION  = 15 * 60; // giây
+    // ---- Thời gian QR còn hiệu lực (10 phút) ----
+    const QR_DURATION  = 10*60; // giây
     let   timerSeconds = QR_DURATION;
     let   timerInterval  = null;
     let   pollInterval   = null;
@@ -66,8 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch(CONTROLLER, {
             method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ action: 'create_qr', order_id: ORDER_ID })
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body:    new URLSearchParams({ action: 'create_qr', order_id: ORDER_ID })
         })
         .then(r => r.json())
         .then(data => {
@@ -167,8 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch(CONTROLLER, {
             method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ action: 'check_status', order_id: ORDER_ID })
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body:    new URLSearchParams({ action: 'check_status', order_id: ORDER_ID })
         })
         .then(r => r.json())
         .then(data => {
@@ -262,8 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function mockConfirmPayment() {
         fetch(CONTROLLER, {
             method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ action: 'mock_confirm', order_id: ORDER_ID })
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body:    new URLSearchParams({ action: 'mock_confirm', order_id: ORDER_ID })
         })
         .then(r => r.json())
         .then(data => {

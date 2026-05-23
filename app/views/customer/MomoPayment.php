@@ -28,18 +28,17 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-
     <link rel="stylesheet" href="/public/assets/css/layout.css">
     <link rel="stylesheet" href="/public/assets/css/Momo.css">
 
     <script>
-        // Truyền dữ liệu đơn hàng sang JS
         const MOMO_ORDER_DATA = <?= json_encode([
-            'order_id' => $order_id ?? null,
-            'products' => $order_products ?? [],
-            'subtotal' => $subtotal ?? 0,
-            'shipping_fee' => $shipping_fee ?? 0,
-            'total_amount' => $total_amount ?? 0
+            'order_id'     => $order_id      ?? null,
+            'products'     => $order_products ?? [],
+            'subtotal'     => $subtotal       ?? 0,
+            'shipping_fee' => $shipping_fee   ?? 0,
+            'total_amount' => $total_amount   ?? 0,
+            'live_mode'    => true,
         ]) ?>;
     </script>
 </head>
@@ -50,7 +49,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
     <main class="momo-main">
         <div class="container">
 
-            <!-- Header Section -->
+            <!-- Title -->
             <div class="text-center mb-2">
                 <h1 class="momo-page-title">Thanh toán đơn hàng</h1>
                 <p class="momo-page-subtitle">Vui lòng sử dụng ứng dụng MoMo để quét mã</p>
@@ -59,11 +58,12 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
             <!-- Bento Grid -->
             <div class="momo-bento">
 
-                <!-- ===== LEFT: Chi tiết đơn hàng ===== -->
+                <!-- ── LEFT: Chi tiết đơn hàng ── -->
                 <div class="momo-order-panel">
+
                     <div class="momo-order-heading">
                         <div class="heading-icon">
-                            <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
                                 <path d="M14 1H4C2.34315 1 1 2.34315 1 4V17C1 18.1046 1.89543 19 3 19H15C16.1046 19 17 18.1046 17 17V4C17 2.34315 15.6569 1 14 1Z" stroke="#022409" stroke-width="1.8" stroke-linecap="round"/>
                                 <path d="M5 7H13M5 11H10" stroke="#022409" stroke-width="1.8" stroke-linecap="round"/>
                             </svg>
@@ -71,17 +71,17 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
                         <h2>Chi tiết đơn hàng</h2>
                     </div>
 
-                    <!-- Danh sách sản phẩm -->
+                    <!-- Items -->
                     <div class="momo-order-items">
                         <?php if (!empty($order_products)): ?>
                             <?php foreach ($order_products as $prod): ?>
+                                <?php
+                                    $img = !empty($prod['product_image'])
+                                        ? '/Media/' . htmlspecialchars($prod['product_image'])
+                                        : '/Media/no-image.png';
+                                ?>
                                 <div class="momo-order-item">
                                     <div class="item-img-wrap">
-                                        <?php
-                                            $img = !empty($prod['product_image'])
-                                                ? '/Media/' . htmlspecialchars($prod['product_image'])
-                                                : '/Media/no-image.png';
-                                        ?>
                                         <img src="<?= $img ?>" alt="<?= htmlspecialchars($prod['product_name'] ?? '') ?>">
                                     </div>
                                     <div class="item-info">
@@ -96,7 +96,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
                         <?php else: ?>
                             <div class="momo-order-item">
                                 <div class="item-info">
-                                    <div class="item-name text-muted">Không có dữ liệu sản phẩm</div>
+                                    <div class="item-name" style="color:#9CA3AF;">Không có dữ liệu sản phẩm</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -112,69 +112,60 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
                             <span class="label">Phí vận chuyển</span>
                             <span class="value"><?= number_format($shipping_fee ?? 0, 0, ',', '.') ?>đ</span>
                         </div>
-
                         <hr class="summary-divider">
-
                         <div class="summary-total-row">
                             <span class="total-label">Tổng thanh toán</span>
                             <span class="total-value"><?= number_format($total_amount ?? 0, 0, ',', '.') ?>đ</span>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- ===== RIGHT: QR Code + Timer ===== -->
+                <!-- ── RIGHT: QR Code ── -->
                 <div class="momo-qr-panel">
 
-                    <!-- QR Card -->
                     <div class="qr-card-frame" id="qr-card-frame">
-                        <!-- Placeholder khi chưa generate QR -->
                         <div class="qr-placeholder" id="qr-placeholder">
                             <div class="qr-icon">📱</div>
                             <p>Đang tạo mã QR...</p>
                         </div>
 
-                        <!-- Ảnh QR thật (được inject bởi JS) -->
                         <img id="qr-img" src="" alt="MoMo QR Code" style="display:none; width:100%; height:100%; object-fit:contain;">
 
-                        <!-- Loading spinner -->
                         <div class="qr-loading-overlay" id="qr-loading">
                             <div class="qr-spinner"></div>
                         </div>
 
-                        <!-- Success overlay -->
                         <div class="qr-status-overlay success-overlay" id="qr-success-overlay">
                             <span class="status-icon">✅</span>
                             <p class="status-msg">Thanh toán thành công!</p>
                         </div>
 
-                        <!-- Expired overlay -->
                         <div class="qr-status-overlay expired-overlay" id="qr-expired-overlay">
                             <span class="status-icon">⏰</span>
-                            <p class="status-msg" style="color:#B91C1C;">Mã QR đã hết hạn</p>
+                            <p class="status-msg">Mã QR đã hết hạn</p>
                         </div>
                     </div>
 
-                    <!-- Instruction -->
                     <p class="qr-instruction">
-                        Mở ứng dụng MoMo &rarr; Chọn <strong>Quét mã</strong><br>
+                        Mở ứng dụng MoMo → Chọn <strong>Quét mã</strong><br>
                         và quét mã QR này để thanh toán
                     </p>
 
-                    <!-- Timer -->
                     <div class="qr-timer-badge" id="qr-timer-badge">
                         <span class="timer-icon">⏱</span>
-                        <span class="timer-text" id="qr-timer-text">15:00</span>
+                        <span class="timer-text" id="qr-timer-text">10:00</span>
                     </div>
 
-                    <!-- Refresh button (hiện khi hết hạn) -->
                     <button class="btn-refresh-qr" id="btn-refresh-qr" onclick="refreshQR()">
                         🔄 Làm mới mã QR
                     </button>
 
                 </div>
+
             </div>
 
-            <!-- Back link -->
+            <!-- Back -->
             <div class="momo-action-row">
                 <a href="/app/controllers/customer/CheckoutController.php" class="btn-back-link">
                     <span class="back-arrow">←</span>
@@ -200,10 +191,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
         </div>
     </div>
 
-    <script>
-        const MOMO_ORDER_ID = "<?= htmlspecialchars($orderInfo['id'] ?? '') ?>";
-        const MOMO_TOTAL = <?= (int)($orderInfo['total_amount'] ?? 0) ?>;
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/public/assets/js/Momo.js"></script>
 </body>
 </html>
