@@ -64,7 +64,7 @@ class SignUpModel {
         $email    = $this->conn->real_escape_string($email);
         
         // Mã hóa bảo mật mật khẩu bằng thuật toán BCRYPT nâng cao
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $hashed_password = md5($password);
         
         // ─── TỰ ĐỘNG TẠO ACCOUNT_ID TĂNG DẦN (Ví dụ: ACC003) ───
         $account_id = 'ACC001'; // Giá trị mặc định nếu bảng trống
