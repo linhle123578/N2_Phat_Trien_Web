@@ -6,9 +6,6 @@ require_once __DIR__ . "/../../models/UserModel.php";
 
 class CheckoutController {
 
-    // ----------------------------------------------------------------
-    // 1. Hiển thị trang Checkout
-    // ----------------------------------------------------------------
     public function index() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -20,7 +17,7 @@ class CheckoutController {
         $cartModel = new CartModel();
         $userModel = new UserModel();
 
-        $customer_id = $_SESSION['customer_id'] ?? 'CUS003';
+        $customer_id = $_SESSION['customer_id'] ?? 'CUS005';
 
         // [FIX 1] Lấy cả thông tin customer lẫn địa chỉ mặc định
         $customer_raw     = $userModel->getCustomerById($customer_id);
@@ -92,7 +89,7 @@ class CheckoutController {
             return;
         }
 
-        $customer_id    = $_SESSION['customer_id'] ?? 'CUS003';
+        $customer_id    = $_SESSION['customer_id'] ?? 'CUS004';
         $name           = trim($data['name']           ?? '');
         $phone          = trim($data['phone']          ?? '');
         $address        = trim($data['address']        ?? '');
@@ -114,6 +111,13 @@ class CheckoutController {
         if (!$order_id) {
             echo json_encode(["status" => "error", "message" => "Lỗi hệ thống khi tạo đơn hàng!"]);
             return;
+        }
+        if ($payment_method === 'cod') {
+            // COD thì cho thẳng vào trạng thái Đang giao
+            $orderModel->updateStatus($order_id, 'Đang giao');
+        } else {
+            // MoMo thì để Chờ xác nhận (đợi quét QR)
+            $orderModel->updateStatus($order_id, 'Chờ xác nhận');
         }
 
         $cartModel        = new CartModel();
