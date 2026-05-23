@@ -19,7 +19,13 @@ if (!isset($tab)) {
 
     require_once __DIR__ . '/../../controllers/customer/OrderHistoryController.php';
     $controller = new OrderHistoryController($conn);
-    $controller->index();
+
+    if (isset($_GET['action']) && $_GET['action'] === 'rebuy') {
+        $controller->rebuy();
+    } else {
+        $controller->index();
+    }
+
     mysqli_close($conn);
     exit;
 }
@@ -238,10 +244,12 @@ echo $header_output;
                                 <?php endif; ?>
 
                                 <?php if ($status === 'delivered' || $status === 'Đã giao' || $status === 'Hoàn thành'): ?>
-                                <button class="btn-oh btn-oh-outline btn-rebuy"
-                                        data-order="<?= $e($oid) ?>">
-                                    <i class="bi bi-arrow-repeat me-1"></i>Mua lại
-                                </button>
+                                <form method="POST" action="OrderHistory.php?action=rebuy" style="display:inline;">
+                                    <input type="hidden" name="order_id" value="<?= $e($oid) ?>">
+                                    <button type="submit" class="btn-oh btn-oh-outline btn-rebuy">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Mua lại
+                                    </button>
+                                </form>
                                 <?php endif; ?>
 
                                 <?php if ($status === 'pending'): ?>

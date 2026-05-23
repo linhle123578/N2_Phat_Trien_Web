@@ -75,6 +75,47 @@ class OrderHistoryController
 
     }
 
+    /**
+     * Action: Mua lại đơn hàng
+     */
+    public function rebuy(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirectWithError('OrderHistory', 'Yêu cầu không hợp lệ.');
+            return;
+        }
+
+        $order_id = trim($_POST['order_id'] ?? '');
+        if (empty($order_id)) {
+            $this->redirectWithError('OrderHistory', 'Thiếu mã đơn hàng.');
+            return;
+        }
+
+        // Lấy sản phẩm của đơn hàng này
+        $items_by_order = $this->model->getOrderItems([$order_id]);
+        $order_items = $items_by_order[$order_id] ?? [];
+
+        if (empty($order_items)) {
+            $this->redirectWithError('OrderHistory', 'Không tìm thấy sản phẩm trong đơn hàng.');
+            return;
+        }
+
+        require_once __DIR__ . '/../../models/ProductModel.php';
+        $productModel = new ProductModel();
+
+        foreach ($order_items as $item) {
+            $product_id = $item['product_id'];
+            $quantity = (int)$item['quantity'];
+            if ($quantity > 0) {
+                $productModel->addToCart($this->customer_id, $product_id, $quantity);
+            }
+        }
+
+        // Chuyển hướng sang giỏ hàng
+        header("Location: ../../../app/views/customer/cart.php");
+        exit;
+    }
+
     // ── Helper tĩnh dùng trong View ──────────────────────
 
     public static function statusLabel(string $s): string
