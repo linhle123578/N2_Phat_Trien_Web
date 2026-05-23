@@ -37,7 +37,7 @@ $clean_footer = $m_foot[0] ?? '';
               <div class="login-split-box">
                   <div class="row no-gutters">
                       
-                      <div class="col-md-6">
+                      <div class="col-md-6 col-img-container">
                           <div class="login-image-side"></div>
                       </div>
                       
@@ -88,7 +88,7 @@ $clean_footer = $m_foot[0] ?? '';
                                       <button type="submit" id="btnLoginSubmit" class="btn-login-submit">Đăng nhập</button>
                                   </form>
                                   
-                                  <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="signup.php" class="signup-link-anchor">Đăng ký ngay</a></p>
+                                  <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="SignUp.php" class="signup-link-anchor">Đăng ký ngay</a></p>
                               </div>
 
                               <div id="forgot-form-section" class="d-none">
