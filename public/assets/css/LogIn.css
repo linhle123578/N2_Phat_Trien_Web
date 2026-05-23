@@ -1,33 +1,46 @@
 /* ── Không gian tên cô lập để bảo vệ tuyệt đối Header/Footer ── */
 .login-body-content {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #fefbe9;
+    background-color: #fefbe9; /* Nền phẳng nhẹ nhàng toàn trang giống mẫu */
     margin: 0;
     padding: 0;
 }
 
 /* ── Wrapper chính tạo khoảng cách dưới Header ── */
 .login-container-wrapper {
-    padding-top: 140px;  
+    padding-top: 140px;   /* Đẩy khoảng cách an toàn tránh cấn Header */
     padding-bottom: 90px;
 }
 
-/* ── Khối hộp kép chứa cả Ảnh và Form ── */
+/* Khối hộp kép chứa cả Ảnh và Form */
 .login-split-box {
     background: #ffffff;
-    border-radius: 16px; 
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
-    overflow: hidden;  
-    max-width: 900px;  
+    border-radius: 16px;  
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05); 
+    overflow: hidden;     
+    max-width: 900px;     
     margin: 0 auto;
 }
 
-/* ── Bên Trái: Chứa ảnh minh họa LogIn.png ── */
+/* Đảm bảo 2 cột bằng nhau tuyệt đối, ảnh sát viền */
+.login-split-box .row.no-gutters {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Bên Trái: Cố định ảnh sát viền hoàn toàn */
 .login-image-side {
     background: url('../../../Media/LogIn.png') no-repeat center center;
     background-size: cover;
-    min-height: 520px;   
     width: 100%;
+    height: 100%;        
+    min-height: 520px;   
+}
+
+/* Đảm bảo thẻ div chứa cột ảnh có chiều cao co giãn theo thẻ Row */
+.col-img-container {
+    display: flex;
+    align-items: stretch;
 }
 
 /* Bên Phải: Khối chứa Form nhập liệu */
@@ -35,17 +48,20 @@
     padding: 45px 40px;
 }
 
+/* SỬA ĐỔI: Căn giữa hoàn toàn 2 dòng tiêu đề */
 .form-title {
     font-weight: 800;
-    color: #183a1d;    
+    color: #183a1d;        
     font-size: 1.85rem;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    text-align: center;   
 }
 
 .form-subtitle {
     color: #718096;
     font-size: 0.88rem;
     margin-bottom: 24px;
+    text-align: center;    
 }
 
 /* Thanh lựa chọn Người dùng / Quản lý */
@@ -70,7 +86,6 @@
     user-select: none;
 }
 
-/* Tab khi được kích hoạt chọn */
 .role-tab.active {
     background-color: #ffffff;
     color: #183a1d;
@@ -124,7 +139,6 @@
     outline: none;
 }
 
-/* Ẩn hiện mật khẩu */
 .toggle-eye {
     position: absolute;
     right: 14px;
@@ -137,13 +151,11 @@
     color: #183a1d;
 }
 
-/* Checkbox */
 .custom-control-input:checked ~ .custom-control-label::before {
     border-color: #183a1d !important;
     background-color: #183a1d !important;
 }
 
-/* Liên kết */
 .forgot-link-anchor {
     color: #f0a04b;
     font-weight: 600;
@@ -160,6 +172,7 @@
     font-size: 0.92rem;
     margin-top: 18px;
     margin-bottom: 0;
+    text-align: center; 
 }
 
 .signup-link-anchor {
@@ -184,7 +197,7 @@
     background-color: #183a1d;
     color: #ffffff;
     height: 45px;
-    border-radius: 6px; 
+    border-radius: 6px;
     font-weight: 700;
     font-size: 0.95rem;
     border: none;
@@ -210,8 +223,9 @@
     background-color: #f7fafc;
 }
 
+/* Responsive di động */
 @media (max-width: 767.98px) {
-    .login-image-side {
+    .col-img-container {
         display: none !important;
     }
     .login-form-side {
