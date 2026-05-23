@@ -1,6 +1,3 @@
-
-// ── Helpers 
-
 function formatVND(amount) {
     const safeAmount = Number(amount);
     if (isNaN(safeAmount) || safeAmount < 0) return '0đ';

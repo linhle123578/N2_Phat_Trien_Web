@@ -6,9 +6,6 @@ require_once __DIR__ . "/../../models/UserModel.php";
 
 class CheckoutController {
 
-    // ----------------------------------------------------------------
-    // 1. Hiển thị trang Checkout
-    // ----------------------------------------------------------------
     public function index() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 

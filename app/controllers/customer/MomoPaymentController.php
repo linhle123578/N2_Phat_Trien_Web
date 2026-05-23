@@ -20,7 +20,6 @@ class MomoPaymentController
         if (session_status() === PHP_SESSION_NONE) session_start();
     }
 
-    // ----------------------------------------------------------------
     // GET → hiển thị trang QR
     // ----------------------------------------------------------------
     public function showPage($order_id)
@@ -45,7 +44,6 @@ class MomoPaymentController
             $subtotal += (int)$p['price'] * (int)$p['quantity'];
         }
 
-        // [FIX 3] DB không có cột shipping_fee/total_amount → lấy từ session
         // Session 'last_order_shipping' được lưu bởi CheckoutController khi đặt hàng
         $shipping_fee = (int)($_SESSION['last_order_shipping'] ?? 25000); // default 25k
         $total_amount = $subtotal + $shipping_fee;
@@ -61,7 +59,6 @@ class MomoPaymentController
         require_once __DIR__ . "/../../views/customer/MomoPayment.php";
     }
 
-    // ----------------------------------------------------------------
     // POST action=create_qr
     // ----------------------------------------------------------------
     public function createQR($order_id)
@@ -98,7 +95,6 @@ class MomoPaymentController
         echo json_encode($result);
     }
 
-    // ----------------------------------------------------------------
     // POST action=check_status
     // ----------------------------------------------------------------
     public function checkStatus($order_id)
@@ -137,7 +133,6 @@ class MomoPaymentController
         ]);
     }
 
-    // ----------------------------------------------------------------
     // POST action=mock_confirm (DEMO only)
     // ----------------------------------------------------------------
     public function mockConfirm($order_id)
@@ -158,7 +153,6 @@ class MomoPaymentController
         }
     }
 
-    // ----------------------------------------------------------------
     // POST action=ipn
     // ----------------------------------------------------------------
     public function handleIPN()
@@ -235,7 +229,7 @@ class MomoPaymentController
 
         $payload = json_encode([
             'partnerCode'  => $partnerCode,
-            'accessKey'    => $accessKey,       // ← bỏ lại accessKey
+            'accessKey'    => $accessKey,      
             'requestId'    => $requestId,
             'amount'       => (int)$amount,
             'orderId'      => $momo_order_id,
@@ -246,7 +240,7 @@ class MomoPaymentController
             'requestType'  => $requestType,
             'signature'    => $signature,
             'lang'         => 'vi',
-            'orderGroupId' => '',               // ← thêm dòng này
+            'orderGroupId' => '',              
         ]);
 
         $ch = curl_init(MOMO_ENDPOINT);
@@ -256,11 +250,11 @@ class MomoPaymentController
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
             CURLOPT_TIMEOUT        => 10,
-            CURLOPT_SSL_VERIFYPEER => false,   // ← thêm dòng này
-            CURLOPT_SSL_VERIFYHOST => false,   // ← thêm dòng này
+            CURLOPT_SSL_VERIFYPEER => false,  
+            CURLOPT_SSL_VERIFYHOST => false,  
         ]);
         $response  = curl_exec($ch);
-        $curl_err  = curl_error($ch);         // ← thêm dòng này
+        $curl_err  = curl_error($ch);        
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
@@ -283,7 +277,6 @@ class MomoPaymentController
             ];
         }
 
-        // Bắt ép nó phải show lỗi thật từ MoMo (cả localMessage)
         $errorMsg = $result['localMessage'] ?? $result['message'] ?? '';
         if (empty($errorMsg)) {
             $errorMsg = 'Lỗi ngầm từ MoMo (Mã lỗi: ' . ($result['resultCode'] ?? 'Không rõ') . ')';
@@ -291,7 +284,7 @@ class MomoPaymentController
 
         return [
             'status'  => 'error',
-            'message' => 'MoMo Error: ' . $errorMsg, // Hiện lỗi cụ thể lên UI
+            'message' => 'MoMo Error: ' . $errorMsg, 
             'code'    => $result['resultCode'] ?? -1,
         ];
     }
@@ -372,7 +365,6 @@ class MomoPaymentController
         return hash_equals($expected, $data['signature'] ?? '');
     }
 
-    // Thêm hàm này vào cuối class MomoPaymentController
     private function clearCart($order_id)
     {
         $order = $this->orderModel->getOrderById($order_id);
