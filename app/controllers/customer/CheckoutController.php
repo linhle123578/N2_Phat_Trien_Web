@@ -4,9 +4,11 @@ require_once __DIR__ . "/../../models/OrderDetailModel.php";
 require_once __DIR__ . "/../../models/CartModel.php";
 require_once __DIR__ . "/../../models/UserModel.php";
 
-class CheckoutController {
+class CheckoutController
+{
 
-    public function index() {
+    public function index()
+    {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (empty($_SESSION['checkout_items'])) {
@@ -17,7 +19,11 @@ class CheckoutController {
         $cartModel = new CartModel();
         $userModel = new UserModel();
 
-        $customer_id = $_SESSION['customer_id'] ?? 'CUS005';
+        if (!isset($_SESSION['customer_id'])) {
+            header("Location: /app/views/customer/LogIn.php");
+            exit();
+        }
+        $customer_id = $_SESSION['customer_id'];
 
         // [FIX 1] Lấy cả thông tin customer lẫn địa chỉ mặc định
         $customer_raw     = $userModel->getCustomerById($customer_id);
@@ -34,7 +40,7 @@ class CheckoutController {
                     $default_address['ward']           ?? '',
                     $default_address['district']       ?? '',
                     $default_address['province']       ?? '',
-                  ]))
+                ]))
                 : '',
             'address_type' => $default_address['address_type'] ?? 'Nha rieng',
         ];
@@ -48,7 +54,6 @@ class CheckoutController {
         if ($all_cart_items) {
             foreach ($all_cart_items as $item) {
                 if (
-                    in_array($item['cart_item_id'], $selected_ids) ||
                     in_array($item['product_id'],   $selected_ids)
                 ) {
                     $product = [
@@ -73,7 +78,8 @@ class CheckoutController {
     // ----------------------------------------------------------------
     // 2. Xử lý đặt hàng (AJAX POST từ Checkout.js)
     // ----------------------------------------------------------------
-    public function process() {
+    public function process()
+    {
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -89,7 +95,7 @@ class CheckoutController {
             return;
         }
 
-        $customer_id    = $_SESSION['customer_id'] ?? 'CUS004';
+        $customer_id = $_SESSION['customer_id'];
         $name           = trim($data['name']           ?? '');
         $phone          = trim($data['phone']          ?? '');
         $address        = trim($data['address']        ?? '');
@@ -104,8 +110,13 @@ class CheckoutController {
 
         $orderModel = new OrderModel();
         $order_id   = $orderModel->createOrder(
-            $customer_id, $name, $phone, $address,
-            $shipping_fee, $total_amount, $payment_method
+            $customer_id,
+            $name,
+            $phone,
+            $address,
+            $shipping_fee,
+            $total_amount,
+            $payment_method
         );
 
         if (!$order_id) {
@@ -145,8 +156,8 @@ class CheckoutController {
 
             // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
             $price = $price_map[$item['cart_item_id'] ?? '']
-                  ?? $price_map[$pid]
-                  ?? 0;
+                ?? $price_map[$pid]
+                ?? 0;
 
             $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
 
@@ -192,4 +203,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     $checkoutController->index();
 }
-?>
