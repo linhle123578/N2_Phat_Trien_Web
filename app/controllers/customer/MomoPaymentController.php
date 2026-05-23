@@ -1,9 +1,5 @@
 <?php
 
-/**
- * app/controllers/customer/MomoPaymentController.php
- */
-
 require_once __DIR__ . "/../../models/OrderModel.php";
 
 define('MOMO_LIVE_MODE',     true);
