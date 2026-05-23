@@ -1,36 +1,11 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-    initAvatarPreview();
+    // Avatar đã bị xóa — không gọi initAvatarPreview nữa
     initPasswordToggles();
     initAddressToggle();
     initPasswordValidation();
 });
-
-/* ── Avatar Preview ──────────────────────────────────────── */
-function initAvatarPreview() {
-    const wrap  = document.getElementById("avatarWrap");
-    const file  = document.getElementById("avatarFileInput");
-    const img   = document.getElementById("avatarPreview");
-    const greet = document.getElementById("greetingAvatar");
-    if (!wrap || !file || !img) return;
-
-    wrap.addEventListener("click", () => file.click());
-    file.addEventListener("change", (e) => {
-        const f = e.target.files[0];
-        if (!f || !f.type.startsWith("image/")) return;
-        if (f.size > 5 * 1024 * 1024) {
-            alert("Ảnh quá lớn (tối đa 5MB).");
-            return;
-        }
-        const r = new FileReader();
-        r.onload = (ev) => {
-            img.src = ev.target.result;
-            if (greet) greet.src = ev.target.result;
-        };
-        r.readAsDataURL(f);
-    });
-}
 
 /* ── Password Toggles ────────────────────────────────────── */
 function initPasswordToggles() {
