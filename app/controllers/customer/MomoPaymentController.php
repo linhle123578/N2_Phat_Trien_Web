@@ -303,7 +303,6 @@ class MomoPaymentController
         $secretKey   = MOMO_SECRET_KEY;
         $requestId   = $partnerCode . time();
 
-        // --- [THÊM DÒNG NÀY] Lấy lại mã đã lưu trong Session ---
         $momo_order_id = $_SESSION['momo_order_id_' . $order_id] ?? $order_id;
 
         // SỬA $order_id thành $momo_order_id ở rawHash
@@ -404,7 +403,6 @@ class MomoPaymentController
     }
 }
 
-// ================================================================
 // ROUTER
 // ================================================================
 $action   = $_GET['action']   ?? ($_POST['action']   ?? '');
