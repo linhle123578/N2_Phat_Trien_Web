@@ -51,7 +51,7 @@ $clean_footer = $m_foot[0] ?? '';
                                   <p class="form-subtitle">Chọn tài khoản của bạn để tiếp tục</p>
                                   
                                   <div class="role-switcher">
-                                      <div class="role-tab active" data-role="customer">Người dùng</div>
+                                      <div class="role-tab active" data-role="customer">Khách hàng</div>
                                       <div class="role-tab" data-role="admin">Quản lý</div>
                                   </div>
 

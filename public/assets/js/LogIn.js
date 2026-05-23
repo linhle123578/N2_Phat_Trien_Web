@@ -89,8 +89,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === "success") {
                     serverAlert.className = "alert alert-success";
                     serverAlert.textContent = data.message;
-                    // Đăng nhập thành công -> Điều hướng về Trang chủ hoặc Giỏ hàng
-                    setTimeout(() => { window.location.href = "cart.php"; }, 1500);
+                    // Đăng nhập thành công -> Điều hướng về Trang chủ
+                    setTimeout(() => { window.location.href = "../../views/customer/TrangChu.php"; }, 1500);
                 } else {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
