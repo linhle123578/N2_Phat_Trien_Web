@@ -1,7 +1,17 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) session_start();
-// File này nhận dữ liệu từ các biến: $categories, $products, $category_filter, $search_filter, $sort_filter, $cart_count do Controller truyền qua
+/** @var string $category_filter */
+/** @var string $search_filter */
+/** @var string $sort_filter */
+/** @var int $page */
+/** @var int $total_pages */
+/** @var int $total_products */
+/** @var int $start_product */
+/** @var int $end_product */
+/** @var int $total_cart_items */
+/** @var mysqli_result $cat_result */
+/** @var mysqli_result $prod_result */
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -19,7 +29,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
         <div class="container">
             <a class="navbar-brand" href="index.php">
-                <img src="../../../Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
+                <img src="Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav1">
                 <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color: #183a1d;"></i></span>
@@ -27,15 +37,20 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <div class="collapse navbar-collapse" id="navbarNav1">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item"><a class="nav-link" href="index.php">Trang Chủ</a></li>
-                    <li class="nav-item active"><a class="nav-link" href="ProductController.php">Sản Phẩm</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="products.php">Sản Phẩm</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
                 </ul>
                 <div class="nav-right-actions">
                     <a href="#" class="action-icon"><i class="far fa-bell"></i><span class="icon-badge">3</span></a>
-                    <a href="cart.php" class="action-icon"><i class="fas fa-shopping-cart"></i><span class="icon-badge" id="cart-count"><?= $cart_count ?></span></a>
+                    <a href="cart.php" class="action-icon"><i class="fas fa-shopping-cart"></i><span class="icon-badge" id="cart-count"><?= $total_cart_items ?></span></a>
                     <div class="nav-divider"></div>
-                    <a href="login.php" class="btn-login">Đăng Nhập</a>
-                    <button class="btn btn-register">Đăng Ký</button>
+                    <?php if(isset($_SESSION['customer_id'])): ?>
+                        <span class="text-dark fw-bold me-2">Hi, <?= htmlspecialchars($_SESSION['customer_name'] ?? 'User') ?></span>
+                        <a href="logout.php" class="btn btn-outline-danger btn-sm rounded-pill">Đăng Xuất</a>
+                    <?php else: ?>
+                        <a href="login.php" class="btn-login text-decoration-none me-3">Đăng Nhập</a>
+                        <a href="signup.php" class="btn btn-register btn-success rounded-pill px-3" style="background-color: #183a1d; border-color: #183a1d;">Đăng Ký</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -44,8 +59,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <section class="search-banner py-5">
         <div class="container text-center">
             <h2 class="text-white mb-4">Tất cả sản phẩm nông sản sạch</h2>
-            <form method="GET" action="ProductController.php" class="search-box mx-auto position-relative" style="max-width: 600px;">
-                <input type="text" name="search" class="form-control rounded-pill py-3 ps-5" placeholder="Tìm kiếm rau củ, trái cây, đặc sản..." value="<?= htmlspecialchars($search_filter) ?>">
+            <form method="GET" action="products.php" class="search-box mx-auto position-relative" style="max-width: 600px;">                <input type="text" name="search" class="form-control rounded-pill py-3 ps-5" placeholder="Tìm kiếm rau củ, trái cây, đặc sản..." value="<?= htmlspecialchars($search_filter) ?>">
                 <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                 <?php if(!empty($category_filter)): ?>
                     <input type="hidden" name="category" value="<?= htmlspecialchars($category_filter) ?>">
@@ -63,15 +77,16 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <div class="mb-4">
                     <h6 class="fw-bold mb-3">Danh mục nông sản</h6>
                     <div class="list-group sidebar-list">
-                        <a href="ProductController.php?search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
+                        <a href="products.php?search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
                             Tất cả sản phẩm
                         </a>
-                        <?php foreach ($categories as $cat): ?>
-                            <a href="ProductController.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
-                               class="list-group-item <?= ($category_filter == $cat['category_id']) ? 'active' : '' ?>">
+                        
+                        <?php while ($cat = mysqli_fetch_assoc($cat_result)): ?>
+                            <a href="products.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
+                            class="list-group-item <?= ($category_filter == $cat['category_id']) ? 'active' : '' ?>">
                                 <?= htmlspecialchars($cat['name']) ?>
                             </a>
-                        <?php endforeach; ?>
+                        <?php endwhile; ?>
                     </div>
                 </div>
             </aside>
@@ -96,12 +111,9 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                         </div>
                     <?php else: ?>
                         <?php 
-                        foreach ($products as $product): 
+                        while ($product = mysqli_fetch_assoc($prod_result)): 
                             $is_out_of_stock = ($product['stock'] <= 0);
                             $unit_display = !empty($product['unit']) ? htmlspecialchars($product['unit']) : 'kg';
-                            $detail_url = "product_detail.php?id=" . $product['product_id'];
-                            // Chú ý: sửa tên cột tiền trùng khớp với tên database thực tế của bạn (price hoặc unit_price)
-                            $price_display = isset($product['price']) ? $product['price'] : ($product['unit_price'] ?? 0);
                         ?>
                             <div class="col-xl-4 col-md-4 col-6">
                                 <div class="card h-100 product-card border-0 shadow-sm <?= $is_out_of_stock ? 'opacity-75' : '' ?>">
@@ -109,16 +121,18 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                                         <?php if ($is_out_of_stock): ?>
                                             <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Hết hàng</span>
                                         <?php endif; ?>
-                                        <a href="<?= $detail_url ?>" class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #f8f9fa; display: block;">
-                                            <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
-                                                alt="<?= htmlspecialchars($product['product_name']) ?>" 
-                                                class="img-fluid product-thumb" 
-                                                style="width: 100%; height: 100%; object-fit: cover; display: block;" 
-                                                onerror="this.src='https://placehold.co/300x300?text=Farm2Home'">
-                                        </a>                                    
+                                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-link-wrapper">
+                                            <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #f8f9fa;">
+                                                <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
+                                                    alt="<?= htmlspecialchars($product['product_name']) ?>" 
+                                                    class="img-fluid product-thumb" 
+                                                    style="width: 100%; height: 100%; object-fit: cover; display: block;" 
+                                                    onerror="this.src='https://placehold.co/300x300?text=Farm2Home'">
+                                            </div>                                    
+                                        </a>
                                     </div>
                                     <div class="card-body d-flex flex-column">
-                                        <a href="<?= $detail_url ?>" class="text-decoration-none">
+                                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="text-decoration-none">
                                             <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
                                         </a>
                                         
@@ -127,7 +141,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                                         </p>
                                         
                                         <div class="d-flex align-items-center gap-1 mb-3 mt-auto">
-                                            <span class="text-orange"><?= number_format($price_display, 0, ',', '.') ?>đ</span>
+                                            <span class="text-orange"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
                                             <span class="text-muted small">/ <?= $unit_display ?></span>
                                         </div>
                                         
@@ -139,29 +153,31 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                                     </div>
                                 </div>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endwhile; ?>
                     <?php endif; ?>
                 </div>
 
-                <?php if ($total_pages > 1): ?>
-                    <div class="d-flex align-items-center justify-content-center py-5">
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination custom-pagination-wrapper mb-0">
-                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="ProductController.php?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>"><i class="fas fa-chevron-left"></i></a>
+            <?php if ($total_pages > 1): ?>
+                <div class="d-flex align-items-center justify-content-center py-5">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination custom-pagination-wrapper mb-0">
+                            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= viewGetPageUrl($page - 1, $category_filter, $search_filter, $sort_filter) ?>"><i class="fas fa-chevron-left"></i></a>
+                            </li>
+                            
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                                    <a class="page-link" href="<?= viewGetPageUrl($i, $category_filter, $search_filter, $sort_filter) ?>"><?= $i ?></a>
                                 </li>
-                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                    <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                                        <a class="page-link" href="ProductController.php?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>"><?= $i ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="ProductController.php?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>"><i class="fas fa-chevron-right"></i></a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                <?php endif; ?>
+                            <?php endfor; ?>
+                            
+                            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="<?= viewGetPageUrl($page + 1, $category_filter, $search_filter, $sort_filter) ?>"><i class="fas fa-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            <?php endif; ?>
             </div>
         </div>
     </main>
@@ -170,14 +186,14 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
-                    <img src="../../../Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
+                    <img src="Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
                     <p class="footer-desc">Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn.</p>
                 </div>
                 <div class="col-6 col-md-3 col-lg-3">
                     <h5>Liên kết</h5>
                     <ul class="list-unstyled">
                         <li><a href="index.php">Trang Chủ</a></li>
-                        <li><a href="ProductController.php">Sản Phẩm</a></li>
+                        <li><a href="products.php">Sản Phẩm</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-3 col-lg-4">
@@ -199,3 +215,17 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <script src="../../../public/assets/js/Products.js"></script>
 </body>
 </html>
+
+<?php 
+// Hàm sinh đường dẫn phân trang giữ nguyên bộ lọc
+function viewGetPageUrl($p, $cat, $search, $sort) {
+    $params = [];
+    if (!empty($cat)) $params['category'] = $cat;
+    if (!empty($search)) $params['search'] = $search;
+    if (!empty($sort)) $params['sort'] = $sort;
+    $params['page'] = $p;
+    
+    // Đảm bảo trả về file products.php ở thư mục gốc chạy qua Controller
+    return 'products.php?' . http_build_query($params);
+}
+?>
