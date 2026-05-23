@@ -1,99 +1,98 @@
 <?php
-class LogInModel {
+class ProductModel {
     private $conn;
 
     public function __construct() {
-        // 1. Cấu hình thông số kết nối TiDB Cloud đám mây
-        $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
-        $port = 4000;
-        $user = "3YHrkxqAKWynehu.root";
-        $pass = "BzDRrZAdAT2jLuyd";
-        $dbname = "db_web_farm2home";
-
+        // Khởi tạo kết nối TiDB Cloud với cấu trúc SSL y chang CartModel của bạn
         $this->conn = mysqli_init();
-        if (!$this->conn) {
-            die(json_encode(["status" => "error", "message" => "mysqli_init thất bại"]));
-        }
-
-        // Bắt buộc cấu hình chứng chỉ SSL đối với cổng kết nối TiDB Cloud
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         
-        // Thực hiện kết nối an toàn với Cloud
-        $success = @mysqli_real_connect(
+        $success = mysqli_real_connect(
             $this->conn,
-            $host,
-            $user,
-            $pass,
-            $dbname,
-            $port,
+            "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
+            "3YHrkxqAKWynehu.root",
+            "BzDRrZAdAT2jLuyd",
+            "db_web_farm2home",
+            4000,
             NULL,
             MYSQLI_CLIENT_SSL
         );
 
         if (!$success) {
-            echo json_encode(["status" => "error", "message" => "Không thể kết nối với hệ thống Cloud: " . mysqli_connect_error()]);
-            exit();
+            die("Kết nối database thất bại: " . mysqli_connect_error());
         }
-        
-        // Ép mã bộ chữ Tiếng Việt bằng lệnh SQL thuần (Tránh lỗi charset làm sập biến conn về null)
-        $this->conn->query("SET NAMES 'utf8mb4'");
+        mysqli_set_charset($this->conn, "utf8mb4");
     }
 
-    /**
-     * 1. XỬ LÝ KIỂM TRA ĐĂNG NHẬP
-     */
-    public function checkCredentials($identity, $password) {
-        $identity = $this->conn->real_escape_string($identity);
-        
-        // Mã hóa mật khẩu người dùng nhập vào sang MD5
-        $md5_password = md5($password);
-        
-        // Kết nối bảng account (email, password) và customer (phone, full_name) dựa trên account_id
-        $sql = "SELECT c.customer_id, c.full_name, c.phone, a.email, a.account_password 
-                FROM account a
-                INNER JOIN customer c ON a.account_id = c.account_id
-                WHERE (a.email = '$identity' OR c.phone = '$identity') 
-                  AND a.account_password = '$md5_password'
-                LIMIT 1";
-                
-        $result = $this->conn->query($sql);
-        
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc(); // Khớp MD5 thành công, trả về dữ liệu user
-        }
-        return false; // Sai tài khoản hoặc sai mật khẩu
-    }
-
-    /**
-     * 2. KIỂM TRA EMAIL TỒN TẠI (Dùng cho luồng quên mật khẩu/gửi OTP)
-     */
-    public function getUserByEmail($email) {
-        $email = $this->conn->real_escape_string($email);
-        
-        $sql = "SELECT c.full_name, a.email 
-                FROM account a
-                INNER JOIN customer c ON a.account_id = c.account_id
-                WHERE a.email = '$email' 
-                LIMIT 1";
-                
-        $result = $this->conn->query($sql);
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
-        return false;
-    }
-
-    /**
-     * 3. TIẾN HÀNH ĐẶT LẠI MẬT KHẨU MỚI (Mã hóa MD5)
-     */
-    public function updatePassword($email, $new_password) {
-        $email = $this->conn->real_escape_string($email);
-        
-        // Mã hóa mật khẩu mới sang định dạng MD5 để lưu trữ đồng bộ vào DB
-        $md5_password = md5($new_password);
-        
-        $sql = "UPDATE account SET account_password = '$md5_password' WHERE email = '$email'";
+    // Lấy danh sách category trả về đối tượng mysqli_result cho vòng lặp while
+    public function getCategories() {
+        $sql = "SELECT * FROM category ORDER BY name ASC";
         return $this->conn->query($sql);
     }
+
+    // Lấy danh sách sản phẩm kết hợp bộ lọc (Trả về đối tượng mysqli_result)
+    public function getProducts($category_filter = '', $search_filter = '', $sort_filter = '') {
+        $category_filter = $this->conn->real_escape_string($category_filter);
+        $search_filter = $this->conn->real_escape_string($search_filter);
+        $sort_filter = $this->conn->real_escape_string($sort_filter);
+
+        $sql = "SELECT p.*, c.name AS category_name 
+                FROM product p 
+                JOIN category c ON p.category_id = c.category_id 
+                WHERE 1=1";
+
+        if (!empty($category_filter)) {
+            $sql .= " AND p.category_id = '$category_filter'";
+        }
+        if (!empty($search_filter)) {
+            $sql .= " AND p.product_name LIKE '%$search_filter%'";
+        }
+
+        // Logic sắp xếp gốc của bạn
+        if ($sort_filter == 'price_asc') {
+            $sql .= " ORDER BY p.unit_price ASC";
+        } elseif ($sort_filter == 'price_desc') {
+            $sql .= " ORDER BY p.unit_price DESC";
+        } elseif ($sort_filter == 'name_asc') {
+            $sql .= " ORDER BY p.product_name ASC";
+        } else {
+            $sql .= " ORDER BY p.product_id DESC";
+        }
+
+        return $this->conn->query($sql);
+    }
+
+    // Thêm sản phẩm vào giỏ hàng hoặc cập nhật số lượng
+    public function addToCart($customer_id, $product_id, $quantity = 1) {
+        $customer_id = $this->conn->real_escape_string($customer_id);
+        $product_id = $this->conn->real_escape_string($product_id);
+        
+        // Lấy giá hiện tại của sản phẩm
+        $p_res = $this->conn->query("SELECT unit_price FROM product WHERE product_id = '$product_id' LIMIT 1");
+        if ($p_res->num_rows == 0) return false;
+        $product = $p_res->fetch_assoc();
+        $unit_price = $product['unit_price'];
+
+        // Kiểm tra xem sản phẩm đã nằm trong giỏ hàng chưa
+        $check = $this->conn->query("SELECT cart_item_id, quantity FROM cart_item WHERE customer_id = '$customer_id' AND product_id = '$product_id' LIMIT 1");
+        
+        if ($check->num_rows > 0) {
+            $item = $check->fetch_assoc();
+            $new_qty = $item['quantity'] + $quantity;
+            $cart_item_id = $item['cart_item_id'];
+            return $this->conn->query("UPDATE cart_item SET quantity = $new_qty WHERE cart_item_id = '$cart_item_id'");
+        } else {
+            $cart_item_id = 'CI-' . strtoupper(substr(uniqid(), -8));
+            return $this->conn->query("INSERT INTO cart_item (cart_item_id, customer_id, product_id, quantity, unit_price, created_at) 
+                                      VALUES ('$cart_item_id', '$customer_id', '$product_id', $quantity, $unit_price, NOW())");
+        }
+    }
+
+    // Đếm tổng số mặt hàng trong giỏ để hiển thị lên Badge icon
+    public function getCartCount($customer_id) {
+        $customer_id = $this->conn->real_escape_string($customer_id);
+        $res = $this->conn->query("SELECT COUNT(*) as total FROM cart_item WHERE customer_id = '$customer_id'");
+        $row = $res->fetch_assoc();
+        return $row['total'] ?? 0;
+    }
 }
-?>
