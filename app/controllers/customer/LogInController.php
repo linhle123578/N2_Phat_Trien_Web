@@ -1,5 +1,6 @@
 <?php
-require_once __DIR__ . "../../models/LogInModel.php";
+// Thêm dấu gạch chéo chuẩn để nạp chính xác file Model
+require_once __DIR__ . "/../../models/LogInModel.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -22,29 +23,33 @@ class LogInController {
             exit();
         }
 
+        // Khởi tạo Model
         $model = new LogInModel();
+        
+        // Thực hiện kiểm tra thông tin tài khoản
         $user = $model->checkCredentials($identity, $password);
 
         if ($user) {
             // Đăng nhập thành công, lưu thông tin vào Session
             $_SESSION['customer_id'] = $user['customer_id'];
-            $_SESSION['customer_name'] = $user['fullname'];
+            $_SESSION['customer_name'] = $user['full_name']; // Khớp với cột full_name trong DB
             
-            echo json_encode(["status" => "success", "message" => "Đăng nhập thành công! Đang chuyển hướng..."]);
+            echo json_encode(["status" => "success", "message" => "Đăng nhập thành công!"]);
+            exit();
         } else {
-            echo json_encode(["status" => "error", "message" => "Tài khoản hoặc mật khẩu không chính xác."]);
+            // Thông báo khi sai thông tin thông tin đăng nhập
+            echo json_encode(["status" => "error", "message" => "Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!"]);
+            exit();
         }
-        exit();
     }
 
-    // 2. YÊU CẦU QUÊN MẬT KHẨU - GỬI MÃ QUA GMAIL
+    // 2. XỬ LÝ YÊU CẦU QUÊN MẬT KHẨU (GỬI OTP)
     public function forgotPassword() {
         if (session_status() === PHP_SESSION_NONE) session_start();
-        
         $email = trim($_POST['email'] ?? '');
 
-        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(["status" => "error", "message" => "Vui lòng nhập định dạng Email hợp lệ."]);
+        if (empty($email)) {
+            echo json_encode(["status" => "error", "message" => "Vui lòng nhập địa chỉ Email."]);
             exit();
         }
 
@@ -52,78 +57,87 @@ class LogInController {
         $user = $model->getUserByEmail($email);
 
         if (!$user) {
-            echo json_encode(["status" => "error", "message" => "Email này không tồn tại trên hệ thống Farm2Home."]);
+            echo json_encode(["status" => "error", "message" => "Email này không tồn tại trên hệ thống!"]);
             exit();
         }
 
-        // Tạo mã OTP khôi phục ngẫu nhiên gồm 6 chữ số
+        // Tạo mã OTP ngẫu nhiên 6 chữ số
         $otp = rand(100000, 999999);
+        $expiry = time() + (5 * 60); // Hết hạn sau 5 phút
+
+        // Lưu thông tin phiên khôi phục vào Session
         $_SESSION['reset_password_session'] = [
             'email' => $email,
             'otp' => $otp,
-            'expire' => time() + (5 * 60) // Hiệu lực 5 phút
+            'expiry' => $expiry,
+            'verified' => false
         ];
 
-        // Gửi Mail qua SMTP của Google
+        // Gửi Mail qua SMTP Gmail
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'email_cua_ban@gmail.com'; // Gmail ứng dụng của bạn
-            $mail->Password   = 'xxxx xxxx xxxx xxxx';      // Mật khẩu ứng dụng 16 ký tự Google cấp
+            $mail->Username   = 'haogiang0401@gmail.com'; // Email cấu hình của bạn
+            $mail->Password   = 'vwyb uemh twel hixu';    // App Password ứng dụng
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port       = 587;
-            $mail->CharSet    = 'UTF-8';
+            
+            $mail->CharSet    = "UTF-8";
 
-            $mail->setFrom('email_cua_ban@gmail.com', 'Farm2Home Support');
-            $mail->addAddress($email, $user['fullname']);
+            $mail->setFrom('haogiang0401@gmail.com', 'Farm2Home Support');
+            $mail->addAddress($email, $user['full_name']);
 
             $mail->isHTML(true);
-            $mail->Subject = '[Farm2Home] Yêu cầu khôi phục mật khẩu tài khoản';
-            $mail->Body    = "
-                <div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #f0a04b; border-radius: 10px; max-width: 500px;'>
-                    <h2 style='color: #183a1d;'>Xin chào {$user['fullname']},</h2>
-                    <p>Chúng tôi nhận được yêu cầu cấp lại mật khẩu cho tài khoản của bạn.</p>
-                    <p>Mã xác thực khôi phục mật khẩu (OTP) là:</p>
-                    <div style='background-color: #fefbe9; padding: 15px; font-size: 24px; font-weight: bold; text-align: center; color: #f0a04b; border-radius: 5px; letter-spacing: 5px;'>
-                        {$otp}
-                    </div>
-                    <p style='color: #6c757d; font-size: 13px; margin-top: 15px;'>Mã này có hiệu lực trong vòng 5 phút. Vui lòng không tiết lộ mã này cho bất kỳ ai.</p>
-                </div>
-            ";
+            $mail->Subject = '=?UTF-8?B?'.base64_encode('Mã OTP khôi phục mật khẩu - Farm2Home').'?=';
+            $mail->Body    = "Chào <b>{$user['full_name']}</b>,<br><br>Mã OTP để thiết lập lại mật khẩu của bạn là: <b style='font-size:20px; color:#f0a04b;'>$otp</b><br>Mã này có hiệu lực trong vòng 5 phút.<br><br>Trân trọng,<br>Đội ngũ Farm2Home.";
 
             $mail->send();
-            echo json_encode(["status" => "otp_sent", "message" => "Mã xác thực khôi phục mật khẩu đã gửi đến Gmail của bạn."]);
+            echo json_encode(["status" => "success", "message" => "Mã OTP đã được gửi tới Email của bạn!"]);
         } catch (Exception $e) {
-            echo json_encode(["status" => "error", "message" => "Không thể gửi Email. Lỗi: " . $mail->ErrorInfo]);
+            echo json_encode(["status" => "error", "message" => "Không thể gửi Email. Lỗi Mailer: " . $mail->ErrorInfo]);
         }
         exit();
     }
 
-    // 3. XÁC NHẬN OTP VÀ CẬP NHẬT MẬT KHẨU MỚI
+    // 3. XỬ LÝ XÁC THỰC MÃ OTP
+    public function verifyOTP() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $otp_input = trim($_POST['otp'] ?? '');
+
+        $session_data = $_SESSION['reset_password_session'] ?? null;
+
+        if (!$session_data) {
+            echo json_encode(["status" => "error", "message" => "Yêu cầu không hợp lệ hoặc đã hết hạn."]);
+            exit();
+        }
+
+        if (time() > $session_data['expiry']) {
+            unset($_SESSION['reset_password_session']);
+            echo json_encode(["status" => "error", "message" => "Mã OTP đã hết thời gian hiệu lực. Vui lòng yêu cầu mã mới."]);
+            exit();
+        }
+
+        if ($otp_input === (string)$session_data['otp']) {
+            $_SESSION['reset_password_session']['verified'] = true; // Đánh dấu đã xác thực thành công
+            echo json_encode(["status" => "success", "message" => "Xác thực OTP thành công! Vui lòng nhập mật khẩu mới."]);
+        } else {
+            echo json_encode(["status" => "error", "message" => "Mã OTP nhập vào không chính xác."]);
+        }
+        exit();
+    }
+
+    // 4. TIẾN HÀNH ĐỔI MẬT KHẨU MỚI
     public function resetPassword() {
         if (session_status() === PHP_SESSION_NONE) session_start();
-
-        $otp = trim($_POST['otp'] ?? '');
         $new_pass = $_POST['new_password'] ?? '';
-        $confirm_pass = $_POST['confirm_password'] ?? '';
+        $confirm_pass = $_POST['confirm_new_password'] ?? '';
 
-        if (!isset($_SESSION['reset_password_session'])) {
-            echo json_encode(["status" => "error", "message" => "Yêu cầu khôi phục không còn hiệu lực. Vui lòng lấy lại mã mới."]);
-            exit();
-        }
+        $session_data = $_SESSION['reset_password_session'] ?? null;
 
-        $session_data = $_SESSION['reset_password_session'];
-
-        if (time() > $session_data['expire']) {
-            unset($_SESSION['reset_password_session']);
-            echo json_encode(["status" => "error", "message" => "Mã OTP đã quá hạn 5 phút. Vui lòng lấy lại mã."]);
-            exit();
-        }
-
-        if ((int)$otp !== (int)$session_data['otp']) {
-            echo json_encode(["status" => "error", "message" => "Mã xác thực OTP không chính xác."]);
+        if (!$session_data || $session_data['verified'] !== true) {
+            echo json_encode(["status" => "error", "message" => "Hành động bị từ chối. Bạn chưa xác thực OTP."]);
             exit();
         }
 
@@ -137,12 +151,11 @@ class LogInController {
             exit();
         }
 
-        // Cập nhật vào DB qua Model
         $model = new LogInModel();
         $update = $model->updatePassword($session_data['email'], $new_pass);
 
         if ($update) {
-            unset($_SESSION['reset_password_session']); // Xóa sạch dấu vết khôi phục mật khẩu
+            unset($_SESSION['reset_password_session']); // Xóa sạch session khôi phục
             echo json_encode(["status" => "success", "message" => "Đổi mật khẩu thành công! Vui lòng đăng nhập lại."]);
         } else {
             echo json_encode(["status" => "error", "message" => "Có lỗi xảy ra khi lưu mật khẩu mới."]);
@@ -151,19 +164,26 @@ class LogInController {
     }
 }
 
-// ─── PHÂN LUỒNG ROUTING ───
+// ─── PHÂN LUỒNG ROUTING ĐẦU ĐẾN ───
 $controller = new LogInController();
 $action = $_GET['action'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'login') {
-        if (ob_get_length()) ob_clean(); header('Content-Type: application/json');
+        if (ob_get_length()) ob_clean(); 
+        header('Content-Type: application/json; charset=utf-8');
         $controller->login();
     } elseif ($action === 'forgot') {
-        if (ob_get_length()) ob_clean(); header('Content-Type: application/json');
+        if (ob_get_length()) ob_clean(); 
+        header('Content-Type: application/json; charset=utf-8');
         $controller->forgotPassword();
+    } elseif ($action === 'verify') {
+        if (ob_get_length()) ob_clean(); 
+        header('Content-Type: application/json; charset=utf-8');
+        $controller->verifyOTP();
     } elseif ($action === 'reset') {
-        if (ob_get_length()) ob_clean(); header('Content-Type: application/json');
+        if (ob_get_length()) ob_clean(); 
+        header('Content-Type: application/json; charset=utf-8');
         $controller->resetPassword();
     }
 }
