@@ -14,13 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 }
 
 // 2. LẤY DỮ LIỆU TỪ DB 
-// Kiểm tra đăng nhập
-//if (!isset($_SESSION['customer_id'])) {
-//    header("Location: login.php");
-//    exit();
-//}
+if (!isset($_SESSION['customer_id'])) {
+    header("Location: /app/views/customer/LogIn.php");
+    exit();
+}
+$customer_id = $_SESSION['customer_id'];
 
-$customer_id = 'CUS005'; // Tạm thời hardcode, sau này sẽ lấy từ session
 $cartModel = new CartModel();
 $items = $cartModel->getCartItems($customer_id);
 $total_items = count($items);
