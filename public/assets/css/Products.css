@@ -233,3 +233,18 @@ body {
     color: rgba(254,251,233,0.9);
     margin-bottom: 20px;
 }
+
+.card-body a {
+    text-decoration: none !important; /* Bỏ gạch chân mặc định khi chưa hover */
+}
+
+.card-body a .product-title {
+    color: var(--text-dark) !important;
+    transition: all 0.2s ease-in-out; /* Tạo hiệu ứng mượt mà khi di chuột */
+}
+
+/* HIỆU ỨNG HOVER: Khi đưa chuột vào tên sản phẩm */
+.card-body a:hover .product-title {
+    color: var(--orange-accent) !important;
+    text-decoration: underline !important; /* Hiển thị gạch chân để nhận biết điều hướng */
+}
