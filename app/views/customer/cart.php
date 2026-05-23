@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 //    exit();
 //}
 
-$customer_id = 'CUS003'; // Tạm thời hardcode, sau này sẽ lấy từ session
+$customer_id = 'CUS005'; // Tạm thời hardcode, sau này sẽ lấy từ session
 $cartModel = new CartModel();
 $items = $cartModel->getCartItems($customer_id);
 $total_items = count($items);
@@ -100,7 +100,7 @@ $clean_footer = $footer_matches[0] ?? '';
                 <div class="row no-gutters align-items-start">
                   
                   <div class="col-auto pr-3">
-                    <input type="checkbox" checked class="item-checkbox" name="selected[]" value="<?= $item['product_id'] ?>">>
+                    <input type="checkbox" checked class="item-checkbox" name="selected[]" value="<?= $item['product_id'] ?>">
                   </div>
 
                   <div class="col-auto pr-3">

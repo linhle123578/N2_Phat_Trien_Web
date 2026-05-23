@@ -47,7 +47,7 @@ class CartController {
         //    exit();
         //}
         // Giả lập
-        $_SESSION['customer_id'] = 'CUS003';
+        $_SESSION['customer_id'] = 'CUS005';
 
         // Lấy danh sách sản phẩm được tick chọn (ID sản phẩm) và số lượng
         $selected = $_POST['selected'] ?? [];

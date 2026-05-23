@@ -52,7 +52,7 @@ class OrderModel {
             "INSERT INTO `order`
                 (order_id, customer_id, address_id, order_status, total_quantity_order, created_at)
              VALUES
-                ('$oid_esc', '$cid', $address_id, 'pending', $total_qty, NOW())"
+                ('$oid_esc', '$cid', $address_id, 'Chờ xác nhận', $total_qty, NOW())"
         );
 
         if (!$ok) {

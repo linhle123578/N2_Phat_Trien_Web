@@ -1,6 +1,3 @@
-
-// ── Helpers 
-
 function formatVND(amount) {
     const safeAmount = Number(amount);
     if (isNaN(safeAmount) || safeAmount < 0) return '0đ';
@@ -41,12 +38,21 @@ function updateItemTotal(item) {
 
 function updateQtyButtons(item) {
     const minusBtn = item.querySelector('.qty-minus');
+    const plusBtn = item.querySelector('.qty-plus');
     const qty = getItemQty(item);
+    const stock = parseInt(item.dataset.stock, 10) || 999; // Lấy tồn kho từ data-stock
 
     if (minusBtn) {
         minusBtn.disabled = qty <= 1;
         minusBtn.style.opacity = qty <= 1 ? '0.45' : '1';
         minusBtn.style.cursor = qty <= 1 ? 'not-allowed' : 'pointer';
+    }
+    
+    if (plusBtn) {
+        // Vô hiệu hóa nút + nếu số lượng chạm mức tồn kho
+        plusBtn.disabled = qty >= stock;
+        plusBtn.style.opacity = qty >= stock ? '0.45' : '1';
+        plusBtn.style.cursor = qty >= stock ? 'not-allowed' : 'pointer';
     }
 }
 
@@ -173,13 +179,16 @@ if (cartItems) {
         }
 
         if (plusBtn) {
-            setItemQty(item, getItemQty(item) + 1);
-            updateSummary();
+            const qty = getItemQty(item);
+            const stock = parseInt(item.dataset.stock, 10) || 999;
+            
+            if (qty < stock) {
+                setItemQty(item, qty + 1);
+                updateSummary();
+            } else {
+                alert('Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này!');
+            }
             return;
-        }
-
-        if (deleteBtn) {
-            deleteItem(item);
         }
     });
 }
