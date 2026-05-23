@@ -1,0 +1,22 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Enabled",
+                "ssl": {
+                    "ca": "D:\\isrgrootx1.pem"
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
+            "port": 4000,
+            "driver": "TiDB",
+            "name": "Farm2Home",
+            "database": "db_web_farm2home",
+            "username": "3YHrkxqAKWynehu.root",
+            "password": "BzDRrZAdAT2jLuyd"
+        }
+    ]
+}

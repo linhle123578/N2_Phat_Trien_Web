@@ -38,7 +38,7 @@ class SignUpController {
         exit();
     }
 
-    // 2. HÀM KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI (Bị lỗi do thiếu hoặc sai hàm này trước đó)
+    // 2. HÀM KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI
     public function checkPhone() {
         // Lấy số điện thoại từ request POST gửi lên
         $phone = trim($_POST['phone'] ?? '');
