@@ -1,2 +1,84 @@
-"<?php\nrequire_once __DIR__ . '/../../models/ProfileAdminModel.php';\n\nclass ProfileAdminController\n{\n    private $model;\n    private $admin_id;\n\n    public function __construct($conn)\n    {\n        $this->model = new ProfileAdminModel($conn);\n        // Fallback for demo, in real app take from session\n        $this->admin_id = $_SESSION['admin_id'] ?? 'ADM001';\n    }\n\n    public function index()\n    {\n        // 1. Prepare default admin info\n        $admin = [\n            'admin_id'   => $this->admin_id,\n            'full_name'  => 'Admin Farm2Home',\n            'birthday'   => '',\n            'phone'      => '0933 111 222',\n            'gender'     => 'Nam',\n            'address'    => 'Hà Nội, Việt Nam',\n            'department' => 'Quản trị hệ thống',\n            'account_id' => 'ACC001',\n            'email'      => 'admin@farm2home.vn',\n            'avatar'     => 'user_1.jpg',\n            'role'       => 'Quản trị viên',\n        ];\n\n        // 2. Fetch from DB\n        $dbAdmin = $this->model->getAdminWithAccount($this->admin_id);\n        if ($dbAdmin) {\n            $admin = array_merge($admin, $dbAdmin);\n        }\n\n        $msg_profile  = '';\n        $msg_password = '';\n\n        // 3. Handle POST\n        if ($_SERVER['REQUEST_METHOD'] === 'POST') {\n            if (isset($_POST['save_profile'])) {\n                $data = [\n                    'admin_id'   => $this->admin_id,\n                    'account_id' => $admin['account_id'] ?? null,\n                    'full_name'  => trim($_POST['full_name'] ?? ''),\n                    'phone'      => trim($_POST['phone'] ?? ''),\n                    'birthday'   => trim($_POST['birthday'] ?? ''),\n                    'gender'     => trim($_POST['gender'] ?? ''),\n                    'address'    => trim($_POST['address'] ?? ''),\n                    'department' => trim($_POST['department'] ?? ''),\n                    'email'      => trim($_POST['email'] ?? ''),\n                ];\n                if
-<truncated 1297 bytes>
+<?php
+require_once __DIR__ . '/../../models/ProfileAdminModel.php';
+
+class ProfileAdminController
+{
+    private $model;
+    private $admin_id;
+
+    public function __construct($conn)
+    {
+        $this->model = new ProfileAdminModel($conn);
+        // Fallback for demo, in real app take from session
+        $this->admin_id = $_SESSION['admin_id'] ?? 'ADM001';
+    }
+
+    public function index()
+    {
+        // 1. Prepare default admin info
+        $admin = [
+            'admin_id'   => $this->admin_id,
+            'full_name'  => 'Admin Farm2Home',
+            'birthday'   => '',
+            'phone'      => '0933 111 222',
+            'gender'     => 'Nam',
+            'address'    => 'Hà Nội, Việt Nam',
+            'department' => 'Quản trị hệ thống',
+            'account_id' => 'ACC001',
+            'email'      => 'admin@farm2home.vn',
+            'avatar'     => 'user_1.jpg',
+            'role'       => 'Quản trị viên',
+        ];
+
+        // 2. Fetch from DB
+        $dbAdmin = $this->model->getAdminWithAccount($this->admin_id);
+        if ($dbAdmin) {
+            $admin = array_merge($admin, $dbAdmin);
+        }
+
+        $msg_profile  = '';
+        $msg_password = '';
+
+        // 3. Handle POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['save_profile'])) {
+                $data = [
+                    'admin_id'   => $this->admin_id,
+                    'account_id' => $admin['account_id'] ?? null,
+                    'full_name'  => trim($_POST['full_name'] ?? ''),
+                    'phone'      => trim($_POST['phone'] ?? ''),
+                    'birthday'   => trim($_POST['birthday'] ?? ''),
+                    'gender'     => trim($_POST['gender'] ?? ''),
+                    'address'    => trim($_POST['address'] ?? ''),
+                    'department' => trim($_POST['department'] ?? ''),
+                    'email'      => trim($_POST['email'] ?? ''),
+                ];
+                
+                if ($this->model->updateProfile($data)) {
+                    $msg_profile = "Cập nhật hồ sơ thành công!";
+                    $admin = array_merge($admin, $data);
+                } else {
+                    $msg_profile = "Cập nhật hồ sơ thất bại!";
+                }
+            } elseif (isset($_POST['change_password'])) {
+                $old_password = $_POST['old_password'] ?? '';
+                $new_password = $_POST['new_password'] ?? '';
+                $confirm_password = $_POST['confirm_password'] ?? '';
+                
+                if ($new_password !== $confirm_password) {
+                    $msg_password = "Mật khẩu xác nhận không khớp!";
+                } else {
+                    $result = $this->model->updatePassword($admin['account_id'], $old_password, $new_password);
+                    if ($result) {
+                        $msg_password = "Đổi mật khẩu thành công!";
+                    } else {
+                        $msg_password = "Mật khẩu cũ không chính xác hoặc có lỗi xảy ra!";
+                    }
+                }
+            }
+        }
+
+        // 4. Render View
+        require_once __DIR__ . '/../../views/admin/ProfileAdmin.php';
+    }
+}
