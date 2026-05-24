@@ -29,43 +29,43 @@ class ProductModel {
     }
 
     public function getProducts($category = '', $search = '', $sort = 'latest', $limit = 9, $offset = 0) {
-        $order_by = "p.product_id DESC"; 
-        if ($sort === 'price_asc') {
-            $order_by = "p.price ASC";
-        } elseif ($sort === 'price_desc') {
-            $order_by = "p.price DESC";
-        }
-
-        $query = "SELECT p.product_id, p.product_name, p.stock, p.price, p.unit, p.product_image, p.category_id, c.name AS category_name 
-                  FROM product p 
-                  LEFT JOIN category c ON p.category_id = c.category_id 
-                  WHERE 1=1";
-
-        if (!empty($category)) {
-            $cat_escaped = mysqli_real_escape_string($this->conn, $category);
-            $query .= " AND p.category_id = '$cat_escaped'";
-        }
+        $conn = $this->conn;
+        $sql = "SELECT p.* FROM product p WHERE 1=1";
+        
+        // Sửa logic tìm kiếm tại đây
         if (!empty($search)) {
-            $search_escaped = mysqli_real_escape_string($this->conn, $search);
-            $query .= " AND p.product_name LIKE '%$search_escaped%'";
+            $search_esc = mysqli_real_escape_string($conn, $search);
+            // Thêm COLLATE utf8mb4_unicode_ci để bỏ qua dấu và hoa/thường
+            $sql .= " AND p.product_name LIKE '%$search_esc%' COLLATE utf8mb4_unicode_ci";
+        }
+        
+        if (!empty($category)) {
+            $cat_esc = mysqli_real_escape_string($conn, $category);
+            $sql .= " AND p.category_id = '$cat_esc'";
         }
 
-        $query .= " ORDER BY $order_by LIMIT $limit OFFSET $offset";
-        return mysqli_query($this->conn, $query);
+        $order_by = ($sort === 'price_asc') ? "p.price ASC" : (($sort === 'price_desc') ? "p.price DESC" : "p.product_id DESC");
+        $sql .= " ORDER BY $order_by LIMIT $limit OFFSET $offset";
+        
+        return mysqli_query($conn, $sql);
     }
 
     public function getTotalProductsCount($category = '', $search = '') {
-        $query = "SELECT COUNT(*) AS total FROM product WHERE 1=1";
-        if (!empty($category)) {
-            $cat_escaped = mysqli_real_escape_string($this->conn, $category);
-            $query .= " AND category_id = '$cat_escaped'";
-        }
+        $sql = "SELECT COUNT(*) as total FROM product WHERE 1=1";
+        
         if (!empty($search)) {
-            $search_escaped = mysqli_real_escape_string($this->conn, $search);
-            $query .= " AND product_name LIKE '%$search_escaped%'";
+            $search_esc = mysqli_real_escape_string($this->conn, $search);
+            // Tương tự cho hàm đếm
+            $sql .= " AND product_name LIKE '%$search_esc%' COLLATE utf8mb4_unicode_ci";
         }
-        $result = mysqli_query($this->conn, $query);
-        $row = mysqli_fetch_assoc($result);
+        
+        if (!empty($category)) {
+            $cat_esc = mysqli_real_escape_string($this->conn, $category);
+            $sql .= " AND category_id = '$cat_esc'";
+        }
+        
+        $res = mysqli_query($this->conn, $sql);
+        $row = mysqli_fetch_assoc($res);
         return $row['total'];
     }
 
