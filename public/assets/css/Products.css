@@ -131,7 +131,6 @@ body {
     box-shadow: 0 8px 20px rgba(24, 58, 29, 0.06);
 }
 
-/* Tên sản phẩm */
 .product-title {
     font-weight: 700;
     font-size: 1.15rem;
@@ -147,7 +146,6 @@ body {
     height: 3.2rem;
 }
 
-/* Khu vực hàng Tồn Kho*/
 .product-stock-lbl {
     display: flex;
     align-items: center;
@@ -163,14 +161,13 @@ body {
     font-size: 0.95rem;
 }
 
-/* Giá tiền màu cam đậm nổi bật */
 .text-orange {
     color: var(--orange-accent);
     font-size: 1.35rem;
     font-weight: 700;
 }
 
-/* Nút thêm giỏ hàng bo tròn viên thuốc */
+/* NÚT THÊM GIỎ */
 .btn-add-cart {
     border: 1px solid var(--text-dark);
     color: var(--text-dark);
@@ -207,6 +204,27 @@ body {
     font-weight: 700;
 }
 
+/* Hiệu ứng hover cho tên sản phẩm */
+.product-title-link {
+    text-decoration: none; 
+    display: inline-block; 
+    transition: all 0.3s ease;
+}
+
+.product-title-link .product-title {
+    color: var(--text-dark);
+    transition: color 0.3s ease;
+    margin-bottom: 0;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.product-title-link:hover .product-title {
+    color: var(--orange-accent) !important;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
 /* FOOTER */
 .footer-custom {
     background-color: #183a1d;
@@ -232,19 +250,4 @@ body {
     line-height: 1.6;
     color: rgba(254,251,233,0.9);
     margin-bottom: 20px;
-}
-
-.card-body a {
-    text-decoration: none !important; /* Bỏ gạch chân mặc định khi chưa hover */
-}
-
-.card-body a .product-title {
-    color: var(--text-dark) !important;
-    transition: all 0.2s ease-in-out; /* Tạo hiệu ứng mượt mà khi di chuột */
-}
-
-/* HIỆU ỨNG HOVER: Khi đưa chuột vào tên sản phẩm */
-.card-body a:hover .product-title {
-    color: var(--orange-accent) !important;
-    text-decoration: underline !important; /* Hiển thị gạch chân để nhận biết điều hướng */
 }

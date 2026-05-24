@@ -1,4 +1,11 @@
 <?php
+// 1. Bộ lọc định tuyến ngầm điều hướng xử lý dữ liệu database qua Controller đám mây
+if (!isset($cat_result) || !isset($prod_result)) {
+    $queryString = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
+    header("Location: ../../controllers/customer/ProductController.php" . $queryString);
+    exit();
+}
+
 /** @var string $category_filter */
 /** @var string $search_filter */
 /** @var string $sort_filter */
@@ -28,29 +35,24 @@
    
     <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <img src="Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
+            <a class="navbar-brand" href="Products.php">
+                <img src="../../../Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav1">
                 <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color: #183a1d;"></i></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav1">
                 <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.php">Trang Chủ</a></li>
-                    <li class="nav-item active"><a class="nav-link" href="products.php">Sản Phẩm</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Trang Chủ</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="Products.php">Sản Phẩm</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
                 </ul>
                 <div class="nav-right-actions">
                     <a href="#" class="action-icon"><i class="far fa-bell"></i><span class="icon-badge">3</span></a>
                     <a href="cart.php" class="action-icon"><i class="fas fa-shopping-cart"></i><span class="icon-badge" id="cart-count"><?= $total_cart_items ?></span></a>
                     <div class="nav-divider"></div>
-                    <?php if(isset($_SESSION['customer_id'])): ?>
-                        <span class="text-dark fw-bold me-2">Hi, <?= htmlspecialchars($_SESSION['customer_name'] ?? 'User') ?></span>
-                        <a href="logout.php" class="btn btn-outline-danger btn-sm rounded-pill">Đăng Xuất</a>
-                    <?php else: ?>
-                        <a href="login.php" class="btn-login text-decoration-none me-3">Đăng Nhập</a>
-                        <a href="signup.php" class="btn btn-register btn-success rounded-pill px-3" style="background-color: #183a1d; border-color: #183a1d;">Đăng Ký</a>
-                    <?php endif; ?>
+                    <a href="login.php" class="btn-login" style="color: #183a1d; text-decoration: none; font-weight: 600; margin-right: 15px;">Đăng Nhập</a>
+                    <button class="btn btn-register" style="background-color: #183a1d; color: white; border-radius: 20px; padding: 5px 15px;">Đăng Ký</button>
                 </div>
             </div>
         </div>
@@ -59,14 +61,14 @@
     <section class="search-banner py-5">
         <div class="container text-center">
             <h2 class="text-white mb-4">Tất cả sản phẩm nông sản sạch</h2>
-            <form method="GET" action="products.php" class="search-box mx-auto position-relative" style="max-width: 600px;">                <input type="text" name="search" class="form-control rounded-pill py-3 ps-5" placeholder="Tìm kiếm rau củ, trái cây, đặc sản..." value="<?= htmlspecialchars($search_filter) ?>">
+            <form method="GET" action="../../views/customer/Products.php" class="search-box mx-auto position-relative" style="max-width: 600px;">
+                <input type="text" name="search" class="form-control rounded-pill py-3 ps-5" 
+                    placeholder="Tìm kiếm rau củ, trái cây, đặc sản..." 
+                    value="<?= isset($search_filter) ? htmlspecialchars($search_filter) : '' ?>">
                 <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                <?php if(!empty($category_filter)): ?>
-                    <input type="hidden" name="category" value="<?= htmlspecialchars($category_filter) ?>">
-                <?php endif; ?>
-                <?php if(!empty($sort_filter)): ?>
-                    <input type="hidden" name="sort" value="<?= htmlspecialchars($sort_filter) ?>">
-                <?php endif; ?>
+                
+                <input type="hidden" name="category" value="<?= isset($category_filter) ? htmlspecialchars($category_filter) : '' ?>">
+                <input type="hidden" name="sort" value="<?= isset($sort_filter) ? htmlspecialchars($sort_filter) : 'latest' ?>">
             </form>
         </div>
     </section>
@@ -75,14 +77,14 @@
         <div class="row">
             <aside class="col-lg-3">
                 <div class="mb-4">
-                    <h6 class="fw-bold mb-3">Danh mục nông sản</h6>
+                    <h6 class="fw-bold mb-3">Danh mục sản phẩm</h6>
                     <div class="list-group sidebar-list">
-                        <a href="products.php?search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
+                        <a href="../../views/customer/Products.php" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
                             Tất cả sản phẩm
                         </a>
                         
                         <?php while ($cat = mysqli_fetch_assoc($cat_result)): ?>
-                            <a href="products.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
+                            <a href="../../views/customer/Products.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
                             class="list-group-item <?= ($category_filter == $cat['category_id']) ? 'active' : '' ?>">
                                 <?= htmlspecialchars($cat['name']) ?>
                             </a>
@@ -107,48 +109,43 @@
                     <?php if ($total_products == 0): ?>
                         <div class="col-12 text-center py-5">
                             <i class="fas fa-search-minus fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">Không tìm thấy sản phẩm nông sản nào phù hợp.</p>
+                            <p class="text-muted">Không tìm thấy sản phẩm nào trùng khớp với từ khóa "<strong><?= htmlspecialchars($search_filter) ?></strong>".</p>
                         </div>
                     <?php else: ?>
                         <?php 
+                        // Chỉ dùng 1 vòng lặp while duy nhất để tránh lỗi trôi dữ liệu
                         while ($product = mysqli_fetch_assoc($prod_result)): 
-                            $is_out_of_stock = ($product['stock'] <= 0);
                             $unit_display = !empty($product['unit']) ? htmlspecialchars($product['unit']) : 'kg';
                         ?>
                             <div class="col-xl-4 col-md-4 col-6">
-                                <div class="card h-100 product-card border-0 shadow-sm <?= $is_out_of_stock ? 'opacity-75' : '' ?>">
+                                <div class="card h-100 product-card border-0 shadow-sm">
                                     <div class="position-relative">
-                                        <?php if ($is_out_of_stock): ?>
-                                            <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Hết hàng</span>
-                                        <?php endif; ?>
-                                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-link-wrapper">
-                                            <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background-color: #f8f9fa;">
+                                        <a href="../../views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="d-block">
+                                            <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden;">
                                                 <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
                                                     alt="<?= htmlspecialchars($product['product_name']) ?>" 
-                                                    class="img-fluid product-thumb" 
-                                                    style="width: 100%; height: 100%; object-fit: cover; display: block;" 
-                                                    onerror="this.src='https://placehold.co/300x300?text=Farm2Home'">
-                                            </div>                                    
+                                                    class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
                                         </a>
                                     </div>
+                                    
                                     <div class="card-body d-flex flex-column">
-                                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="text-decoration-none">
-                                            <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
-                                        </a>
+                                <a href="../../views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-title-link">
+                                    <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
+                                </a>
                                         
-                                        <p class="product-stock-lbl">
-                                            <i class="bi bi-box-seam"></i> <?= $product['stock'] ?>
-                                        </p>
+                                        <div class="d-flex align-items-center text-muted mb-2">
+                                            <i class="fas fa-box me-2"></i> 
+                                            <span><?= htmlspecialchars($product['stock']) ?></span>
+                                        </div>
                                         
                                         <div class="d-flex align-items-center gap-1 mb-3 mt-auto">
                                             <span class="text-orange"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
-                                            <span class="text-muted small">/ <?= $unit_display ?></span>
+                                            <span class="text-muted">/ <?= $unit_display ?></span>
                                         </div>
                                         
-                                        <button class="btn btn-outline-dark w-100 btn-add-cart" 
-                                                data-product-id="<?= $product['product_id'] ?>"
-                                                <?= $is_out_of_stock ? 'disabled' : '' ?>>
-                                            <i class="bi bi-cart-plus me-2"></i><?= $is_out_of_stock ? 'Tạm hết hàng' : 'Thêm vào giỏ' ?>
+                                        <button class="btn btn-outline-dark w-100 btn-add-cart" data-product-id="<?= $product['product_id'] ?>">
+                                            <i class="fas fa-shopping-cart me-2"></i>Thêm vào giỏ
                                         </button>
                                     </div>
                                 </div>
@@ -157,27 +154,25 @@
                     <?php endif; ?>
                 </div>
 
-            <?php if ($total_pages > 1): ?>
-                <div class="d-flex align-items-center justify-content-center py-5">
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination custom-pagination-wrapper mb-0">
-                            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="<?= viewGetPageUrl($page - 1, $category_filter, $search_filter, $sort_filter) ?>"><i class="fas fa-chevron-left"></i></a>
-                            </li>
-                            
-                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                                <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                                    <a class="page-link" href="<?= viewGetPageUrl($i, $category_filter, $search_filter, $sort_filter) ?>"><?= $i ?></a>
+                <?php if ($total_pages > 1): ?>
+                    <div class="d-flex align-items-center justify-content-center py-5">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination custom-pagination-wrapper mb-0">
+                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="../../views/customer/Products.php?page=<?= $page - 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-left"></i></a>
                                 </li>
-                            <?php endfor; ?>
-                            
-                            <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="<?= viewGetPageUrl($page + 1, $category_filter, $search_filter, $sort_filter) ?>"><i class="fas fa-chevron-right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                                        <a class="page-link" href="../../views/customer/Products.php?page=<?= $i ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                                <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="../../views/customer/Products.php?page=<?= $page + 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </main>
@@ -186,14 +181,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
-                    <img src="Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
+                    <img src="../../../Media/Logo.png" alt="Farm2Home" class="footer-logo mb-3">
                     <p class="footer-desc">Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn.</p>
                 </div>
                 <div class="col-6 col-md-3 col-lg-3">
                     <h5>Liên kết</h5>
                     <ul class="list-unstyled">
-                        <li><a href="index.php">Trang Chủ</a></li>
-                        <li><a href="products.php">Sản Phẩm</a></li>
+                        <li><a href="#">Trang Chủ</a></li>
+                        <li><a href="Products.php">Sản Phẩm</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-3 col-lg-4">
@@ -215,17 +210,3 @@
     <script src="../../../public/assets/js/Products.js"></script>
 </body>
 </html>
-
-<?php 
-// Hàm sinh đường dẫn phân trang giữ nguyên bộ lọc
-function viewGetPageUrl($p, $cat, $search, $sort) {
-    $params = [];
-    if (!empty($cat)) $params['category'] = $cat;
-    if (!empty($search)) $params['search'] = $search;
-    if (!empty($sort)) $params['sort'] = $sort;
-    $params['page'] = $p;
-    
-    // Đảm bảo trả về file products.php ở thư mục gốc chạy qua Controller
-    return 'products.php?' . http_build_query($params);
-}
-?>

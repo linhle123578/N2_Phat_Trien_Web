@@ -1,13 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // 1. LOGIC SẮP XẾP KHI THAY ĐỔI DROP BOX
+    // 1. FIX SẮP XẾP DROP DOWN: Chuyển hướng khớp với tệp Products.php đang chạy trực tiếp
     const sortSelect = document.getElementById("sort-select");
     if (sortSelect) {
         sortSelect.addEventListener("change", function () {
             const selectedSort = this.value;
-            // SỬA: Hướng trực tiếp về file router gốc products.php, không lùi cấp bằng ../../../
             let targetUrl = `../../../app/views/customer/Products.php?sort=${selectedSort}`;
             
-            // Kiểm tra các biến toàn cục được truyền từ PHP ở cuối file View
             if (typeof currentCategory !== 'undefined' && currentCategory) {
                 targetUrl += `&category=${currentCategory}`;
             }
@@ -19,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 2. LOGIC THÊM VÀO GIỎ HÀNG QUA AJAX
+    // 2. FIX SỰ KIỆN THÊM VÀO GIỎ HÀNG QUA FETCH AJAX
     const addCartButtons = document.querySelectorAll(".btn-add-cart");
     addCartButtons.forEach(button => {
         button.addEventListener("click", function (e) {
@@ -28,25 +26,23 @@ document.addEventListener("DOMContentLoaded", function () {
             const productCard = this.closest(".card-body");
             const productTitle = productCard.querySelector(".product-title").innerText;
 
+            // Đóng gói dữ liệu an toàn gửi lên máy chủ
             const formData = new FormData();
             formData.append('product_id', productId);
 
-            // SỬA: Gọi trực tiếp cổng xử lý action từ file router gốc products.php
-            fetch('products.php?action=add_to_cart', {
+            // Đường dẫn tương đối từ thư mục views/customer/ sang controllers/customer/
+            fetch('../../controllers/customer/ProductController.php?action=add_to_cart', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Mạng lỗi hệ thống");
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.status === 'not_logged_in') {
-                    alert("Bạn cần phải đăng nhập tài khoản hệ thống để thực hiện chức năng mua sắm này!");
-                    window.location.href = 'login.php'; // SỬA: Chuyển hướng trực tiếp ở tầng root
+                    // Xử lý khi CHƯA đăng nhập: Hiện thông báo và đẩy sang trang đăng nhập
+                    alert(data.message);
+                    window.location.href = 'login.php'; 
                 } else if (data.status === 'success') {
+                    // Xử lý khi ĐÃ đăng nhập: Thông báo thành công và tăng số thực tế trên icon Navbar
                     alert(`Đã thêm thành công sản phẩm "${productTitle}" vào giỏ hàng hệ thống!`);
                     
                     const cartBadge = document.getElementById("cart-count");
@@ -54,12 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         cartBadge.innerText = data.new_cart_count;
                     }
                 } else {
-                    alert("Lỗi hệ thống: " + data.message);
+                    alert("Lỗi: " + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert("Đường truyền hệ thống đang bận. Vui lòng thử lại sau!");
+                alert("Đường truyền hệ thống đang bận, vui lòng thử lại sau!");
             });
         });
     });
