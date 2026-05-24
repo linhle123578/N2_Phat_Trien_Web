@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // ── 2. XỬ LÝ ẨN / HIỆN MẬT KHẨU KHÁCH HÀNG
+// ── 2. XỬ LÝ ẨN / HIỆN MẬT KHẨU KHÁCH HÀNG (CẢ ĐĂNG NHẬP VÀ ĐỔI MẬT KHẨU)
+    // 2.1 Cho ô Đăng nhập cũ
     const togglePwd = document.getElementById("toggle-pwd");
     if (togglePwd) {
         togglePwd.addEventListener("click", function () {
@@ -44,6 +45,24 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // 2. Xử lý Ẩn/Hiện Mật khẩu
+    const toggleResetPwds = document.querySelectorAll(".toggle-password-reset");
+    toggleResetPwds.forEach(btn => {
+        btn.addEventListener("click", function () {
+            const targetId = this.getAttribute("data-target"); // Lấy id của ô input cần ẩn/hiện
+            const pwdInput = document.getElementById(targetId);
+            const eyeIcon = this.querySelector("i");
+
+            if (pwdInput && pwdInput.type === "password") {
+                pwdInput.type = "text";
+                eyeIcon.className = "far fa-eye"; // Đổi thành mắt mở
+            } else if (pwdInput) {
+                pwdInput.type = "password";
+                eyeIcon.className = "far fa-eye-slash"; // Đổi thành mắt đóng
+            }
+        });
+    });
 
     // ── 3. AJAX ĐĂNG NHẬP HỆ THỐNG
     const formLogIn = document.getElementById("formLogIn");
