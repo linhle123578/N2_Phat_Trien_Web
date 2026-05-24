@@ -124,23 +124,23 @@ $clean_footer = $m_foot[0] ?? '';
                                           <div class="invalid-msg" id="msg-otp"></div>
                                       </div>
 
-                                      <div class="form-group-custom">
-                                          <label class="field-label">Mật khẩu mới</label>
-                                          <div class="input-group-custom">
-                                              <span class="input-icon"><i class="fas fa-key"></i></span>
-                                              <input type="password" id="new_password" class="field-input" placeholder="Tối thiểu 6 ký tự">
-                                          </div>
-                                          <div class="invalid-msg" id="msg-new-password"></div>
-                                      </div>
+                                    <div class="form-group position-relative mb-3">
+                                        <label for="new_password">Mật khẩu mới</label>
+                                        <input type="password" id="new_password" name="new_password" class="form-control" placeholder="Nhập mật khẩu mới">
+                                        <span class="toggle-password-reset" data-target="new_password" style="position: absolute; right: 15px; top: 38px; cursor: pointer;">
+                                            <i class="far fa-eye-slash"></i>
+                                        </span>
+                                        <span id="msg-new-password" class="invalid-msg text-danger small"></span>
+                                    </div>
 
-                                      <div class="form-group-custom">
-                                          <label class="field-label">Xác nhận mật khẩu</label>
-                                          <div class="input-group-custom">
-                                              <span class="input-icon"><i class="fas fa-check-double"></i></span>
-                                              <input type="password" id="confirm_new_password" class="field-input" placeholder="Nhập lại mật khẩu mới">
-                                          </div>
-                                          <div class="invalid-msg" id="msg-confirm-new-password"></div>
-                                      </div>
+                                    <div class="form-group position-relative mb-3">
+                                        <label for="confirm_new_password">Xác nhận mật khẩu mới</label>
+                                        <input type="password" id="confirm_new_password" name="confirm_new_password" class="form-control" placeholder="Xác nhận mật khẩu mới">
+                                        <span class="toggle-password-reset" data-target="confirm_new_password" style="position: absolute; right: 15px; top: 38px; cursor: pointer;">
+                                            <i class="far fa-eye-slash"></i>
+                                        </span>
+                                        <span id="msg-confirm-new-password" class="invalid-msg text-danger small"></span>
+                                    </div>
 
                                       <button type="submit" id="btnResetSubmit" class="btn-login-submit" style="background-color: #f0a04b;">Xác nhận đổi mật khẩu</button>
                                   </form>
