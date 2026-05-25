@@ -1,4 +1,6 @@
 <?php
+ob_start();
+include __DIR__ . '/../layouts/loginheader.php';
 if (!isset($tab)) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -43,7 +45,7 @@ $BASE_URL = '/n2_phat_trien_web';
 
 // ── Header ─────────────────────────────────────────────
 ob_start();
-include '../../../app/views/layouts/header.php';
+include '../../../app/views/layouts/loginheader.php';
 $header_output = ob_get_clean();
 
 $extra_head = '

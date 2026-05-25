@@ -1,5 +1,13 @@
 <?php
 session_start();
+if (isset($_SESSION['customer_id'])) {
+
+    include __DIR__ . '/../layouts/loginheader.php';
+
+} else {
+
+    include __DIR__ . '/../layouts/header.php';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -94,94 +102,11 @@ $isLoggedIn = isset($_SESSION['customer_id']);
     <link rel="stylesheet"
           href="http://localhost/N2_Phat_Trien_Web/public/assets/css/Trang_chu.css"/>
 </head>
+<?php include __DIR__ . '/Chatbot.php'; ?>
 
 <body>
 
-<!-- HEADER -->
 
-<nav class="navbar navbar-expand-lg fixed-top custom-navbar">
-    <div class="container">
-
-        <a class="navbar-brand" href="#">
-            <img src="../Media/Logo.png" alt="Farm2Home">
-        </a>
-
-        <button class="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarNav1">
-
-            <span class="navbar-toggler-icon">
-                <i class="fas fa-bars" style="color: #183a1d;"></i>
-            </span>
-
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav1">
-
-            <ul class="navbar-nav mx-auto">
-
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">
-                        Trang Chủ
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        Sản Phẩm
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        Liên Hệ
-                    </a>
-                </li>
-
-            </ul>
-
-            <div class="nav-right-actions">
-
-                <a href="#" class="action-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="icon-badge">0</span>
-                </a>
-
-                <a href="#" class="action-icon">
-                    <i class="fas fa-shopping-cart"></i>
-
-                    <span class="icon-badge">
-                        <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>
-                    </span>
-                </a>
-
-                <div class="nav-divider"></div>
-
-                <?php if ($isLoggedIn): ?>
-
-                    <a href="#" class="btn-login">
-                        Tài khoản
-                    </a>
-
-                <?php else: ?>
-
-                    <a href="#" class="btn-login">
-                        Đăng Nhập
-                    </a>
-
-                    <button class="btn btn-register">
-                        Đăng Ký
-                    </button>
-
-                <?php endif; ?>
-
-            </div>
-
-        </div>
-
-    </div>
-</nav>
 
 <main>
 
@@ -445,55 +370,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
 </main>
 
-<!-- FOOTER -->
 
-<footer class="footer-custom">
-
-    <div class="container-fluid px-lg-5">
-
-        <div class="row">
-
-            <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
-
-                <img src="../Media/Logo-trang.png"
-                     alt="Farm2Home"
-                     class="mb-3"
-                     style="max-width: 180px; filter: brightness(0) invert(1);">
-
-                <p class="pr-lg-4 mb-4"
-                   style="font-size: 0.95rem; line-height: 1.6; color: rgba(254, 251, 233, 0.9);">
-
-                    Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn.
-
-                </p>
-
-            </div>
-
-        </div>
-
-        <hr class="footer-divider">
-
-        <div class="row align-items-center footer-bottom">
-
-            <div class="col-md-4 mb-3 mb-md-0 social-icons text-center text-md-left">
-
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-
-            </div>
-
-            <div class="col-md-4 mb-3 mb-md-0 text-center">
-
-                &copy; 2026 Farm2Home. Tất cả quyền được bảo lưu.
-
-            </div>
-
-        </div>
-
-    </div>
-
-</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
 

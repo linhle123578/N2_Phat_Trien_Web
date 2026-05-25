@@ -1,5 +1,5 @@
 <?php
-$BASE_URL = '/n2_phat_trien_web';
+
 
 // ── DB connection ────────────────────────────────────────────────────────────
 $conn = mysqli_init();
@@ -295,9 +295,9 @@ function build_full_address(array $addr): string {
     return implode(', ', $parts);
 }
 
-// ═══════════════════════════════════════════════════════════════
+//═══════════════════════════════════════════════════════════════
 ob_start();
-include '../../../app/views/layouts/header.php';
+include '../../../app/views/layouts/loginheader.php';
 $header_output = ob_get_clean();
 
 $extra_head = '
@@ -305,7 +305,7 @@ $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/assets/css/ProfileCustomer.css">
+    <link rel="stylesheet" href="/N2_Phat_Trien_Web/public/assets/css/ProfileCustomer.css">
 ';
 $header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
 

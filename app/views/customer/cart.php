@@ -1,8 +1,15 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+session_start();
+
+if (!isset($_SESSION['customer_id'])) {
+    header("Location: /N2_Phat_Trien_Web/app/views/customer/LogIn.php");
+    exit();
 }
+
+include __DIR__ . '/../layouts/loginheader.php';
 require_once "../../models/CartModel.php";
+
+
 
 // 1. XỬ LÝ AJAX XÓA
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
@@ -15,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 
 // 2. LẤY DỮ LIỆU TỪ DB 
 if (!isset($_SESSION['customer_id'])) {
-    header("Location: /app/views/customer/LogIn.php");
+    header("Location:/N2_Phat_Trien_Web/app/views/customer/LogIn.php");
     exit();
 }
 $customer_id = $_SESSION['customer_id'];
@@ -28,12 +35,12 @@ $total_items = count($items);
 $_SESSION['cart'] = array_fill(0, $total_items, 1);
 
 
-// Lọc lấy mỗi thanh <nav> từ header.php
+/*// Lọc lấy mỗi thanh <nav> từ header.php
 ob_start();
 include_once '../layouts/header.php';
 $raw_header = ob_get_clean();
 preg_match('/<nav.*<\/nav>/is', $raw_header, $nav_matches);
-$clean_header = $nav_matches[0] ?? '';
+$clean_header = $nav_matches[0] ?? '';*/
 
 // Lọc lấy mỗi khối <footer> từ footer.php
 ob_start();
@@ -53,12 +60,13 @@ $clean_footer = $footer_matches[0] ?? '';
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="/public/assets/css/layout.css">
-  <link rel="stylesheet" href="/public/assets/css/cart.css">
+ <link rel="stylesheet"
+      href="/N2_Phat_Trien_Web/public/assets/css/layout.css">
+
+<link rel="stylesheet"
+      href="/N2_Phat_Trien_Web/public/assets/css/cart.css">
 </head>
 <body>
-
-  <?= $clean_header ?>
 
   <main class="cart-main">
     <div class="container">
@@ -163,7 +171,7 @@ $clean_footer = $footer_matches[0] ?? '';
                 <span class="summary-total-value" id="summary-total">30.000đ</span>
               </div>
 
-              <form id="checkout-form" action="/app/controllers/customer/CartController.php" method="POST">
+              <form id="checkout-form" action="/N2_Phat_Trien_Web/app/controllers/customer/CartController.php" method="POST">
                 <input type="hidden" name="action" value="dat_hang">
                 <div id="selected-inputs"></div>
                 <button type="submit" class="btn-checkout">Tiến hành thanh toán</button>
@@ -186,7 +194,7 @@ $clean_footer = $footer_matches[0] ?? '';
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/public/assets/js/cart.js"></script>
+  <script src="/N2_Phat_Trien_Web/public/assets/js/cart.js"></script>
   
   <script>
   document.getElementById('checkout-form').addEventListener('submit', function(e) {

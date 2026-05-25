@@ -1,6 +1,6 @@
 <?php
 ob_start();
-include __DIR__ . '/../layouts/header.php';
+include __DIR__ . '/../layouts/loginheader.php';
 $raw_header = ob_get_clean();
 if (preg_match('/<(nav|header)[^>]*>.*?<\/\1>/is', $raw_header, $m)) {
     $clean_header = $m[0];

@@ -23,7 +23,7 @@ class LogoutController
         }
         // Redirect về trang chủ
         // Dùng đường dẫn tương đối từ views/customer/ lên root project
-        header('Location: ../../../index.php');
+        header('Location: /N2_Phat_Trien_Web/app/views/customer/TrangChu.php');
         exit;
     }
 }

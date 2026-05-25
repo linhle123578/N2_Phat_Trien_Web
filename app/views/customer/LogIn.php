@@ -1,6 +1,33 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
+// ===== XỬ LÝ LOGIN =====
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $identity = $_POST['identity'] ?? '';
+    $password = $_POST['password'] ?? '';
+
+    // ❌ KHÔNG CÒN ADMIN FIX CỨNG NỮA
+
+    // 👉 DEMO CUSTOMER LOGIN (tạm thời)
+    if (!empty($identity) && !empty($password)) {
+
+        $_SESSION['role'] = 'customer';
+        $_SESSION['user'] = [
+            'name' => $identity,
+            'identity' => $identity
+        ];
+
+        header("Location: /N2_Phat_Trien_Web/app/views/customer/TrangChu.php");
+        exit();
+    }
+
+    // sai dữ liệu
+    echo "Sai tài khoản hoặc mật khẩu";
+    exit();
+}
+
+
 ob_start();
 include_once '../layouts/header.php';
 $raw_header = ob_get_clean();
@@ -55,7 +82,7 @@ $clean_footer = $m_foot[0] ?? '';
                                       <div class="role-tab" data-role="admin">Quản lý</div>
                                   </div>
 
-                                  <form id="formLogIn" novalidate>
+                                  <form id="formLogIn" method="POST" action="">
                                       <input type="hidden" id="login_role" name="role" value="customer">
 
                                       <div class="form-group-custom">
