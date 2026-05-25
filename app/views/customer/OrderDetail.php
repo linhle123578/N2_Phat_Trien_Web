@@ -1,4 +1,6 @@
 <?php
+ob_start();
+include __DIR__ . '/../layouts/loginheader.php';
 $BASE_URL = '/n2_phat_trien_web';
 
 // ── DB ────────────────────────────────────────────────────
@@ -156,17 +158,17 @@ function build_address(array $addr): string {
 }
 
 // ── Header ────────────────────────────────────────────────
-ob_start();
+/*ob_start();
 include '../../../app/views/layouts/header.php';
-$header_output = ob_get_clean();
+$header_output = ob_get_clean();*/
 $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../public/assets/css/OrderDetail.css">
 ';
-$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
-echo $header_output;
+//$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
+//echo $header_output;
 ?>
 
 <div class="container" style="padding-top:80px;">

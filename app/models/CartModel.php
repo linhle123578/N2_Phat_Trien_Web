@@ -21,7 +21,7 @@ class CartModel {
 
         // Kiểm tra kết nối
         if (!$success) {
-            die("Kết nối database thất bại: " . mysqli_connect_error());
+        throw new Exception("Kết nối database thất bại: " . mysqli_connect_error());
         }
 
         mysqli_set_charset($this->conn, "utf8");
@@ -94,5 +94,7 @@ class CartModel {
         }
         return $order_id;
     }
+    
 }
+
 ?>

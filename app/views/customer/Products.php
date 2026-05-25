@@ -1,4 +1,19 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// HEADER
+if (isset($_SESSION['customer_id'])) {
+
+    include __DIR__ . '/../layouts/loginheader.php';
+
+} else {
+
+    include __DIR__ . '/../layouts/header.php';
+}
+
+
 // 1. Bộ lọc định tuyến ngầm điều hướng xử lý dữ liệu database qua Controller đám mây
 if (!isset($cat_result) || !isset($prod_result)) {
     $queryString = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
@@ -33,30 +48,6 @@ if (!isset($cat_result) || !isset($prod_result)) {
 </head>
 <body>
    
-    <nav class="navbar navbar-expand-lg custom-navbar sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="Products.php">
-                <img src="../../../Media/Logo.png" alt="Farm2Home" onerror="this.src='https://placehold.co/150x45?text=Farm2Home'">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav1">
-                <span class="navbar-toggler-icon"><i class="fas fa-bars" style="color: #183a1d;"></i></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav1">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item"><a class="nav-link" href="#">Trang Chủ</a></li>
-                    <li class="nav-item active"><a class="nav-link" href="Products.php">Sản Phẩm</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
-                </ul>
-                <div class="nav-right-actions">
-                    <a href="#" class="action-icon"><i class="far fa-bell"></i><span class="icon-badge">3</span></a>
-                    <a href="cart.php" class="action-icon"><i class="fas fa-shopping-cart"></i><span class="icon-badge" id="cart-count"><?= $total_cart_items ?></span></a>
-                    <div class="nav-divider"></div>
-                    <a href="login.php" class="btn-login" style="color: #183a1d; text-decoration: none; font-weight: 600; margin-right: 15px;">Đăng Nhập</a>
-                    <button class="btn btn-register" style="background-color: #183a1d; color: white; border-radius: 20px; padding: 5px 15px;">Đăng Ký</button>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     <section class="search-banner py-5">
         <div class="container text-center">

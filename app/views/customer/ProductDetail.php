@@ -1,4 +1,18 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// HEADER
+if (isset($_SESSION['customer_id'])) {
+
+    include __DIR__ . '/../layouts/loginheader.php';
+
+} else {
+
+    include __DIR__ . '/../layouts/header.php';
+}
+
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
@@ -66,36 +80,6 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     <link href="../../../public/assets/css/ProductDetail.css" rel="stylesheet"/></head>
 <body>
 
-<nav class="navbar navbar-expand-lg custom-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="Trang_chu.html">
-            <img src="../../../Media/logo_black.png" alt="Farm2Home" style="max-height:40px;">
-        </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-            <i class="fas fa-bars" style="color: #183a1d;"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" href="Trang_chu.html">Trang Chủ</a></li>
-                <li class="nav-item active"><a class="nav-link" href="Sản phẩm.html">Sản Phẩm</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Liên Hệ</a></li>
-            </ul>
-            <div class="nav-right-actions">
-                <a href="#" class="action-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="icon-badge">3</span>
-                </a>
-                <a href="Giỏ hàng.html" class="action-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                </a>
-                <div class="nav-divider"></div>
-                <a href="#" style="display:flex;align-items:center;gap:6px;border:1.5px solid #ddd;border-radius:30px;padding:6px 16px;font-size:0.9rem;font-weight:600;color:var(--green-dark);text-decoration:none;">
-                    <i class="far fa-user"></i> Đăng nhập
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
 
 <div class="breadcrumb-section">
     <div class="container">
@@ -138,13 +122,66 @@ while ($row = mysqli_fetch_assoc($result_related)) {
                 </div>
 
                 <div class="action-buttons">
-                    <form action="Giỏ hàng.html" method="POST" class="w-100 d-flex" style="gap:12px;">
-                        <input type="hidden" name="product_id" value="<?= htmlspecialchars($product['product_id']) ?>">
-                        <input type="hidden" name="quantity" id="cartQuantity" value="1">
-                        <button type="submit" class="btn-cart"><i class="fas fa-shopping-cart mr-2"></i>Thêm vào giỏ hàng</button>
-                        <button type="submit" name="buy_now" value="1" class="btn-buynow">Mua ngay</button>
-                    </form>
-                </div>
+
+<?php if (isset($_SESSION['customer_id'])): ?>
+
+    <!-- ĐÃ ĐĂNG NHẬP -->
+
+    <form action="Cart.php"
+          method="POST"
+          class="w-100 d-flex"
+          style="gap:12px;">
+
+        <input type="hidden"
+               name="product_id"
+               value="<?= htmlspecialchars($product['product_id']) ?>">
+
+        <input type="hidden"
+               name="quantity"
+               id="cartQuantity"
+               value="1">
+
+        <button type="submit"
+                class="btn-cart">
+
+            <i class="fas fa-shopping-cart mr-2"></i>
+            Thêm vào giỏ hàng
+
+        </button>
+
+        <button type="submit"
+                name="buy_now"
+                value="1"
+                class="btn-buynow">
+
+            Mua ngay
+
+        </button>
+
+    </form>
+
+<?php else: ?>
+
+    <!-- CHƯA ĐĂNG NHẬP -->
+
+    <button class="btn-cart"
+            onclick="requireLogin()">
+
+        <i class="fas fa-shopping-cart mr-2"></i>
+        Thêm vào giỏ hàng
+
+    </button>
+
+    <button class="btn-buynow"
+            onclick="requireLogin()">
+
+        Mua ngay
+
+    </button>
+
+<?php endif; ?>
+
+</div>
 
                 <div class="weight-note mt-4">
                     <i class="fas fa-info-circle"></i> Quy cách đóng gói: <strong><?= htmlspecialchars($product['unit']) ?></strong>
@@ -264,6 +301,24 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     </div>
 </footer>
 
-<script src="../../../public/assets/js/ProductDetail.js"></script>
+<script src="../../../public/assets/js/ProductDetail.js">
+
+</script>
+
+<script>
+function requireLogin() {
+
+    alert("Vui lòng đăng nhập để tiếp tục!");
+
+    // Lưu trang hiện tại
+    const currentUrl = window.location.href;
+
+    // Chuyển sang login kèm redirect
+    window.location.href =
+        "/N2_Phat_Trien_Web/app/views/customer/LogIn.php?redirect="
+        + encodeURIComponent(currentUrl);
+}
+</script>
+
 </body>
 </html>

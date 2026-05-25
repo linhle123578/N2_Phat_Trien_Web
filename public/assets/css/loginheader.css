@@ -226,3 +226,20 @@
         flex-direction: column;
     }
 }
+/* User avatar icon — trạng thái đã đăng nhập */
+.user-avatar {
+    background-color: #e0d9cc;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    margin: 0 0 0 4px;
+}
+
+.user-avatar:hover {
+    background-color: #cfc7b4;
+    color: #183a1d;
+}
