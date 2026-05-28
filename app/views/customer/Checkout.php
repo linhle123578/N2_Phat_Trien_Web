@@ -1,52 +1,20 @@
-<?php 
-    ob_start();
-    include __DIR__ . '/../layouts/loginheader.php';
-    $raw_header = ob_get_clean();
-    
-    if (preg_match('/<(nav|header)[^>]*>.*?<\/\1>/is', $raw_header, $header_matches)) {
-        $clean_header = $header_matches[0];
-    } else {
-        $clean_header = $raw_header; 
-    }
+<?php
+    $extra_head = '
+    <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/assets/css/checkout.css">
+    <script>
+        const DB_SUBTOTAL = ' . ($subtotal ?? 0) . ';
+    </script>
+    ';
+    echo $extra_head;
 
-    ob_start();
-    include __DIR__ . '/../layouts/footer.php';
-    $raw_footer = ob_get_clean();
-    
-    if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $footer_matches)) {
-        $clean_footer = $footer_matches[0];
-    } else {
-        $clean_footer = $raw_footer;
-    }
 
     // [FIX 1] Chuẩn hoá: dùng key 'fullname', 'phone', 'address' từ controller
     $display_name    = htmlspecialchars($customer_info['fullname'] ?? 'Khách hàng');
     $display_phone   = htmlspecialchars(ltrim($customer_info['phone'] ?? '', '0'));
     $display_address = htmlspecialchars($customer_info['address'] ?? 'Vui lòng cập nhật địa chỉ');
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thanh Toán - Farm2Home</title>
-
-    <base href="/">
-
-    <!-- [FIX 3] Đổi CDN Bootstrap sang unpkg để tránh bị Tracking Prevention block -->
-    <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="/public/assets/css/layout.css">
-    <link rel="stylesheet" href="/public/assets/css/checkout.css">
-
-    <script>
-        const DB_SUBTOTAL = <?= $subtotal ?? 0 ?>;
-    </script>
-</head>
-<body>
-
-    <?= $clean_header ?>
 
     <main class="checkout-main" style="margin-top: 50px;">
         <div class="container py-5">
@@ -84,8 +52,8 @@
                             <?php if (!empty($checkout_products)): ?>
                                 <?php foreach ($checkout_products as $product): 
                                     $img_src = !empty($product['image'])
-                                        ? "/Media/" . htmlspecialchars($product['image'])
-                                        : "/Media/no-image.png";
+                                        ? "../../../Media/" . htmlspecialchars($product['image'])
+                                        : "../../../Media/no-image.png";
                                 ?>
                                     <div class="inner-card p-3 d-flex align-items-center gap-3 flex-wrap">
                                         <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="product-img rounded">
@@ -120,7 +88,7 @@
                         <h3 class="section-title mb-3">🚚 PHƯƠNG THỨC VẬN CHUYỂN</h3>
                         <div class="d-flex flex-column gap-3">
                             <label class="inner-card radio-card active p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="shipping" value="25000" checked class="form-check-input m-0">
+                                <input type="radio" name="shipping" value="25000" checked>
                                 <div class="d-flex justify-content-between align-items-center w-100">
                                     <div>
                                         <div class="d-flex align-items-center gap-2 mb-1">
@@ -134,7 +102,7 @@
                             </label>
                             
                             <label class="inner-card radio-card p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="shipping" value="55000" class="form-check-input m-0">
+                                <input type="radio" name="shipping" value="55000">
                                 <div class="d-flex justify-content-between align-items-center w-100">
                                     <div>
                                         <h4 class="fs-6 fw-bold mb-1" style="color: #022409;">Giao hàng hỏa tốc</h4>
@@ -150,7 +118,7 @@
                         <h3 class="section-title mb-3">PHƯƠNG THỨC THANH TOÁN</h3>
                         <div class="d-flex flex-column gap-3">
                             <label class="inner-card radio-card active p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="payment" value="momo" checked class="form-check-input m-0">
+                                <input type="radio" name="payment" value="momo" checked>
                                 <div class="d-flex align-items-center gap-3">
                                     <span class="fs-4">🟣</span>
                                     <div>
@@ -160,7 +128,7 @@
                                 </div>
                             </label>
                             <label class="inner-card radio-card p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="payment" value="cod" class="form-check-input m-0">
+                                <input type="radio" name="payment" value="cod">
                                 <div class="d-flex align-items-center gap-3">
                                     <span class="fs-4">💵</span>
                                     <div>
@@ -234,10 +202,10 @@
         </div>
     </div>
 
-    <?= $clean_footer ?>
+    <?php include __DIR__ . '/../layouts/footer.php'; ?>
 
-    <!-- [FIX 3] Bootstrap JS cũng dùng unpkg -->
+    <!-- Scripts -->
     <script src="https://unpkg.com/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/public/assets/js/checkout.js"></script>
+    <script src="../../../public/assets/js/checkout.js"></script>
 </body>
 </html>

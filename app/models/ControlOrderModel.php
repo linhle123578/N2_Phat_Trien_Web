@@ -17,6 +17,9 @@ class OrderModel {
             NULL
         );
 
+        // Bỏ qua xác thực chứng chỉ SSL
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+
         mysqli_real_connect(
             $this->conn,
             "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",

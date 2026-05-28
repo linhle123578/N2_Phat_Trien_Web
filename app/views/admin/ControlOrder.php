@@ -6,6 +6,7 @@
 
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -179,7 +180,7 @@ function pageUrl($p, $search, $filter) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/N2_Phat_Trien_Web/public/assets/css/ControlOrder.css">
+<link rel="stylesheet" href="../../../public/assets/css/ControlOrder.css">
 </head>
 <body>
 
@@ -192,20 +193,20 @@ function pageUrl($p, $search, $filter) {
         <div class="logo-text">Farm2Home<small>Admin Dashboard</small></div>
     </div>
     <div style="display:flex;flex-direction:column;gap:3px">
-        <button class="nav-btn"><span class="material-symbols-outlined">dashboard</span>Dashboard</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">bar_chart</span>Thống kê</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">storefront</span>Sản phẩm</button>
-        <button class="nav-btn active">
+        <a href="../../../app/controllers/admin/DashboardController.php" class="nav-btn"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+        <a href="../../../app/controllers/admin/DashboardController.php" class="nav-btn"><span class="material-symbols-outlined">bar_chart</span>Thống kê</a>
+        <a href="../../../app/views/admin/ProductAdmin.php" class="nav-btn"><span class="material-symbols-outlined">storefront</span>Sản phẩm</a>
+        <a href="../../../app/views/admin/ControlOrder.php" class="nav-btn active">
             <span class="material-symbols-outlined">receipt_long</span>Đơn hàng
             <?php if($pendingReturns > 0): ?>
             <span class="notif-dot"><?= $pendingReturns ?></span>
             <?php endif; ?>
-        </button>
-        <button class="nav-btn"><span class="material-symbols-outlined">person</span>Tài khoản</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">settings</span>Cài đặt</button>
+        </a>
+        <a href="../../../app/views/admin/ProfileAdmin.php" class="nav-btn"><span class="material-symbols-outlined">person</span>Tài khoản</a>
+        <a href="#" class="nav-btn"><span class="material-symbols-outlined">settings</span>Cài đặt</a>
     </div>
     <div class="sidebar-footer">
-        <button class="nav-btn"><span class="material-symbols-outlined">logout</span>Đăng xuất</button>
+        <a href="../../../app/views/customer/logout.php" class="nav-btn"><span class="material-symbols-outlined">logout</span>Đăng xuất</a>
     </div>
 </div>
 

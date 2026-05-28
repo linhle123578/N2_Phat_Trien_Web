@@ -6,6 +6,7 @@ class OrderModel {
     public function __construct() {
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
         $success = mysqli_real_connect(
             $this->conn,
             "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",

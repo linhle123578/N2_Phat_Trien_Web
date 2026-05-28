@@ -19,6 +19,10 @@ class Database {
         $this->conn = mysqli_init();
 
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+
+        // Bỏ qua xác thực chứng chỉ SSL
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
         $ok = mysqli_real_connect(
             $this->conn,

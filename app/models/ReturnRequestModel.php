@@ -32,8 +32,8 @@ class ReturnRequestModel
     public function getOrderInfo(string $order_id, string $customer_id): ?array
     {
         $stmt = mysqli_prepare($this->conn,
-            "SELECT o.order_id, o.order_status, o.created_at, o.updated_at,
-                    o.total_quantity_order,
+            "SELECT o.order_id, o.order_status, o.created_at,
+                    p.total_amount, p.payment_method,
                     p.total_amount, p.payment_method,
                     c.full_name, c.phone, c.email
              FROM `order` o

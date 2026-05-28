@@ -59,14 +59,7 @@ $isLoggedIn = isset($_SESSION['user']);
 HEADER
 ========================================
 */
-if ($isLoggedIn) {
-
-    include __DIR__ . '/../app/views/layouts/header.php';
-
-} else {
-
-    include __DIR__ . '/../app/views/layouts/loginheader.php';
-}
+include __DIR__ . '/../app/views/layouts/header.php';
 
 /*
 ========================================

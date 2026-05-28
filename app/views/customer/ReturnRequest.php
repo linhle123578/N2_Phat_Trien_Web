@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * Entry point: ReturnRequest.php
  * File gộp chung form và success page.
@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -36,17 +37,13 @@ if (!empty($controller->view_name)) {
         $price = fn($n) => ReturnRequestController::formatPrice((float)$n);
         $old_val = fn($key, $default = '') => $e($old[$key] ?? $default);
 
-        ob_start();
-        include '../../../app/views/layouts/header.php';
-        $header_output = ob_get_clean();
         $extra = '
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
             <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="../../../public/assets/css/ReturnRequest.css">
         ';
-        $header_output = str_replace('</head>', $extra . '</head>', $header_output);
-        echo $header_output;
+        echo $extra;
 
         $total = array_sum(array_map(fn($i) => (float)$i['price'] * (int)$i['quantity'], $order_items));
 ?>
@@ -54,9 +51,9 @@ if (!empty($controller->view_name)) {
             <div class="rr-container">
 
                 <nav class="rr-breadcrumb">
-                    <a href="../../../index.php">Trang chủ</a>
+                    <a href="../../../public/index.php">Trang chủ</a>
                     <span>›</span>
-                    <a href="OrderHistory.php">Lịch sử đơn hàng</a>
+                    <a href="../../../public/index.php?page=orders">Lịch sử đơn hàng</a>
                     <span>›</span>
                     <span class="current">Yêu cầu đổi/trả hàng</span>
                 </nav>
@@ -185,7 +182,7 @@ if (!empty($controller->view_name)) {
                             </div>
 
                             <div class="rr-submit-row">
-                                <a href="OrderHistory.php" class="btn-rr btn-rr-outline">
+                                <a href="../../../public/index.php?page=orders" class="btn-rr btn-rr-outline">
                                     <i class="bi bi-arrow-left me-1"></i>Quay lại
                                 </a>
                                 <button type="submit" class="btn-rr btn-rr-primary" id="btnSubmit">
@@ -258,23 +255,19 @@ if (!empty($controller->view_name)) {
                 </div></div>
         </div>
 
-        <?php include '../../../app/views/layouts/footer.php'; ?>
+        <?php include __DIR__ . '/../layouts/footer.php'; ?>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="../../../public/assets/js/ReturnRequest.js"></script>
 <?php
     } elseif ($controller->view_name === 'return_request_success') {
-        ob_start();
-        include '../../../app/views/layouts/header.php';
-        $header_output = ob_get_clean();
         $extra = '
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
             <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
             <link rel="stylesheet" href="../../../public/assets/css/ReturnRequest.css">
         ';
-        $header_output = str_replace('</head>', $extra . '</head>', $header_output);
-        echo $header_output;
+        echo $extra;
 ?>
         <div class="rr-wrapper">
             <div class="rr-container rr-success-container">
@@ -354,10 +347,10 @@ if (!empty($controller->view_name)) {
                     </div>
 
                     <div class="rr-success-actions">
-                        <a href="OrderHistory.php" class="btn-rr btn-rr-outline">
+                        <a href="../../../public/index.php?page=orders" class="btn-rr btn-rr-outline">
                             <i class="bi bi-bag-check me-1"></i>Xem đơn hàng
                         </a>
-                        <a href="../../../index.php" class="btn-rr btn-rr-primary">
+                        <a href="../../../public/index.php?page=TrangChu" class="btn-rr btn-rr-primary">
                             <i class="bi bi-house me-1"></i>Về trang chủ
                         </a>
                     </div>
@@ -366,7 +359,7 @@ if (!empty($controller->view_name)) {
             </div>
         </div>
 
-        <?php include '../../../app/views/layouts/footer.php'; ?>
+        <?php include __DIR__ . '/../layouts/footer.php'; ?>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         </body>
         </html>
@@ -374,3 +367,4 @@ if (!empty($controller->view_name)) {
     }
 }
 ?>
+

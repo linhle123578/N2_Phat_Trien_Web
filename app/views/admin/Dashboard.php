@@ -27,30 +27,27 @@ $analytics = $analytics ?? [
 </head>
 <body>
 
-    <div class="admin-sidebar">
+    <div class="admin-sidebar" id="adminSidebar">
         <div class="sidebar-brand">
-            <i class="fas fa-seedling mr-2"></i> FARM2HOME ADMIN
+            <i class="fas fa-seedling mr-2"></i> FARM2HOME
         </div>
         <ul class="sidebar-menu">
             <li class="sidebar-item active">
-                <a href="#"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="../../../app/controllers/admin/DashboardController.php"><i class="fas fa-th-large"></i> Dashboard</a>
             </li>
             <li class="sidebar-item">
-                <a href="#"><i class="fas fa-box"></i> Quản lý sản phẩm</a>
+                <a href="../../../app/views/admin/ProductAdmin.php"><i class="fas fa-box"></i> Quản lý sản phẩm</a>
             </li>
             <li class="sidebar-item">
-                <a href="#"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a>
+                <a href="../../../app/views/admin/ControlOrder.php"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a>
             </li>
             <li class="sidebar-item">
-                <a href="#"><i class="fas fa-users"></i> Quản lý khách hàng</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-folder"></i> Danh mục nông sản</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-cog"></i> Cấu hình hệ thống</a>
+                <a href="../../../app/views/admin/ProfileAdmin.php"><i class="fas fa-user-cog"></i> Tài khoản</a>
             </li>
         </ul>
+        <div class="sidebar-footer-item">
+            <a href="../../../app/views/customer/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+        </div>
     </div>
 
     <div class="admin-main-content">
@@ -205,7 +202,7 @@ $analytics = $analytics ?? [
                                                         <td>
                                                             <div class="d-flex align-items-center">
                                                                 <div class="product-rank-badge mr-3 rank-<?= $index + 1 ?>"><?= $index + 1 ?></div>
-                                                                <img src="/Media/<?= htmlspecialchars($product['product_image']) ?>" class="product-thumb mr-3" onerror="this.src='https://placehold.co/100x100?text=Farm2Home'">
+                                                                <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" class="product-thumb mr-3" onerror="this.src='https://placehold.co/100x100?text=Farm2Home'">
                                                                 <div class="product-info-text">
                                                                     <h6 class="p-name mb-0"><?= htmlspecialchars($product['product_name']) ?></h6>
                                                                 </div>

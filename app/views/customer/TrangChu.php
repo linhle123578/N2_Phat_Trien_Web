@@ -1,13 +1,4 @@
 <?php
-session_start();
-if (isset($_SESSION['customer_id'])) {
-
-    include __DIR__ . '/../layouts/loginheader.php';
-
-} else {
-
-    include __DIR__ . '/../layouts/header.php';
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -21,10 +12,13 @@ mysqli_ssl_set(
     $conn,
     NULL,
     NULL,
-    "C:/xampp/htdocs/N2_Phat_Trien_Web/isrgrootx1.pem",
+    NULL,
     NULL,
     NULL
 );
+
+// Bỏ qua xác thực chứng chỉ SSL (fix lỗi XAMPP Windows)
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
 mysqli_real_connect(
     $conn,
@@ -100,7 +94,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <link rel="stylesheet"
-          href="http://localhost/N2_Phat_Trien_Web/public/assets/css/Trang_chu.css"/>
+          href="../../../public/assets/css/Trang_chu.css"/>
 </head>
 <?php include __DIR__ . '/Chatbot.php'; ?>
 
@@ -119,7 +113,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom active">
 
                 <img class="hero-bg"
-     src="/N2_Phat_Trien_Web/Media/canh_dong_3.jpg"
+     src="../../../Media/canh_dong_3.jpg"
      alt="">
 
                 <div class="hero-overlay">
@@ -146,7 +140,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom">
 
                 <img class="hero-bg"
-                     src="/N2_Phat_Trien_Web/Media/canh_dong_2.jpg"
+                     src="../../../Media/canh_dong_2.jpg"
                      alt="">
 
                 <div class="hero-overlay">
@@ -198,12 +192,12 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-small-imgs">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_1.jpg"
+                        <img src="../../../Media/canh_dong_1.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_5.jpg"
+                        <img src="../../../Media/canh_dong_5.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
@@ -212,7 +206,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-large-img">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_4.jpg"
+                        <img src="../../../Media/canh_dong_4.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-lg"
                              style="height: 495px; object-fit: cover; width: 100%;">
@@ -254,7 +248,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                 Sản phẩm nổi bật
             </h2>
 
-            <a href="#"
+            <a href="../../../public/index.php?page=products"
                class="font-weight-bold text-dark border-bottom"
                style="text-decoration: none;">
 
@@ -283,20 +277,22 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                 </span>
 
-                                <img
-    src="/N2_Phat_Trien_Web/Media/<?= htmlspecialchars($product['product_image']) ?>"
-    alt="<?= htmlspecialchars($product['product_name']) ?>"
-    style="width:100%; height:250px; object-fit:cover;"
->
+                                <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>">
+                                    <img
+        src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>"
+        alt="<?= htmlspecialchars($product['product_name']) ?>"
+        style="width:100%; height:250px; object-fit:cover;"
+    >
+                                </a>
 
                             </div>
 
                             <div class="p-4 text-left">
 
                                 <h6 class="font-weight-bold">
-
-                                    <?= htmlspecialchars($product['product_name']) ?>
-
+                                    <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>" style="color: inherit; text-decoration: none;">
+                                        <?= htmlspecialchars($product['product_name']) ?>
+                                    </a>
                                 </h6>
 
                                 <p class="small text-muted mb-2">
@@ -404,6 +400,3 @@ $isLoggedIn = isset($_SESSION['customer_id']);
     }, 5000);
 
 </script>
-
-</body>
-</html>

@@ -1,148 +1,130 @@
 <?php
-ob_start();
-include __DIR__ . '/../layouts/loginheader.php';
-$BASE_URL = '/n2_phat_trien_web';
-
-// ── DB ────────────────────────────────────────────────────
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
     "3YHrkxqAKWynehu.root",
     "BzDRrZAdAT2jLuyd",
     "db_web_farm2home",
-    4000, NULL, MYSQLI_CLIENT_SSL
+    4000,
+    NULL,
+    MYSQLI_CLIENT_SSL
 );
 mysqli_set_charset($conn, "utf8mb4");
 
-$session_customer_id = $_SESSION['customer_id'] ?? 'CUS001';
+require_once __DIR__ . '/../../models/OrderHistoryModel.php';
 
-$order_id = trim($_GET['id'] ?? '');
-if (empty($order_id)) {
-    header("Location: OrderHistory.php");
-    exit;
+// ... Lấy dữ liệu cơ bản ...
+$order_id = $_GET['id'] ?? '';
+if (!$order_id) {
+    die("Mã đơn hàng không hợp lệ.");
 }
 
-function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
-function format_price(float $n): string { return number_format($n, 0, ',', '.') . ' ₫'; }
+// Lấy customer_id từ session
+$customer_id = $_SESSION['customer_id'] ?? 'KH001';
+$model = new OrderHistoryModel($conn);
+$orders = $model->getOrders($customer_id, 'all');
 
-function status_label(string $s): string {
-    return match($s) {
-        'pending'   => 'Chờ xác nhận',
-        'confirmed' => 'Đã xác nhận',
-        'shipping'  => 'Đang giao',
-        'delivered' => 'Đã giao hàng',
-        'cancelled' => 'Đã huỷ',
-        default     => $s,
-    };
-}
-function status_class(string $s): string {
-    return match($s) {
-        'pending'   => 'status-pending',
-        'confirmed' => 'status-confirmed',
-        'shipping'  => 'status-shipping',
-        'delivered' => 'status-delivered',
-        'cancelled' => 'status-cancelled',
-        default     => '',
-    };
-}
-
-// ── Load order ────────────────────────────────────────────
 $order = null;
-try {
-    $s = mysqli_prepare($conn,
-        "SELECT order_id, customer_id, address_id, order_status,
-                total_quantity_order, created_at
-         FROM `order` WHERE order_id = ? AND customer_id = ? LIMIT 1");
-    mysqli_stmt_bind_param($s, 'ss', $order_id, $session_customer_id);
-    mysqli_stmt_execute($s);
-    $r = mysqli_stmt_get_result($s);
-    $order = mysqli_fetch_assoc($r);
-    mysqli_stmt_close($s);
-} catch (Exception $e) {}
-
+foreach ($orders as $o) {
+    if ($o['order_id'] === $order_id) {
+        $order = $o;
+        break;
+    }
+}
 if (!$order) {
-    mysqli_close($conn);
-    header("Location: OrderHistory.php");
+    die("Đơn hàng không tồn tại hoặc không thuộc về bạn.");
+}
+
+// Lấy sản phẩm
+$all_items = $model->getOrderItems([$order_id]);
+$items = $all_items[$order_id] ?? [];
+
+// Lấy thông tin thanh toán, giao hàng
+$stmt = mysqli_prepare($conn, "SELECT * FROM payment WHERE order_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, 's', $order_id);
+mysqli_stmt_execute($stmt);
+$payment = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+mysqli_stmt_close($stmt);
+
+$stmt = mysqli_prepare($conn, "SELECT * FROM shipment WHERE order_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, 's', $order_id);
+mysqli_stmt_execute($stmt);
+$shipment = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+mysqli_stmt_close($stmt);
+
+$stmt = mysqli_prepare($conn, "SELECT * FROM address WHERE address_id = ? LIMIT 1");
+$addr_id = $order['address_id'] ?? '';
+mysqli_stmt_bind_param($stmt, 's', $addr_id);
+mysqli_stmt_execute($stmt);
+$address = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+mysqli_stmt_close($stmt);
+
+// Tính số lượng đơn hàng (badge)
+$counts = $model->getOrderCounts($customer_id);
+$order_count = $counts['all'];
+
+// Xử lý XÁC NHẬN ĐÃ NHẬN HÀNG
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_received'])) {
+    $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'delivered' WHERE order_id = ?");
+    mysqli_stmt_bind_param($stmt, 's', $order_id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
+    header("Location: OrderDetail.php?id=" . urlencode($order_id));
     exit;
 }
 
-// ── Load items ────────────────────────────────────────────
-$items = [];
-try {
-    $s = mysqli_prepare($conn,
-        "SELECT oi.order_item_id, oi.product_id, oi.quantity, oi.price,
-                pr.product_name, pr.product_image, pr.unit
-         FROM orderitem oi
-         LEFT JOIN product pr ON oi.product_id = pr.product_id
-         WHERE oi.order_id = ?");
-    mysqli_stmt_bind_param($s, 's', $order_id);
-    mysqli_stmt_execute($s);
-    $r = mysqli_stmt_get_result($s);
-    while ($row = mysqli_fetch_assoc($r)) $items[] = $row;
-    mysqli_stmt_close($s);
-} catch (Exception $e) {}
-
-// ── Load address ──────────────────────────────────────────
-$address = null;
-if (!empty($order['address_id'])) {
-    try {
-        $s = mysqli_prepare($conn,
-            "SELECT receiver_name, address_type,
-                    street_address, ward, district, province
-             FROM address WHERE address_id = ? LIMIT 1");
-        mysqli_stmt_bind_param($s, 's', $order['address_id']);
-        mysqli_stmt_execute($s);
-        $r = mysqli_stmt_get_result($s);
-        $address = mysqli_fetch_assoc($r);
-        mysqli_stmt_close($s);
-    } catch (Exception $e) {}
+// Xử lý HUỶ ĐƠN HÀNG
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_order'])) {
+    if ($order['order_status'] === 'pending') {
+        $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'cancelled' WHERE order_id = ?");
+        mysqli_stmt_bind_param($stmt, 's', $order_id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        header("Location: OrderDetail.php?id=" . urlencode($order_id));
+        exit;
+    }
 }
 
-// ── Load payment ──────────────────────────────────────────
-$payment = null;
-try {
-    $s = mysqli_prepare($conn,
-        "SELECT payment_id, payment_method, payment_status,
-                total_amount, transaction_id, payment_date
-         FROM payment WHERE order_id = ? LIMIT 1");
-    mysqli_stmt_bind_param($s, 's', $order_id);
-    mysqli_stmt_execute($s);
-    $r = mysqli_stmt_get_result($s);
-    $payment = mysqli_fetch_assoc($r);
-    mysqli_stmt_close($s);
-} catch (Exception $e) {}
+// Helper functions
+function e($str): string {
+    return htmlspecialchars((string)$str, ENT_QUOTES, 'UTF-8');
+}
+function format_price(float $val): string {
+    return number_format($val, 0, ',', '.') . ' đ';
+}
+function status_class($st): string {
+    $st = mb_strtolower((string)$st, 'UTF-8');
+    return match($st) {
+        'pending', 'chờ xác nhận'   => 'status-pending',
+        'confirmed', 'đã xác nhận' => 'status-confirmed',
+        'shipping', 'đang giao'    => 'status-shipping',
+        'delivered', 'đã giao', 'hoàn thành', 'completed' => 'status-delivered',
+        'cancelled', 'đã hủy', 'đã huỷ'  => 'status-cancelled',
+        default => 'status-pending'
+    };
+}
+function status_label($st): string {
+    $st = mb_strtolower((string)$st, 'UTF-8');
+    return match($st) {
+        'pending', 'chờ xác nhận'   => 'Chờ xác nhận',
+        'confirmed', 'đã xác nhận' => 'Đã xác nhận',
+        'shipping', 'đang giao'    => 'Đang giao',
+        'delivered', 'đã giao', 'hoàn thành', 'completed' => 'Hoàn thành',
+        'cancelled', 'đã hủy', 'đã huỷ'  => 'Đã huỷ',
+        default => ucfirst($st)
+    };
+}
 
-// ── Load shipment ─────────────────────────────────────────
-$shipment = null;
-try {
-    $s = mysqli_prepare($conn,
-        "SELECT shipment_method, shipment_status, estimated_date
-         FROM shipment WHERE order_id = ? LIMIT 1");
-    mysqli_stmt_bind_param($s, 's', $order_id);
-    mysqli_stmt_execute($s);
-    $r = mysqli_stmt_get_result($s);
-    $shipment = mysqli_fetch_assoc($r);
-    mysqli_stmt_close($s);
-} catch (Exception $e) {}
-
-// ── Sidebar order count ───────────────────────────────────
-$order_count = 0;
-try {
-    $s = mysqli_prepare($conn, "SELECT COUNT(*) FROM `order` WHERE customer_id = ?");
-    mysqli_stmt_bind_param($s, 's', $session_customer_id);
-    mysqli_stmt_execute($s);
-    mysqli_stmt_bind_result($s, $order_count);
-    mysqli_stmt_fetch($s);
-    mysqli_stmt_close($s);
-} catch (Exception $e) {}
-
-mysqli_close($conn);
-
-// ── Tính tiền ─────────────────────────────────────────────
 $subtotal = 0;
-foreach ($items as $item) $subtotal += (float)$item['price'] * (int)$item['quantity'];
+foreach ($items as $itm) {
+    $subtotal += (float)$itm['price'] * (int)$itm['quantity'];
+}
 $total_amount = $payment ? (float)$payment['total_amount'] : $subtotal;
 $discount = $subtotal > $total_amount ? $subtotal - $total_amount : 0;
 
@@ -158,25 +140,21 @@ function build_address(array $addr): string {
 }
 
 // ── Header ────────────────────────────────────────────────
-/*ob_start();
-include '../../../app/views/layouts/header.php';
-$header_output = ob_get_clean();*/
 $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../../public/assets/css/OrderDetail.css">
 ';
-//$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
-//echo $header_output;
+echo $extra_head;
 ?>
 
 <div class="container" style="padding-top:80px;">
 
     <nav class="profile-breadcrumb">
-        <a href="../../../index.php">Trang chủ</a>
+        <a href="index.php">Trang chủ</a>
         <span class="sep">›</span>
-        <a href="OrderHistory.php">Lịch sử đơn hàng</a>
+        <a href="index.php?page=orders">Lịch sử đơn hàng</a>
         <span class="sep">›</span>
         <span class="current"><?= e($order_id) ?></span>
     </nav>
@@ -189,13 +167,13 @@ $extra_head = '
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="../../../app/views/customer/ProfileCustomer.php">
+                        <a href="index.php?page=profile">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li class="active">
-                        <a href="OrderHistory.php">
+                        <a href="index.php?page=orders">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($order_count > 0): ?>
@@ -219,7 +197,7 @@ $extra_head = '
 
             <!-- Nút quay lại + tiêu đề -->
             <div class="od-topbar">
-                <a href="OrderHistory.php" class="btn-back">
+                <a href="index.php?page=orders" class="btn-back">
                     <i class="bi bi-arrow-left me-1"></i>Quay lại
                 </a>
                 <span class="oh-status-badge <?= status_class($order['order_status']) ?>">
@@ -285,8 +263,16 @@ $extra_head = '
                 'delivered' => 'Giao thành công',
             ];
             $step_keys    = array_keys($steps);
-            $current_idx  = array_search($order['order_status'], $step_keys);
-            $is_cancelled = $order['order_status'] === 'cancelled';
+            $os_lower     = mb_strtolower($order['order_status'] ?? '', 'UTF-8');
+            $norm_status  = $os_lower;
+            
+            if ($os_lower === 'chờ xác nhận' || $os_lower === 'pending') $norm_status = 'pending';
+            elseif ($os_lower === 'đã xác nhận' || $os_lower === 'confirmed') $norm_status = 'confirmed';
+            elseif ($os_lower === 'đang giao' || $os_lower === 'shipping') $norm_status = 'shipping';
+            elseif ($os_lower === 'đã giao' || $os_lower === 'hoàn thành' || $os_lower === 'completed' || $os_lower === 'delivered') $norm_status = 'delivered';
+            
+            $current_idx  = array_search($norm_status, $step_keys);
+            $is_cancelled = ($os_lower === 'cancelled' || $os_lower === 'đã hủy' || $os_lower === 'đã huỷ');
             ?>
             <?php if (!$is_cancelled): ?>
             <div class="section-card od-section od-timeline-card">
@@ -340,12 +326,6 @@ $extra_head = '
                     <div class="od-item-right">
                         <div class="od-item-qty">x<?= (int)$item['quantity'] ?></div>
                         <div class="od-item-subtotal"><?= format_price((float)$item['price'] * (int)$item['quantity']) ?></div>
-                        <?php if ($order['order_status'] === 'delivered'): ?>
-                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= e($item['product_id']) ?>"
-                           class="btn-review">
-                            <i class="bi bi-star me-1"></i>Đánh giá
-                        </a>
-                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -403,63 +383,62 @@ $extra_head = '
             <div class="od-actions-bar">
                 <?php if ($order['order_status'] === 'pending'): ?>
                 <form method="POST"
-                      action="../../../app/views/customer/CancelOrder.php"
-                      onsubmit="return confirm('Huỷ đơn hàng này?')">
-                    <input type="hidden" name="order_id" value="<?= e($order_id) ?>">
-                    <button type="submit" class="btn-od btn-od-danger">
-                        <i class="bi bi-x-circle me-1"></i>Huỷ đơn
+                      onsubmit="return confirm('Bạn có chắc chắn muốn huỷ đơn hàng này?');"
+                      style="margin:0;">
+                    <button type="submit" name="cancel_order" class="btn-od btn-od-cancel">
+                        Huỷ đơn hàng
                     </button>
                 </form>
                 <?php endif; ?>
-                <?php if ($order['order_status'] === 'delivered'): ?>
+
+                <?php if ($order['order_status'] === 'shipping'): ?>
                 <form method="POST"
-                      action="../../../app/views/customer/ReturnRequest.php">
-                    <input type="hidden" name="order_id" value="<?= e($order_id) ?>">
-                    <button type="submit" class="btn-od btn-od-outline">
-                        <i class="bi bi-arrow-return-left me-1"></i>Đổi/Trả
+                      onsubmit="return confirm('Xác nhận bạn đã nhận được hàng?');"
+                      style="margin:0;">
+                    <button type="submit" name="confirm_received" class="btn-od btn-od-primary">
+                        Đã nhận được hàng
                     </button>
                 </form>
                 <?php endif; ?>
+
+                <?php
+                $od_rebuy_items = array_map(fn($it) => ['product_id' => $it['product_id'], 'quantity' => (int)$it['quantity']], $items);
+                ?>
+                <button type="button" class="btn-od btn-od-outline"
+                        onclick="rebuyOrder(<?= htmlspecialchars(json_encode($od_rebuy_items), ENT_QUOTES) ?>)">
+                    <i class="bi bi-arrow-repeat me-1"></i>Mua lại
+                </button>
+
+                <a href="index.php" class="btn-od btn-od-secondary">Tiếp tục mua sắm</a>
             </div>
 
-        </div><!-- /.od-main -->
-    </div><!-- /.profile-layout -->
+        </div> <!-- /.od-main -->
+    </div> <!-- /.profile-layout -->
 </div>
-
-<?php include '../../../app/views/layouts/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../../../public/assets/js/OrderDetail.js"></script>
+<script>
+document.getElementById('btnLogout')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+        window.location.href = '../../../app/controllers/customer/LogOutController.php';
+    }
+});
 
-<!-- Modal đăng xuất -->
-<div id="logoutOverlay" style="
-    display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.55);z-index:99999;
-    align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:18px;padding:36px 28px 28px;
-                max-width:360px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.25);
-                text-align:center;font-family:'Plus Jakarta Sans',sans-serif;
-                position:relative;z-index:100000;">
-        <div style="width:60px;height:60px;border-radius:50%;background:#fef2f2;
-                    display:flex;align-items:center;justify-content:center;
-                    margin:0 auto 16px;font-size:1.6rem;color:#c0392b;">
-            <i class="bi bi-box-arrow-right"></i>
-        </div>
-        <div style="font-size:1.08rem;font-weight:800;color:#1a2e1c;margin-bottom:8px;">Đăng xuất?</div>
-        <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">
-            Bạn có chắc muốn đăng xuất khỏi tài khoản không?
-        </div>
-        <div style="display:flex;gap:10px;">
-            <button id="btnLogoutCancel"
-                    style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;
-                           background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;
-                           cursor:pointer;font-family:inherit;">Huỷ</button>
-            <a href="../../../app/views/customer/logout.php"
-               style="flex:1;padding:11px;border-radius:999px;background:#c0392b;
-                      color:#fff;font-weight:700;font-size:0.9rem;text-decoration:none;
-                      display:flex;align-items:center;justify-content:center;">Đăng xuất</a>
-        </div>
-    </div>
-</div>
-</body>
-</html>
+// Mua lại: thêm từng sản phẩm vào giỏ rồi chuyển sang trang giỏ hàng
+function rebuyOrder(items) {
+    if (!items || items.length === 0) return;
+    var cartUrl = '../app/controllers/customer/CartController.php';
+    var cartPageUrl = 'index.php?page=cart';
+    var total = items.length;
+    var done = 0;
+    items.forEach(function(item) {
+        var fd = new FormData();
+        fd.append('product_id', item.product_id);
+        fd.append('quantity', item.quantity);
+        fetch(cartUrl, { method: 'POST', body: fd })
+            .then(function() { done++; if (done === total) window.location.href = cartPageUrl; })
+            .catch(function() { done++; if (done === total) window.location.href = cartPageUrl; });
+    });
+}
+</script>

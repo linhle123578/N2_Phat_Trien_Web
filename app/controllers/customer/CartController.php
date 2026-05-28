@@ -10,7 +10,7 @@ class CartController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (!isset($_SESSION['customer_id'])) {
-            header("Location: /login"); // Tùy router của bạn
+            header("Location: ../../../public/index.php?page=login");
             exit();
         }
 
@@ -46,7 +46,7 @@ class CartController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (!isset($_SESSION['customer_id'])) {
-            header("Location: /app/views/customer/LogIn.php");
+            header("Location: ../../../public/index.php?page=login");
             exit();
         }
         
@@ -58,8 +58,8 @@ class CartController
 
         // Nếu không chọn sản phẩm nào mà bấm thanh toán
         if (empty($selected)) {
-            header("Location: /cart?msg=noselect");
-            exit();
+            header("Location: ../../../public/index.php?page=cart&msg=noselect");
+        exit();
         }
 
         // MỚI: Thay vì tạo đơn hàng luôn, ta lưu danh sách mua vào Session
@@ -76,11 +76,52 @@ class CartController
         }
 
         // Chuyển hướng sang trang Checkout để user nhập địa chỉ, chọn ship/thanh toán
-        header("Location: /app/controllers/customer/CheckoutController.php");
+        header("Location: CheckoutController.php");
+        exit();
+    }
+
+    public function add()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['customer_id'])) {
+            header("Location: ../../../public/index.php?page=login");
+            exit();
+        }
+
+        require_once __DIR__ . "/../../models/ProductModel.php";
+        $productModel = new ProductModel();
+
+        $customer_id = $_SESSION['customer_id'];
+        $product_id = $_POST['product_id'] ?? '';
+        $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
+
+        if (!empty($product_id)) {
+            $productModel->addToCart($customer_id, $product_id, $quantity);
+        }
+
+        if (isset($_POST['buy_now'])) {
+            header("Location: ../../../public/index.php?page=cart");
+        } else {
+            $referer = $_SERVER['HTTP_REFERER'] ?? '../../../public/index.php?page=cart';
+            header("Location: " . $referer);
+        }
         exit();
     }
 }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cartController = new CartController();
-    $cartController->checkout();
+    
+    // Nếu có truyền cart_item_id qua POST (AJAX xóa)
+    if (isset($_POST['cart_item_id'])) {
+        $cartController->delete();
+    } 
+    // Nếu có truyền product_id qua POST (Thêm vào giỏ hoặc Mua ngay)
+    elseif (isset($_POST['product_id'])) {
+        $cartController->add();
+    } 
+    // Nếu bấm nút Thanh Toán trong giỏ hàng
+    else {
+        $cartController->checkout();
+    }
 }

@@ -86,19 +86,19 @@
 }
 
 .btn-register {
-    background-color: #183a1d;
-    color: #fefbe9;
-    font-weight: 600;
-    font-size: 0.95rem;
-    padding: 8px 25px;
-    border-radius: 30px;
-    border: none;
+    background-color: #183a1d !important;
+    color: #fefbe9 !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    padding: 8px 25px !important;
+    border-radius: 30px !important;
+    border: none !important;
     transition: background-color 0.3s;
 }
 
 .btn-register:hover {
-    background-color: #2c5c2d;
-    color: #fefbe9;
+    background-color: #2c5c2d !important;
+    color: #ffffff !important;
 }
 /* FOOTER */
 .footer-custom {

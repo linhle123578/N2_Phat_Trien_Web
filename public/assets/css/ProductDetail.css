@@ -42,6 +42,7 @@ body {
     background-color: var(--cream);
     border-bottom: 1px solid rgba(24,58,29,0.08);
     padding: 12px 0;
+    margin-top: 76px;
 }
 .breadcrumb { background: transparent; margin: 0; padding: 0; font-size: 0.88rem; }
 .breadcrumb-item a { color: #6c757d; text-decoration: none; }

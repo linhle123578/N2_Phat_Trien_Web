@@ -1,110 +1,93 @@
 <!-- app/views/layouts/header.php -->
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$currentPage = $_GET['page'] ?? 'TrangChu';
+$isLoggedIn = isset($_SESSION['user']) || isset($_SESSION['customer_id']);
+
+// Kh?i t?o s? ??m gi? hàng an toàn
+$cartCount = 0;
+if (isset($_SESSION['customer_id'])) {
+    if (!class_exists('ProductModel')) {
+        require_once __DIR__ . '/../../models/ProductModel.php';
+    }
+    $pm = new ProductModel();
+    $cartCount = $pm->getCartCount($_SESSION['customer_id']);
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farm2Home</title>
 
-    <link rel="stylesheet"
-          href="/N2_Phat_Trien_Web/public/assets/css/layout.css">
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Bootstrap 4 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- CSS Chu?n cho Header (l?y t? loginheader c? vì nó ??p h?n và ?? style) -->
+    <link rel="stylesheet" href="../../../public/assets/css/loginheader.css">
 </head>
-
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
     <div class="container">
-
         <!-- LOGO -->
-        <a class="navbar-brand"
-           href="/N2_Phat_Trien_Web/public/index.php?page=TrangChu">
-            <img src="/N2_Phat_Trien_Web/Media/Logo.png" alt="Farm2Home">
+        <a class="navbar-brand" href="../../../public/index.php?page=TrangChu">
+            <img src="../../../Media/Logo.png" alt="Farm2Home">
         </a>
 
         <!-- MENU TOGGLE -->
-        <button class="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarNav1">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav1">
             <span class="navbar-toggler-icon">
                 <i class="fas fa-bars" style="color: #183a1d;"></i>
             </span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav1">
-
             <!-- MENU CENTER -->
             <ul class="navbar-nav mx-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="/N2_Phat_Trien_Web/app/views/customer/TrangChu.php">
-                        Trang Chủ
-                    </a>
+                <li class="nav-item <?= ($currentPage == 'TrangChu') ? 'active' : '' ?>">
+                    <a class="nav-link" href="../../../public/index.php?page=TrangChu">Trang Chủ</a>
                 </li>
-
-                <li class="nav-item">
-                    <a class="nav-link"
-                       href="/N2_Phat_Trien_Web/app/views/customer/Products.php">
-                        Sản Phẩm
-                    </a>
+                <li class="nav-item <?= ($currentPage == 'products' || $currentPage == 'productdetail') ? 'active' : '' ?>">
+                    <a class="nav-link" href="../../../public/index.php?page=products">Sản Phẩm</a>
                 </li>
-
-
             </ul>
 
             <!-- RIGHT ACTIONS -->
             <div class="nav-right-actions">
-
                 <!-- NOTIFICATION -->
                 <a href="#" class="action-icon">
                     <i class="far fa-bell"></i>
-                    <span class="icon-badge">0</span>
+                    <span class="icon-badge">1</span>
                 </a>
 
                 <!-- CART -->
-                <a href="/N2_Phat_Trien_Web/public/Cart.php"
-                   class="action-icon">
+                <a href="../../../public/index.php?page=cart" class="action-icon">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="icon-badge">
-                        <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>
-                    </span>
+                    <span class="icon-badge" id="cart-count"><?= $cartCount ?></span>
                 </a>
 
                 <div class="nav-divider"></div>
 
                 <!-- LOGIN / ACCOUNT -->
-                <?php if (!empty($_SESSION['user'])): ?>
-
-                    <a href="index.php?page=ProfileCustomer"
-                       class="btn-login">
-                        Tài khoản
-                    </a>
-
-                    <a href="/N2_Phat_Trien_Web/app/views/customer/Logout.php"
-                       class="btn btn-register">
-                        Đăng xuất
-                    </a>
-
+                <?php if ($isLoggedIn): ?>
+                    <a href="../../../public/index.php?page=profile" class="btn-login">Tài khoản</a>
+                    <a href="../../../app/views/customer/logout.php" class="btn btn-register" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">Đăng xuất</a>
                 <?php else: ?>
-
-                    <a href="/N2_Phat_Trien_Web/app/views/customer/LogIn.php"
-                       class="btn-login">
-                        Đăng Nhập
-                    </a>
-
-                    <a href="/N2_Phat_Trien_Web/app/views/customer/SignUp.php"
-                       class="btn btn-register">
-                        Đăng Ký
-                    </a>
-
+                    <a href="../../../public/index.php?page=login" class="btn-login">Đăng Nhập</a>
+                    <a href="../../../public/index.php?page=signup" class="btn btn-register">Đăng Ký</a>
                 <?php endif; ?>
-
             </div>
-
         </div>
-
     </div>
 </nav>
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

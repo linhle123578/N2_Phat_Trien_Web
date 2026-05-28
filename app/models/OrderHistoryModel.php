@@ -46,11 +46,18 @@ class OrderHistoryModel
         
         $map = [
             'chờ xác nhận' => 'pending',
+            'pending'      => 'pending',
             'đã xác nhận'  => 'confirmed',
+            'confirmed'    => 'confirmed',
             'đang giao'    => 'shipping',
+            'shipping'     => 'shipping',
             'đã giao'      => 'delivered',
+            'delivered'    => 'delivered',
             'hoàn thành'   => 'completed',
-            'đã hủy'       => 'cancelled'
+            'completed'    => 'completed',
+            'đã hủy'       => 'cancelled',
+            'đã huỷ'       => 'cancelled',
+            'cancelled'    => 'cancelled'
         ];
 
         while ($row = mysqli_fetch_assoc($result)) {
@@ -82,24 +89,27 @@ class OrderHistoryModel
             mysqli_stmt_bind_param($stmt, 's', $customer_id);
         } else {
             $map_reverse = [
-                'pending'   => 'Chờ xác nhận',
-                'confirmed' => 'Đã xác nhận',
-                'shipping'  => 'Đang giao',
-                'delivered' => 'Đã giao',
-                'completed' => 'Hoàn thành',
-                'cancelled' => 'Đã hủy'
+                'pending'   => ['Chờ xác nhận', 'pending'],
+                'confirmed' => ['Đã xác nhận', 'confirmed'],
+                'shipping'  => ['Đang giao', 'shipping'],
+                'delivered' => ['Đã giao', 'delivered'],
+                'completed' => ['Hoàn thành', 'completed'],
+                'cancelled' => ['Đã hủy', 'Đã huỷ', 'cancelled']
             ];
-            $vn_tab = $map_reverse[$tab] ?? $tab;
-
+            $allowed_statuses = $map_reverse[$tab] ?? [$tab];
+            
+            $placeholders = implode(',', array_fill(0, count($allowed_statuses), '?'));
             $sql = "SELECT o.order_id, o.order_status, o.total_quantity_order,
                            o.created_at,
                            p.total_amount, p.payment_method
                     FROM `order` o
                     LEFT JOIN payment p ON o.order_id = p.order_id
-                    WHERE o.customer_id = ? AND o.order_status = ?
+                    WHERE o.customer_id = ? AND o.order_status IN ($placeholders)
                     ORDER BY o.created_at DESC";
+            
             $stmt = mysqli_prepare($this->conn, $sql);
-            mysqli_stmt_bind_param($stmt, 'ss', $customer_id, $vn_tab);
+            $types = 's' . str_repeat('s', count($allowed_statuses));
+            mysqli_stmt_bind_param($stmt, $types, $customer_id, ...$allowed_statuses);
         }
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -143,7 +153,7 @@ class OrderHistoryModel
     {
         $stmt = mysqli_prepare($this->conn,
             "SELECT created_at FROM `order`
-             WHERE order_id = ? AND (order_status = 'delivered' OR order_status = 'Hoàn thành' OR order_status = 'Đã giao') LIMIT 1");
+             WHERE order_id = ? AND (order_status = 'delivered' OR order_status = 'Hoàn thành' OR order_status = 'completed' OR order_status = 'Đã giao') LIMIT 1");
         mysqli_stmt_bind_param($stmt, 's', $order_id);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);

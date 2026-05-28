@@ -1,6 +1,7 @@
 <?php
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -76,16 +77,16 @@ mysqli_close($conn);
         <hr class="sidebar-divider my-0">
         <ul class="nav flex-column px-3 mt-3">
             <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-speedometer2 me-3"></i>Dashboard</a>
+                <a href="../../../app/controllers/admin/DashboardController.php" class="nav-link sidebar-link"><i class="bi bi-speedometer2 me-3"></i>Dashboard</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link active"><i class="bi bi-box-seam me-3"></i>Sản phẩm</a>
+                <a href="../../../app/views/admin/ProductAdmin.php" class="nav-link sidebar-link active"><i class="bi bi-box-seam me-3"></i>Sản phẩm</a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link sidebar-link"><i class="bi bi-list-ul me-3"></i>Danh mục</a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-cart me-3"></i>Đơn hàng</a>
+                <a href="../../../app/views/admin/ControlOrder.php" class="nav-link sidebar-link"><i class="bi bi-cart me-3"></i>Đơn hàng</a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link sidebar-link"><i class="bi bi-people me-3"></i>Khách hàng</a>

@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formData = new FormData(formLogIn);
 
-            fetch("../../controllers/customer/LogInController.php?action=login", {
+            fetch("../app/controllers/customer/LogInController.php?action=login", {
                 method: "POST",
                 body: formData
             })
@@ -108,8 +108,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === "success") {
                     serverAlert.className = "alert alert-success";
                     serverAlert.textContent = data.message;
-                    // Đăng nhập thành công -> Điều hướng về Trang chủ
-                    setTimeout(() => { window.location.href = "../../views/customer/TrangChu.php"; }, 1500);
+                    // Đăng nhập khách hàng -> Trang chủ
+                    setTimeout(() => { window.location.href = "index.php?page=TrangChu"; }, 1200);
+                } else if (data.status === "admin") {
+                    serverAlert.className = "alert alert-success";
+                    serverAlert.textContent = data.message;
+                    // Đăng nhập admin -> Dashboard admin
+                    setTimeout(() => { window.location.href = "../app/controllers/admin/DashboardController.php"; }, 1200);
                 } else {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
@@ -145,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btnForgot.disabled = true;
             btnForgot.textContent = "Đang gửi OTP...";
 
-            fetch("../../controllers/customer/LogInController.php?action=forgot", {
+            fetch("../app/controllers/customer/LogInController.php?action=forgot", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: "email=" + encodeURIComponent(email)
@@ -207,7 +212,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btnReset.disabled = true;
             btnReset.textContent = "Đang cập nhật...";
 
-            fetch("../../controllers/customer/LogInController.php?action=reset", {
+            fetch("../app/controllers/customer/LogInController.php?action=reset", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: `otp=${encodeURIComponent(otp)}&new_password=${encodeURIComponent(newPass)}&confirm_password=${encodeURIComponent(confirmPass)}`
