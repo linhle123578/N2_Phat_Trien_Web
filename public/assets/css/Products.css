@@ -15,77 +15,7 @@ body {
     min-height: 100vh;
 }
 
-/* NAVBAR */
-.custom-navbar {
-    background-color: #fefbe9;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-}
 
-.custom-navbar .navbar-brand img {
-    max-height: 45px;
-}
-
-.custom-navbar .nav-item {
-    margin: 0 15px;
-}
-
-.custom-navbar .nav-link {
-    color: #6c757d !important;
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.3s;
-}
-
-.custom-navbar .nav-link:hover {
-    color: #183a1d !important;
-}
-
-.custom-navbar .nav-item.active .nav-link {
-    color: #183a1d !important;
-    font-weight: 700; 
-}
-
-.nav-right-actions {
-    display: flex;
-    align-items: center;
-}
-
-.action-icon {
-    position: relative;
-    font-size: 1.2rem;
-    color: #183a1d;
-    margin: 0 12px;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-.action-icon:hover {
-    color: #2c5c2d;
-}
-
-.icon-badge {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    background-color: #f04e4e; 
-    color: white;
-    font-size: 0.65rem;
-    font-weight: 700;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.nav-divider {
-    height: 24px;
-    border-right: 1px solid #dcdcdc;
-    margin: 0 15px;
-}
 
 /* BANNER TÌM KIẾM */
 .search-banner {

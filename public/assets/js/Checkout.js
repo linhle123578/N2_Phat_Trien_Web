@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPlaceOrder.disabled   = true;
 
         // Đường dẫn absolute đến controller
-        fetch('/app/controllers/customer/CheckoutController.php', {
+        fetch('<?= BASE_URL ?>app/controllers/customer/CheckoutController.php', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(orderPayload)

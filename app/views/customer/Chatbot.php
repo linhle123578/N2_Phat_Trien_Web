@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     if (!$connected) {
 
         echo json_encode([
-            "reply" => "❌ Không thể kết nối hệ thống AI."
+            "reply" => "Không thể kết nối hệ thống AI."
         ], JSON_UNESCAPED_UNICODE);
 
         exit;
@@ -85,15 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
             cursor:pointer;
             font-weight:bold;
         '>
-            💬 Liên hệ quản lý website
+            Liên hệ quản lý website
         </button>
 
         <div id='contactAdminBox'
         style='display:none;margin-top:12px;'>
 
-            📞 Hotline: 1900 6868 <br>
-            📧 Email: cskh@farm2home.vn <br>
-            🕒 08:00 - 22:00 mỗi ngày
+            Hotline: 1900 6868 <br>
+            Email: cskh@farm2home.vn <br>
+            08:00 - 22:00 mỗi ngày
 
         </div>
         ";
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     ) {
 
         reply("
-            👋 Xin chào, mình là AI Farm2Home.<br><br>
+            Xin chào, mình là AI Farm2Home.<br><br>
 
             Mình có thể hỗ trợ:<br>
 
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$customer_id) {
 
-            reply("🔐 Bạn cần đăng nhập để xem đơn hàng.");
+            reply("Bạn cần đăng nhập để xem đơn hàng.");
         }
 
         $sql = "
@@ -152,18 +152,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$rs) {
 
-            reply("❌ SQL ERROR: " . mysqli_error($conn));
+            reply("SQL ERROR: " . mysqli_error($conn));
         }
 
         if (mysqli_num_rows($rs) <= 0) {
 
-            reply("📦 Bạn chưa có đơn hàng.");
+            reply("Bạn chưa có đơn hàng.");
         }
 
         $o = mysqli_fetch_assoc($rs);
 
         reply("
-            📦 Đơn hàng gần nhất:<br><br>
+            Đơn hàng gần nhất:<br><br>
 
             Mã đơn: <b>{$o['order_id']}</b><br>
             Trạng thái: <b>{$o['order_status']}</b><br>
@@ -183,7 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$customer_id) {
 
-            reply("🔐 Bạn cần đăng nhập.");
+            reply("Bạn cần đăng nhập.");
         }
 
         $sql = "
@@ -203,18 +203,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$rs) {
 
-            reply("❌ SQL ERROR: " . mysqli_error($conn));
+            reply("SQL ERROR: " . mysqli_error($conn));
         }
 
         if (mysqli_num_rows($rs) <= 0) {
 
-            reply("🚚 Không có thông tin vận chuyển.");
+            reply("Không có thông tin vận chuyển.");
         }
 
         $s = mysqli_fetch_assoc($rs);
 
         reply("
-            🚚 Thông tin vận chuyển:<br><br>
+            Thông tin vận chuyển:<br><br>
 
             Mã đơn: {$s['order_id']}<br>
             Trạng thái: <b>{$s['shipment_status']}</b><br>
@@ -251,15 +251,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$rs) {
 
-            reply("❌ SQL ERROR: " . mysqli_error($conn));
+            reply("SQL ERROR: " . mysqli_error($conn));
         }
 
         if (mysqli_num_rows($rs) <= 0) {
 
-            reply("📦 Chưa có dữ liệu bán hàng.");
+            reply("Chưa có dữ liệu bán hàng.");
         }
 
-        $html = "🔥 Top sản phẩm bán chạy:<br><br>";
+        $html = "Top sản phẩm bán chạy:<br><br>";
 
         while ($p = mysqli_fetch_assoc($rs)) {
 
@@ -274,9 +274,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
                     Đã bán: {$p['total_sold']} sản phẩm<br>
 
-                    💰 " . number_format($p['price']) . "đ / {$p['unit']}<br>
+                    " . number_format($p['price']) . "đ / {$p['unit']}<br>
 
-                    📝 {$p['product_description']}
+                    {$p['product_description']}
 
                 </div>
             ";
@@ -305,10 +305,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
         if (!$rs) {
 
-            reply("❌ SQL ERROR: " . mysqli_error($conn));
+            reply("SQL ERROR: " . mysqli_error($conn));
         }
 
-        $html = "🛒 AI đề xuất cho bạn:<br><br>";
+        $html = "AI đề xuất cho bạn:<br><br>";
 
         while ($p = mysqli_fetch_assoc($rs)) {
 
@@ -321,11 +321,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
                     <b>{$p['product_name']}</b><br>
 
-                    💰 " . number_format($p['price']) . "đ<br>
+                    " . number_format($p['price']) . "đ<br>
 
-                    📦 Tồn kho: {$p['stock']}<br>
+                    Tồn kho: {$p['stock']}<br>
 
-                    📝 {$p['product_description']}
+                    {$p['product_description']}
 
                 </div>
             ";
@@ -354,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
             if (str_contains($msg, $name)) {
 
                 reply("
-                    💰 {$p['product_name']}<br><br>
+                    {$p['product_name']}<br><br>
 
                     Giá:
                     <b>" . number_format($p['price']) . "đ</b><br>
@@ -389,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
                 if ($p['stock'] > 0) {
 
                     reply("
-                        ✅ {$p['product_name']} còn hàng.<br><br>
+                        {$p['product_name']} còn hàng.<br><br>
 
                         Tồn kho:
                         {$p['stock']}
@@ -398,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
                 } else {
 
                     reply("
-                        ❌ {$p['product_name']} đã hết hàng.
+                        {$p['product_name']} đã hết hàng.
                     ");
                 }
             }
@@ -410,7 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     ========================================================= */
 
     reply("
-        🤖 Xin lỗi, AI chưa hiểu yêu cầu này.<br><br>
+        Xin lỗi, AI chưa hiểu yêu cầu này.<br><br>
 
         Bạn có thể hỏi:<br>
 
@@ -561,7 +561,7 @@ if (!$allowChat) return;
 <div id="farm2home-chatbox">
 
     <div class="chat-header">
-        🤖 Farm2Home AI Assistant
+        Farm2Home Chatbot
     </div>
 
     <div class="chat-messages" id="chatMessages">
@@ -574,7 +574,7 @@ if (!$allowChat) return;
 
             <div class="bubble">
 
-                Xin chào 👋<br><br>
+                Xin chào <br><br>
 
                 Bạn có thể hỏi:<br><br>
 
@@ -697,7 +697,7 @@ function sendChat(){
 
             appendMessage(
                 'ai',
-                '❌ AI trả dữ liệu lỗi.'
+                'AI trả dữ liệu lỗi.'
             );
         }
 
@@ -709,7 +709,7 @@ function sendChat(){
 
         appendMessage(
             'ai',
-            '❌ Hệ thống AI đang bận.'
+            'Hệ thống AI đang bận.'
         );
 
     });
