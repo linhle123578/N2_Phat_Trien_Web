@@ -1,179 +1,200 @@
 <?php
-
 session_start();
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 /*
-========================================
-TIME ZONE
-========================================
+|--------------------------------------------------------------------------
+| BASE URL
+|--------------------------------------------------------------------------
 */
-date_default_timezone_set('Asia/Ho_Chi_Minh');
 
+define(
+    'BASE_URL',
+    rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\') . '/'
+);
+define('ROOT_PATH', dirname(__DIR__));
 /*
-========================================
-BASE URL
-========================================
+|--------------------------------------------------------------------------
+| PAGE
+|--------------------------------------------------------------------------
 */
-define('BASE_URL', '/N2_Phat_Trien_Web/public/');
 
-/*
-========================================
-LẤY PAGE
-========================================
-*/
 $page = $_GET['page'] ?? 'TrangChu';
 
 /*
-========================================
-DEBUG PAGE
-========================================
+|--------------------------------------------------------------------------
+| HEADER
+|--------------------------------------------------------------------------
 */
-// echo $page;
 
-/*
-========================================
-LOGOUT
-========================================
-*/
-if ($page == 'logout') {
+if(isset($_SESSION['admin'])){
 
-    session_destroy();
+    include ROOT_PATH . '/app/views/layouts/adminheader.php';
 
-    header("Location: index.php?page=login");
+}else{
 
-    exit;
+    include ROOT_PATH . '/app/views/layouts/header.php';
+
 }
-
 /*
-========================================
-CHECK LOGIN
-========================================
+|--------------------------------------------------------------------------
+| ROUTER
+|--------------------------------------------------------------------------
 */
-$isLoggedIn = isset($_SESSION['user']);
 
-/*
-========================================
-HEADER
-========================================
-*/
-if ($isLoggedIn) {
+switch($page){
 
-    include __DIR__ . '/../app/views/layouts/header.php';
-
-} else {
-
-    include __DIR__ . '/../app/views/layouts/loginheader.php';
-}
-
-/*
-========================================
-ROUTER
-========================================
-*/
-switch ($page) {
+    /*
+    |--------------------------------------------------------------------------
+    | CUSTOMER
+    |--------------------------------------------------------------------------
+    */
 
     case 'TrangChu':
-
-        include __DIR__ . '/../app/views/customer/TrangChu.php';
-
+        include ROOT_PATH . '/app/views/customer/TrangChu.php';
     break;
 
-    case 'products':
-
-        include __DIR__ . '/../app/views/customer/Products.php';
-
+    case 'Products':
+    include ROOT_PATH . '/app/controllers/customer/ProductController.php';
+break;
     break;
 
-    case 'productdetail':
-
-        include __DIR__ . '/../app/views/customer/ProductDetail.php';
-
+    case 'ProductDetail':
+        include ROOT_PATH . '/app/views/customer/ProductDetail.php';
     break;
 
-    case 'cart':
-
-        include __DIR__ . '/../app/views/customer/cart.php';
-
+    case 'Cart':
+        include ROOT_PATH . '/app/views/customer/cart.php';
     break;
 
-    case 'checkout':
-
-        include __DIR__ . '/../app/views/customer/Checkout.php';
-
+    case 'Checkout':
+        include ROOT_PATH . '/app/views/customer/Checkout.php';
     break;
 
-    case 'login':
-
-        include __DIR__ . '/../app/views/customer/LogIn.php';
-
+    case 'LogIn':
+        include ROOT_PATH . '/app/views/customer/LogIn.php';
     break;
 
-    case 'signup':
-
-        include __DIR__ . '/../app/views/customer/SignUp.php';
-
+    case 'SignUp':
+        include ROOT_PATH . '/app/views/customer/SignUp.php';
     break;
 
-    case 'profile':
-
-        include __DIR__ . '/../app/views/customer/ProfileCustomer.php';
-
+    case 'Logout':
+        include ROOT_PATH . '/app/views/customer/logout.php';
     break;
 
-    case 'orders':
-
-        include __DIR__ . '/../app/views/customer/OrderHistory.php';
-
+    case 'ProfileCustomer':
+        include ROOT_PATH . '/app/views/customer/ProfileCustomer.php';
     break;
 
-    case 'orderdetail':
-
-        include __DIR__ . '/../app/views/customer/OrderDetail.php';
-
+    case 'OrderHistory':
+        include ROOT_PATH . '/app/views/customer/OrderHistory.php';
     break;
 
-    case 'return':
-
-        include __DIR__ . '/../app/views/customer/ReturnRequest.php';
-
+    case 'OrderDetail':
+        include ROOT_PATH . '/app/views/customer/OrderDetail.php';
     break;
 
-    case 'momo':
-
-        include __DIR__ . '/../app/views/customer/MomoPayment.php';
-
+    case 'ReturnRequest':
+        include ROOT_PATH . '/app/views/customer/ReturnRequest.php';
     break;
+
+    case 'MomoPayment':
+        include ROOT_PATH . '/app/views/customer/MomoPayment.php';
+    break;
+
+    case 'Chatbot':
+        include ROOT_PATH . '/app/views/customer/Chatbot.php';
+    break;
+
+    case 'ReadMeVC':
+        include ROOT_PATH . '/app/views/customer/ReadMeVC.php';
+    break;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    case 'Dashboard':
+        include ROOT_PATH . '/app/views/admin/Dashboard.php';
+    break;
+
+    case 'ProductAdmin':
+        include ROOT_PATH . '/app/views/admin/ProductAdmin.php';
+    break;
+
+    case 'ControlOrder':
+        include ROOT_PATH . '/app/views/admin/ControlOrder.php';
+    break;
+
+    case 'ProfileAdmin':
+        include ROOT_PATH . '/app/views/admin/ProfileAdmin.php';
+    break;
+
+    case 'ProductController':
+    include ROOT_PATH . '/app/controllers/customer/ProductController.php';
+break;
+
+case 'CartController':
+    include ROOT_PATH . '/app/controllers/customer/CartController.php';
+break;
+
+case 'CheckoutController':
+    include ROOT_PATH . '/app/controllers/customer/CheckoutController.php';
+break;
+
+case 'LoginController':
+    include ROOT_PATH . '/app/controllers/customer/LoginController.php';
+break;
+
+case 'LogoutController':
+    include ROOT_PATH . '/app/controllers/customer/LogoutController.php';
+break;
+
+case 'OrderHistoryController':
+    include ROOT_PATH . '/app/controllers/customer/OrderHistoryController.php';
+break;
+
+case 'ProductDetailController':
+    include ROOT_PATH . '/app/controllers/customer/ProductDetailController.php';
+break;
+
+case 'ReturnRequestController':
+    include ROOT_PATH . '/app/controllers/customer/ReturnRequestController.php';
+break;
+
+case 'SignUpController':
+    include ROOT_PATH . '/app/controllers/customer/SignUpController.php';
+break;
+
+case 'MomoPaymentController':
+    include ROOT_PATH . '/app/controllers/customer/MomoPaymentController.php';
+break;
+
+case 'DashboardController':
+    include ROOT_PATH . '/app/controllers/admin/DashboardController.php';
+break;
+
+case 'ProductAdminController':
+    include ROOT_PATH . '/app/controllers/admin/ProductAdminController.php';
+break;
+
+case 'ControlOrderController':
+    include ROOT_PATH . '/app/controllers/admin/ControlOrderController.php';
+break;
+
+case 'ProfileAdminController':
+    include ROOT_PATH . '/app/controllers/admin/ProfileAdminController.php';
+break;
+    /*
+    |--------------------------------------------------------------------------
+    | DEFAULT
+    |--------------------------------------------------------------------------
+    */
 
     default:
-
-        echo "<h1>404 - Page Not Found</h1>";
-
+        include ROOT_PATH . '/app/views/customer/TrangChu.php';
     break;
 }
-
-/*
-========================================
-CHATBOT
-========================================
-*/
-if ($page == 'TrangChu') {
-
-    $chatbot = __DIR__ . '/../app/views/customer/Chatbot.php';
-
-    if (file_exists($chatbot)) {
-
-        include $chatbot;
-    }
-}
-
-/*
-========================================
-FOOTER
-========================================
-*/
-include __DIR__ . '/../app/views/layouts/footer.php';
-
-?>

@@ -187,26 +187,9 @@ function pageUrl($p, $search, $filter) {
 
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon"><span class="material-symbols-outlined">eco</span></div>
-        <div class="logo-text">Farm2Home<small>Admin Dashboard</small></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:3px">
-        <button class="nav-btn"><span class="material-symbols-outlined">dashboard</span>Dashboard</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">bar_chart</span>Thống kê</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">storefront</span>Sản phẩm</button>
-        <button class="nav-btn active">
-            <span class="material-symbols-outlined">receipt_long</span>Đơn hàng
-            <?php if($pendingReturns > 0): ?>
-            <span class="notif-dot"><?= $pendingReturns ?></span>
-            <?php endif; ?>
-        </button>
-        <button class="nav-btn"><span class="material-symbols-outlined">person</span>Tài khoản</button>
-        <button class="nav-btn"><span class="material-symbols-outlined">settings</span>Cài đặt</button>
-    </div>
-    <div class="sidebar-footer">
-        <button class="nav-btn"><span class="material-symbols-outlined">logout</span>Đăng xuất</button>
-    </div>
+     <aside class="sidebar text-white">
+        <?php include __DIR__ . '/../layouts/adminsidebar.php'; ?>
+    </aside>
 </div>
 
 <!-- MAIN -->

@@ -60,43 +60,7 @@ mysqli_close($conn);
 
     <!-- SIDEBAR -->
     <aside class="sidebar text-white">
-        <div class="sidebar-brand d-flex align-items-center gap-3 px-4 py-4">
-            <img src="../../../Media/Logo-trang.png" alt="Farm2Home" class="sidebar-logo"
-                 onerror="this.src='https://placehold.co/120x36?text=Farm2Home'">
-        </div>
-        <hr class="sidebar-divider my-0">
-        <div class="sidebar-user d-flex align-items-center gap-3 px-4 py-3">
-            <img src="../../../Media/user_1.jpg" alt="Admin" class="admin-avatar"
-                 onerror="this.src='https://placehold.co/36x36?text=A'">
-            <div>
-                <div class="fw-semibold" style="font-size:.85rem;">Admin</div>
-                <div class="text-white-50" style="font-size:.7rem;">Quản trị viên</div>
-            </div>
-        </div>
-        <hr class="sidebar-divider my-0">
-        <ul class="nav flex-column px-3 mt-3">
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-speedometer2 me-3"></i>Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link active"><i class="bi bi-box-seam me-3"></i>Sản phẩm</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-list-ul me-3"></i>Danh mục</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-cart me-3"></i>Đơn hàng</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-people me-3"></i>Khách hàng</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link sidebar-link"><i class="bi bi-bar-chart me-3"></i>Báo cáo</a>
-            </li>
-            <li class="nav-item mt-4">
-                <a href="#" class="nav-link sidebar-link" style="opacity:.55;"><i class="bi bi-gear me-3"></i>Cài đặt</a>
-            </li>
-        </ul>
+        <?php include __DIR__ . '/../layouts/adminsidebar.php'; ?>
     </aside>
 
     <!-- MAIN CONTENT -->

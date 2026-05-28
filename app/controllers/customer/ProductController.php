@@ -45,7 +45,7 @@ class ProductController {
         $end_product = min($offset + $limit, $total_products);
 
         // Bao bọc view giao diện vào
-        require_once __DIR__ . '../../../views/customer/Products.php';
+        require_once __DIR__ . '/../../views/customer/Products.php';
     }
 
     // Hành động API AJAX: Thêm vào giỏ hàng kiểm tra Login bảo mật

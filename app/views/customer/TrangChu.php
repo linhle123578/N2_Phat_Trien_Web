@@ -1,13 +1,4 @@
 <?php
-session_start();
-if (isset($_SESSION['customer_id'])) {
-
-    include __DIR__ . '/../layouts/loginheader.php';
-
-} else {
-
-    include __DIR__ . '/../layouts/header.php';
-}
 
 /*
 |--------------------------------------------------------------------------
@@ -119,8 +110,8 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom active">
 
                 <img class="hero-bg"
-     src="/N2_Phat_Trien_Web/Media/canh_dong_3.jpg"
-     alt="">
+                     src="<?= BASE_URL ?>Media/canh_dong_3.jpg"
+                     alt="">
 
                 <div class="hero-overlay">
 
@@ -146,7 +137,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom">
 
                 <img class="hero-bg"
-                     src="/N2_Phat_Trien_Web/Media/canh_dong_2.jpg"
+                     src="<?= BASE_URL ?>Media/canh_dong_2.jpg"
                      alt="">
 
                 <div class="hero-overlay">
@@ -198,12 +189,12 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-small-imgs">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_1.jpg"
+                        <img src="<?= BASE_URL ?>Media/canh_dong_1.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_5.jpg"
+                        <img src="<?= BASE_URL ?>Media/canh_dong_5.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
@@ -212,7 +203,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-large-img">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_4.jpg"
+                        <img src="<?= BASE_URL ?>Media/canh_dong_4.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-lg"
                              style="height: 495px; object-fit: cover; width: 100%;">
@@ -283,12 +274,10 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                 </span>
 
-                                <img
-    src="/N2_Phat_Trien_Web/Media/<?= htmlspecialchars($product['product_image']) ?>"
-    alt="<?= htmlspecialchars($product['product_name']) ?>"
-    style="width:100%; height:250px; object-fit:cover;"
->
-
+                               <img src="<?= BASE_URL ?>../Media/<?= htmlspecialchars($product['product_image']) ?>"
+                                alt="<?= htmlspecialchars($product['product_name']) ?>">
+                                    class="img-fluid"
+                                    style="width:100%; height:100%; object-fit:cover;">
                             </div>
 
                             <div class="p-4 text-left">

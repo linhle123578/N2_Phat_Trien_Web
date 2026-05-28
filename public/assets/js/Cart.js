@@ -218,11 +218,11 @@ if (checkoutForm) {
         const checkedItems = document.querySelectorAll('.item-checkbox:checked');
         
         // Chặn submit nếu chưa chọn món nào
-        if (checkedItems.length === 0) {
+        /*if (checkedItems.length === 0) {
             e.preventDefault();
             alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!');
             return;
-        }
+        }*/
 
         // Lặp qua từng món được chọn, tạo thẻ input ẩn nhét vào form
         checkedItems.forEach(checkbox => {
@@ -249,4 +249,5 @@ if (checkoutForm) {
         
         // Sau khi nhét đủ input ẩn vào DOM, form sẽ tự động submit đi tiếp
     });
+
 }

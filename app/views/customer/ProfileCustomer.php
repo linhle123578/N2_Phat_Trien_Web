@@ -297,7 +297,7 @@ function build_full_address(array $addr): string {
 
 //═══════════════════════════════════════════════════════════════
 ob_start();
-include '../../../app/views/layouts/loginheader.php';
+//include '../../../app/views/layouts/loginheader.php';
 $header_output = ob_get_clean();
 
 $extra_head = '
@@ -305,13 +305,14 @@ $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/N2_Phat_Trien_Web/public/assets/css/ProfileCustomer.css">
 ';
 $header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
 
 echo $header_output;
 ?>
 
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/ProfileCustomer.css">
 <div class="container" style="padding-top: 80px;">
 
     <!-- Breadcrumb -->
@@ -330,13 +331,13 @@ echo $header_output;
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li class="active">
-                        <a href="#">
+                        <a href="<?= BASE_URL ?>index.php?page=ProfileCustomer">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li>
-                        <a href="../../../app/views/customer/OrderHistory.php">
+                        <a href="<?= BASE_URL ?>index.php?page=OrderHistory">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($customer['orders'] > 0): ?>
@@ -347,7 +348,7 @@ echo $header_output;
                 </ul>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-logout">
-                    <a href="#" id="btnLogout">
+                    <a href="<?= BASE_URL ?>index.php?page=Logout" id="btnLogout">
                         <i class="bi bi-box-arrow-right"></i>
                         Đăng xuất
                     </a>
@@ -647,7 +648,7 @@ echo $header_output;
 
     </div><!-- /.profile-layout -->
 
-<?php include '../../../app/views/layouts/footer.php'; ?>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
@@ -681,7 +682,7 @@ echo $header_output;
         <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">Bạn có chắc muốn đăng xuất khỏi tài khoản không?</div>
         <div style="display:flex;gap:10px;">
             <button id="btnLogoutCancel" style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;cursor:pointer;font-family:inherit;transition:background .15s;">Huỷ</button>
-            <a href="../../../app/views/customer/logout.php" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
+            <a href="<?= BASE_URL ?>index.php?page=Logout" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
         </div>
     </div>
 </div>

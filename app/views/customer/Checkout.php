@@ -37,8 +37,8 @@
     <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="/public/assets/css/layout.css">
-    <link rel="stylesheet" href="/public/assets/css/checkout.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/Checkout.css">
 
     <script>
         const DB_SUBTOTAL = <?= $subtotal ?? 0 ?>;
@@ -238,6 +238,6 @@
 
     <!-- [FIX 3] Bootstrap JS cũng dùng unpkg -->
     <script src="https://unpkg.com/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/public/assets/js/checkout.js"></script>
+    <script src="<?= BASE_URL ?>assets/js/Checkout.js"></script>
 </body>
 </html>

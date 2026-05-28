@@ -1,11 +1,12 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     // 1. FIX SẮP XẾP DROP DOWN: Chuyển hướng khớp với tệp Products.php đang chạy trực tiếp
     const sortSelect = document.getElementById("sort-select");
     if (sortSelect) {
         sortSelect.addEventListener("change", function () {
             const selectedSort = this.value;
-            let targetUrl = `../../../app/views/customer/Products.php?sort=${selectedSort}`;
-            
+            // let targetUrl = `../../../app/views/customer/Products.php?sort=${selectedSort}`;
+            let targetUrl = `index.php?page=Products&sort=${selectedSort}`;
             if (typeof currentCategory !== 'undefined' && currentCategory) {
                 targetUrl += `&category=${currentCategory}`;
             }
@@ -31,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
             formData.append('product_id', productId);
 
             // Đường dẫn tương đối từ thư mục views/customer/ sang controllers/customer/
-            fetch('../../controllers/customer/ProductController.php?action=add_to_cart', {
+            fetch(`${BASE_URL}index.php?page=CartController&action=add`, {
                 method: 'POST',
                 body: formData
             })
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === 'not_logged_in') {
                     // Xử lý khi CHƯA đăng nhập: Hiện thông báo và đẩy sang trang đăng nhập
                     alert(data.message);
-                    window.location.href = 'login.php'; 
+                    window.location.href = `${BASE_URL}index.php?page=LogIn`; 
                 } else if (data.status === 'success') {
                     // Xử lý khi ĐÃ đăng nhập: Thông báo thành công và tăng số thực tế trên icon Navbar
                     alert(`Đã thêm thành công sản phẩm "${productTitle}" vào giỏ hàng hệ thống!`);

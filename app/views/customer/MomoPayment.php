@@ -1,6 +1,6 @@
 <?php
 ob_start();
-include __DIR__ . '/../layouts/loginheader.php';
+include __DIR__ . '/../layouts/header.php';
 $raw_header = ob_get_clean();
 if (preg_match('/<(nav|header)[^>]*>.*?<\/\1>/is', $raw_header, $m)) {
     $clean_header = $m[0];
@@ -8,14 +8,14 @@ if (preg_match('/<(nav|header)[^>]*>.*?<\/\1>/is', $raw_header, $m)) {
     $clean_header = $raw_header;
 }
 
-ob_start();
+/*ob_start();
 include __DIR__ . '/../layouts/footer.php';
 $raw_footer = ob_get_clean();
 if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
     $clean_footer = $m[0];
 } else {
     $clean_footer = $raw_footer;
-}
+}*/
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -28,8 +28,8 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/public/assets/css/layout.css">
-    <link rel="stylesheet" href="/public/assets/css/Momo.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/Momo.css">
 
     <script>
         const MOMO_ORDER_DATA = <?= json_encode([
@@ -176,7 +176,6 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
         </div>
     </main>
 
-    <?= $clean_footer ?>
 
     <!-- Success Modal -->
     <div class="momo-success-modal" id="momo-success-modal">

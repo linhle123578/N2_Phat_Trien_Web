@@ -1,13 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['customer_id'])) {
-    header("Location: /N2_Phat_Trien_Web/app/views/customer/LogIn.php");
+    header("Location: " . BASE_URL . "index.php?page=LogIn");
     exit();
 }
 
-include __DIR__ . '/../layouts/loginheader.php';
-require_once "../../models/CartModel.php";
+//include __DIR__ . '/../layouts/loginheader.php';
+require_once __DIR__ . '/../../models/CartModel.php';
 
 
 
@@ -22,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 
 // 2. LẤY DỮ LIỆU TỪ DB 
 if (!isset($_SESSION['customer_id'])) {
-    header("Location:/N2_Phat_Trien_Web/app/views/customer/LogIn.php");
+    header("Location: " . BASE_URL . "index.php?page=LogIn");
     exit();
 }
 $customer_id = $_SESSION['customer_id'];
@@ -83,7 +85,7 @@ $clean_footer = $footer_matches[0] ?? '';
               <div class="text-center py-5">
                 <i class="fas fa-shopping-cart fa-3x mb-3" style="color:#ccc;"></i>
                 <p style="color:#6c757d; font-size:1rem;">Giỏ hàng của bạn đang trống.</p>
-                <a href="TrangChu.php" class="back-link">
+                <a href="<?= BASE_URL ?>index.php?page=TrangChu" class="back-link">
                   <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
                 </a>
               </div>
@@ -171,7 +173,7 @@ $clean_footer = $footer_matches[0] ?? '';
                 <span class="summary-total-value" id="summary-total">30.000đ</span>
               </div>
 
-              <form id="checkout-form" action="/N2_Phat_Trien_Web/app/controllers/customer/CartController.php" method="POST">
+              <form id="checkout-form" action="<?= BASE_URL ?>index.php?page=Checkout" method="POST">
                 <input type="hidden" name="action" value="dat_hang">
                 <div id="selected-inputs"></div>
                 <button type="submit" class="btn-checkout">Tiến hành thanh toán</button>
@@ -194,7 +196,7 @@ $clean_footer = $footer_matches[0] ?? '';
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/N2_Phat_Trien_Web/public/assets/js/cart.js"></script>
+  <script src="<?= BASE_URL ?>assets/js/Cart.js"></script>
   
   <script>
   document.getElementById('checkout-form').addEventListener('submit', function(e) {

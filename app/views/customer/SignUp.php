@@ -27,8 +27,8 @@ $clean_footer = $m_foot[0] ?? '';
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../public/assets/css/layout.css">
-  <link rel="stylesheet" href="../../../public/assets/css/SignUp.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/SignUp.css">
 </head>
 <body class="signup-page">
 
