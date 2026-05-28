@@ -95,35 +95,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formData = new FormData(formLogIn);
 
-            fetch("../../controllers/customer/LogInController.php?action=login", {
-                method: "POST",
-                body: formData
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Lỗi kết nối Server.");
-                return res.json();
-            })
-            .then(data => {
-                serverAlert.classList.remove("d-none");
-                if (data.status === "success") {
-                    serverAlert.className = "alert alert-success";
-                    serverAlert.textContent = data.message;
-                    // Đăng nhập thành công -> Điều hướng về Trang chủ
-                    setTimeout(() => { window.location.href = "../../views/customer/TrangChu.php"; }, 1500);
-                } else {
-                    serverAlert.className = "alert alert-danger";
-                    serverAlert.textContent = data.message;
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = "Đăng nhập";
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                serverAlert.className = "alert alert-danger";
-                serverAlert.textContent = "Không thể kết nối với hệ thống Cloud.";
-                submitBtn.disabled = false;
-                submitBtn.textContent = "Đăng nhập";
-            });
+           fetch(BASE_URL + "app/controllers/customer/LogInController.php?action=login", {
+    method: "POST",
+    body: formData
+})
+.then(async res => {
+
+    console.log("STATUS:", res.status);
+
+    const text = await res.text();
+
+    console.log("RAW RESPONSE:", text);
+
+    return JSON.parse(text);
+})
+
+.then(data => {
+    console.log(data);
+
+    serverAlert.classList.remove("d-none");
+
+    if (data.status === "success") {
+        serverAlert.className = "alert alert-success";
+        serverAlert.textContent = data.message;
+
+        setTimeout(() => {
+            window.location.href = BASE_URL + "index.php?page=TrangChu";
+        }, 1500);
+
+    } else {
+        serverAlert.className = "alert alert-danger";
+        serverAlert.textContent = data.message;
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Đăng nhập";
+    }
+})
+.catch(err => {
+    console.error(err);
+
+    serverAlert.className = "alert alert-danger";
+    serverAlert.textContent = "Không thể kết nối tới server.";
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Đăng nhập";
+});
         });
     }
 
@@ -145,7 +161,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btnForgot.disabled = true;
             btnForgot.textContent = "Đang gửi OTP...";
 
-            fetch("../../controllers/customer/LogInController.php?action=forgot", {
+            fetch(BASE_URL + "app/controllers/customer/LogInController.php?action=forgot", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: "email=" + encodeURIComponent(email)
@@ -207,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
             btnReset.disabled = true;
             btnReset.textContent = "Đang cập nhật...";
 
-            fetch("../../controllers/customer/LogInController.php?action=reset", {
+            fetch(BASE_URL + "app/controllers/customer/LogInController.php?action=reset", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 body: `otp=${encodeURIComponent(otp)}&new_password=${encodeURIComponent(newPass)}&confirm_password=${encodeURIComponent(confirmPass)}`

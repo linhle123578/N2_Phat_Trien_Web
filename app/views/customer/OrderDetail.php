@@ -165,7 +165,7 @@ $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/assets/css/OrderDetail.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/OrderDetail.css">
 ';
 //$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
 //echo $header_output;
@@ -174,9 +174,9 @@ $extra_head = '
 <div class="container" style="padding-top:80px;">
 
     <nav class="profile-breadcrumb">
-        <a href="../../../index.php">Trang chủ</a>
+        <a href="<?= BASE_URL ?>index.php">Trang chủ</a>
         <span class="sep">›</span>
-        <a href="OrderHistory.php">Lịch sử đơn hàng</a>
+        <a href="<?= BASE_URL ?>app/views/customer/OrderHistory.php">Lịch sử đơn hàng</a>
         <span class="sep">›</span>
         <span class="current"><?= e($order_id) ?></span>
     </nav>
@@ -189,13 +189,13 @@ $extra_head = '
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="../../../app/views/customer/ProfileCustomer.php">
+                        <a href="<?= BASE_URL ?>app/views/customer/ProfileCustomer.php">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li class="active">
-                        <a href="OrderHistory.php">
+                        <a href="<?= BASE_URL ?>app/views/customer/OrderHistory.php">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($order_count > 0): ?>
@@ -219,7 +219,7 @@ $extra_head = '
 
             <!-- Nút quay lại + tiêu đề -->
             <div class="od-topbar">
-                <a href="OrderHistory.php" class="btn-back">
+                <a href="<?= BASE_URL ?>app/views/customer/OrderHistory.php" class="btn-back">
                     <i class="bi bi-arrow-left me-1"></i>Quay lại
                 </a>
                 <span class="oh-status-badge <?= status_class($order['order_status']) ?>">

@@ -12,13 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 👉 DEMO CUSTOMER LOGIN (tạm thời)
     if (!empty($identity) && !empty($password)) {
 
-        $_SESSION['role'] = 'customer';
-        $_SESSION['user'] = [
-            'name' => $identity,
-            'identity' => $identity
-        ];
+      $_SESSION['role'] = 'customer';
 
-        header("Location: /N2_Phat_Trien_Web/app/views/customer/TrangChu.php");
+$_SESSION['customer_id'] = 1;
+$_SESSION['customer_name'] = $identity;
+
+$_SESSION['user'] = [
+    'name' => $identity,
+    'identity' => $identity
+];
+
+        header("Location: " . BASE_URL . "index.php?page=TrangChu");
         exit();
     }
 
@@ -26,19 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo "Sai tài khoản hoặc mật khẩu";
     exit();
 }
-
-
-ob_start();
-include_once '../layouts/header.php';
-$raw_header = ob_get_clean();
-preg_match('/<nav.*?>.*?<\/nav>/is', $raw_header, $m_head);
-$clean_header = $m_head[0] ?? '';
-
-ob_start();
-include_once '../layouts/footer.php';
-$raw_footer = ob_get_clean();
-preg_match('/<footer.*?>.*?<\/footer>/is', $raw_footer, $m_foot);
-$clean_footer = $m_foot[0] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -50,13 +41,11 @@ $clean_footer = $m_foot[0] ?? '';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-      <link rel="stylesheet" href="../../../public/assets/css/layout.css">
-    <link rel="stylesheet" href="../../../public/assets/css/LogIn.css">
+     <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/LogIn.css">
 </head>
 <body>
-
-  <?= $clean_header ?>
-
+<?php include __DIR__ . '/../layouts/header.php'; ?>
   <div class="login-body-content">
       <div class="login-container-wrapper">
           <div class="container">
@@ -183,10 +172,9 @@ $clean_footer = $m_foot[0] ?? '';
       </div>
   </div>
 
-  <?= $clean_footer ?>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../../../public/assets/js/LogIn.js"></script>
+  <!-- <script src="<?= BASE_URL ?>assets/js/LogIn.js"></script> -->
 </body>
 </html>

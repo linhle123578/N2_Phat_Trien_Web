@@ -166,4 +166,14 @@ class OrderHistoryController
     {
         return htmlspecialchars($s, ENT_QUOTES, 'UTF-8');
     }
+    private function redirectWithError(string $page, string $msg): void
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $_SESSION['error'] = $msg;
+    header("Location: " . BASE_URL . "index.php?page={$page}");
+    exit;
+}
 }

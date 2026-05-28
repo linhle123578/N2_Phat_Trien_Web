@@ -193,35 +193,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 
 <div class="pa-shell">
-
-    <!-- ══════════════════════════════════════════════
-         SIDEBAR
-    ═══════════════════════════════════════════════ -->
-    <aside class="pa-sidebar" id="paSidebar">
-        <div class="pa-brand">
-            <img src="../../../Media/Logo-trang.png" alt="Farm2Home Logo">
-        </div>
-
-        <!-- Admin mini card in sidebar -->
-        <div class="pa-sidebar-user">
-            <img src="../../../Media/<?= htmlspecialchars($admin['avatar'] ?? 'user_1.jpg') ?>"
-                 alt="avatar"
-                 onerror="this.src='../../../Media/user_1.jpg'">
-            <div>
-                <div class="pa-su-name"><?= htmlspecialchars($admin['full_name']) ?></div>
-                <div class="pa-su-role"><?= htmlspecialchars($admin['role'] ?? 'Quản trị viên') ?></div>
-            </div>
-        </div>
-
-        <nav class="pa-nav">
-            <a href="#" class="pa-link"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-bar-chart-line"></i><span>Thống kê</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-box-seam"></i><span>Sản phẩm</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-cart-check"></i><span>Đơn hàng</span></a>
-            <a href="#" class="pa-link active"><i class="bi bi-person-badge"></i><span>Tài khoản</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-gear"></i><span>Cài đặt</span></a>
-            <a href="#" class="pa-link pa-link-logout"><i class="bi bi-box-arrow-left"></i><span>Đăng xuất</span></a>
-        </nav>
+ <aside class="sidebar text-white">
+        <?php include __DIR__ . '/../layouts/adminsidebar.php'; ?>
     </aside>
 
     <!-- ══════════════════════════════════════════════

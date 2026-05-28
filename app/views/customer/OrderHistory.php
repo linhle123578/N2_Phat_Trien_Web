@@ -1,6 +1,6 @@
 <?php
-ob_start();
-include __DIR__ . '/../layouts/loginheader.php';
+//ob_start();
+//include __DIR__ . '/../layouts/header.php';
 if (!isset($tab)) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -29,10 +29,10 @@ if (!isset($tab)) {
     }
 
     mysqli_close($conn);
-    exit;
+    //exit;
 }
 
-use function OrderHistoryController as OH;
+//use function OrderHistoryController as OH;
 
 // Alias helpers
 $e     = fn($s) => OrderHistoryController::e((string)$s);
@@ -44,43 +44,56 @@ $price = fn($n) => OrderHistoryController::formatPrice((float)$n);
 $BASE_URL = '/n2_phat_trien_web';
 
 // ── Header ─────────────────────────────────────────────
-ob_start();
+/*ob_start();
 include '../../../app/views/layouts/loginheader.php';
-$header_output = ob_get_clean();
+$header_output = ob_get_clean();*/
+//include __DIR__ . '/../layouts/header.php';
+?>
+<?php
+include __DIR__ . '/../layouts/header.php';
+?>
 
-$extra_head = '
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lịch sử đơn hàng</title>
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/assets/css/OrderHistory.css">
-';
-$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
-echo $header_output;
-?>
+
+    <!-- CSS của bạn -->
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/OrderHistory.css">
+</head>
+
 
 <div class="container" style="padding-top:80px;">
 
     <nav class="profile-breadcrumb">
-        <a href="../../../index.php">Trang chủ</a>
+        <a href="<?= BASE_URL ?>index.php">Trang chủ</a>
         <span class="sep">›</span>
         <span class="current">Lịch sử đơn hàng</span>
     </nav>
 
     <div class="profile-layout">
-
+    <?php $counts = $counts ?? ['all' => 0]; ?>
         <!-- ── SIDEBAR ──────────────────────────────── -->
         <aside class="profile-sidebar">
             <div class="sidebar-card">
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="../../../app/views/customer/ProfileCustomer.php">
+                        <a href="<?= BASE_URL ?>index.php?page=ProfileCustomer">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li class="active">
-                        <a href="#">
+                        <a href="<?= BASE_URL ?>index.php?page=OrderHistory">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($counts['all'] > 0): ?>
@@ -91,7 +104,7 @@ echo $header_output;
                 </ul>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-logout">
-                    <a href="#" id="btnLogout">
+                    <a href="<?= BASE_URL ?>index.php?page=Logout" id="btnLogout">
                         <i class="bi bi-box-arrow-right"></i>
                         Đăng xuất
                     </a>
@@ -121,6 +134,8 @@ echo $header_output;
                     'completed' => 'Hoàn thành',
                     'cancelled' => 'Đã huỷ',
                 ];
+                $tab = $tab ?? 'all';
+                $counts = $counts ?? [];
                 foreach ($tab_labels as $key => $lbl):
                     $active = $tab === $key ? 'active' : '';
                     $cnt = $counts[$key] ?? 0;
@@ -203,7 +218,7 @@ echo $header_output;
                                 <?= $price((float)$item['price'] * (int)$item['quantity']) ?>
                             </div>
                             <?php if ($status === 'delivered' || $status === 'Đã giao' || $status === 'Hoàn thành'): ?>
-                            <a href="../../../app/views/customer/ProductDetail.php?id=<?= $e($item['product_id']) ?>"
+                            <a href="<?= BASE_URL ?>index.php?page=ProductDetail&id=<?= $e($item['product_id']) ?>"
                                class="btn-review">
                                 <i class="bi bi-star me-1"></i>Đánh giá
                             </a>
@@ -282,7 +297,7 @@ echo $header_output;
     </div><!-- /.profile-layout -->
 </div>
 
-<?php include '../../../app/views/layouts/footer.php'; ?>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/OrderHistory.js"></script>
@@ -309,7 +324,7 @@ echo $header_output;
                     style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;
                            background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;
                            cursor:pointer;font-family:inherit;">Huỷ</button>
-            <a href="../../../app/views/customer/logout.php"
+            <a href="<?= BASE_URL ?>index.php?page=Logout"
                style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;
                       color:#fff;font-weight:700;font-size:0.9rem;text-decoration:none;
                       display:flex;align-items:center;justify-content:center;">Đăng xuất</a>

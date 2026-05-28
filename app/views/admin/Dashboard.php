@@ -28,29 +28,9 @@ $analytics = $analytics ?? [
 <body>
 
     <div class="admin-sidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-seedling mr-2"></i> FARM2HOME ADMIN
-        </div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item active">
-                <a href="#"><i class="fas fa-th-large"></i> Dashboard</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-box"></i> Quản lý sản phẩm</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-users"></i> Quản lý khách hàng</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-folder"></i> Danh mục nông sản</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="#"><i class="fas fa-cog"></i> Cấu hình hệ thống</a>
-            </li>
-        </ul>
+         <aside class="sidebar text-white">
+        <?php include __DIR__ . '/../layouts/adminsidebar.php'; ?>
+    </aside>
     </div>
 
     <div class="admin-main-content">

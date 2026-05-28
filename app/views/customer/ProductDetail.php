@@ -3,15 +3,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// HEADER
-if (isset($_SESSION['customer_id'])) {
 
-    include __DIR__ . '/../layouts/loginheader.php';
-
-} else {
-
-    include __DIR__ . '/../layouts/header.php';
-}
 
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
@@ -77,15 +69,17 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="../../../public/assets/css/ProductDetail.css" rel="stylesheet"/></head>
+    <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+    <link href="<?= BASE_URL ?>assets/css/ProductDetail.css" rel="stylesheet">
+</head>
 <body>
 
 
 <div class="breadcrumb-section">
     <div class="container">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="Trang_chu.html">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="Sản phẩm.html">Sản phẩm</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>index.php?page=TrangChu">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="<?= BASE_URL ?>index.php?page=Products">Sản phẩm</a></li>
             <li class="breadcrumb-item active"><?= htmlspecialchars($product['product_name']) ?></li>
         </ol>
     </div>
@@ -99,7 +93,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
         <div class="row m-0 container-split">
             <div class="col-lg-5 col-md-6 p-4 left-image-panel">
                 <div class="gallery-main" id="mainImg">
-                    <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" id="mainImgTag" style="width:100%;height:100%;object-fit:cover;">
+                    <img src="<?= BASE_URL ?>Media/<?= htmlspecialchars($product['product_image']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>" id="mainImgTag" style="width:100%;height:100%;object-fit:cover;">
                 </div>
             </div>
 
@@ -127,8 +121,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
 
     <!-- ĐÃ ĐĂNG NHẬP -->
 
-    <form action="Cart.php"
-          method="POST"
+    <form action="<?= BASE_URL ?>index.php?page=Cart" method="POST"
           class="w-100 d-flex"
           style="gap:12px;">
 
@@ -206,17 +199,17 @@ while ($row = mysqli_fetch_assoc($result_related)) {
                 <?php foreach ($related_products as $item): ?>
                 <div class="col-6 col-md-3 mb-3">
                     <div class="product-item">
-                        <a href="ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-link">
+                        <a href="<?= BASE_URL ?>index.php?page=ProductDetail&id=<?= urlencode($item['product_id']) ?>" class="product-link">
                             <div class="product-img-wrap">
-                                <img src="../../../Media/<?= htmlspecialchars($item['product_image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+                                <img src="<?= BASE_URL ?>Media/<?= htmlspecialchars($item['product_image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </a>
                         <div class="product-info">
-                            <a href="ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-title-link">
+                            <a href="<?= BASE_URL ?>index.php?page=ProductDetail&id=<?= urlencode($item['product_id']) ?>" class="product-title-link">
                                 <div class="product-name-item"><?= htmlspecialchars($item['product_name']) ?></div>
                             </a>
                             <div class="product-price-item"><?= number_format($item['price'], 0, ',', '.') ?>₫ <span class="product-price-unit">/<?= htmlspecialchars($item['unit']) ?></span></div>
-                            <form action="Giỏ hàng.html" method="POST">
+                            <form action="<?= BASE_URL ?>index.php?page=Cart" method="POST">
                                 <input type="hidden" name="product_id" value="<?= htmlspecialchars($item['product_id']) ?>">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="btn-add-cart-sm mt-1">Thêm vào giỏ</button>
@@ -242,7 +235,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
         <div class="row">
             <div class="col-lg-5 col-md-12 mb-4 mb-lg-0">
                 <div style="margin-bottom: 12px;">
-                    <img src="../../../Media/logo_white.png" alt="Farm2Home" style="max-height:40px;">
+                    <img src="<?= BASE_URL ?>Media/logo_white.png" alt="Farm2Home" style="max-height:40px;">
                 </div>
                 <p class="pr-lg-4 mb-4" style="font-size: 0.95rem; line-height: 1.6; color: rgba(254,251,233,0.9);">
                     Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn, để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
@@ -301,7 +294,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
     </div>
 </footer>
 
-<script src="../../../public/assets/js/ProductDetail.js">
+<script src="<?= BASE_URL ?>assets/js/ProductDetail.js">
 
 </script>
 
@@ -314,9 +307,8 @@ function requireLogin() {
     const currentUrl = window.location.href;
 
     // Chuyển sang login kèm redirect
-    window.location.href =
-        "/N2_Phat_Trien_Web/app/views/customer/LogIn.php?redirect="
-        + encodeURIComponent(currentUrl);
+   window.location.href =
+    "<?= BASE_URL ?>index.php?page=LogIn&redirect=" + encodeURIComponent(currentUrl);
 }
 </script>
 
