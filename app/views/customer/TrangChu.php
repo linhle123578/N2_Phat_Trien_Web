@@ -1,13 +1,6 @@
 <?php
-session_start();
-if (isset($_SESSION['customer_id'])) {
-
-    include __DIR__ . '/../layouts/loginheader.php';
-
-} else {
-
-    include __DIR__ . '/../layouts/header.php';
-}
+ob_start();
+include_once __DIR__ . '/../layouts/header.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -21,10 +14,13 @@ mysqli_ssl_set(
     $conn,
     NULL,
     NULL,
-    "C:/xampp/htdocs/N2_Phat_Trien_Web/isrgrootx1.pem",
+    NULL,
     NULL,
     NULL
 );
+
+// Bỏ qua xác thực chứng chỉ SSL (fix lỗi XAMPP Windows)
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
 mysqli_real_connect(
     $conn,
@@ -86,27 +82,17 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 $isLoggedIn = isset($_SESSION['customer_id']);
 ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet"
+          href="../../../public/assets/css/Trang_chu.css"/>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Farm2Home - Nông Sản Sạch</title>
+<title>Farm2Home - Nông Sản Sạch</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
-    <link rel="stylesheet"
-          href="http://localhost/N2_Phat_Trien_Web/public/assets/css/Trang_chu.css"/>
-</head>
+
 <?php include __DIR__ . '/Chatbot.php'; ?>
-
-<body>
-
-
 
 <main>
 
@@ -119,7 +105,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom active">
 
                 <img class="hero-bg"
-     src="/N2_Phat_Trien_Web/Media/canh_dong_3.jpg"
+     src="../../../Media/canh_dong_3.jpg"
      alt="">
 
                 <div class="hero-overlay">
@@ -146,7 +132,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom">
 
                 <img class="hero-bg"
-                     src="/N2_Phat_Trien_Web/Media/canh_dong_2.jpg"
+                     src="../../../Media/canh_dong_2.jpg"
                      alt="">
 
                 <div class="hero-overlay">
@@ -198,12 +184,12 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-small-imgs">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_1.jpg"
+                        <img src="../../../Media/canh_dong_1.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_5.jpg"
+                        <img src="../../../Media/canh_dong_5.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-sm"
                              style="height: 240px; object-fit: cover; width: 100%;">
@@ -212,7 +198,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                     <div class="about-large-img">
 
-                        <img src="/N2_Phat_Trien_Web/Media/canh_dong_4.jpg"
+                        <img src="../../../Media/canh_dong_4.jpg"
                              alt=""
                              class="img-fluid rounded-20 shadow-lg"
                              style="height: 495px; object-fit: cover; width: 100%;">
@@ -254,7 +240,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                 Sản phẩm nổi bật
             </h2>
 
-            <a href="#"
+            <a href="../../../app/views/customer/Products.php"
                class="font-weight-bold text-dark border-bottom"
                style="text-decoration: none;">
 
@@ -283,20 +269,22 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                 </span>
 
-                                <img
-    src="/N2_Phat_Trien_Web/Media/<?= htmlspecialchars($product['product_image']) ?>"
-    alt="<?= htmlspecialchars($product['product_name']) ?>"
-    style="width:100%; height:250px; object-fit:cover;"
->
+                                <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>">
+                                    <img
+        src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>"
+        alt="<?= htmlspecialchars($product['product_name']) ?>"
+        style="width:100%; height:250px; object-fit:cover;"
+    >
+                                </a>
 
                             </div>
 
-                            <div class="p-4 text-left">
+                            <div class="card-body p-4 text-left">
 
                                 <h6 class="font-weight-bold">
-
-                                    <?= htmlspecialchars($product['product_name']) ?>
-
+                                    <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" style="color: inherit; text-decoration: none;" class="product-title">
+                                        <?= htmlspecialchars($product['product_name']) ?>
+                                    </a>
                                 </h6>
 
                                 <p class="small text-muted mb-2">
@@ -334,7 +322,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                     </span>
 
-                                    <button class="btn-cart-round shadow-sm">
+                                    <button class="btn-cart-round shadow-sm btn-add-cart" data-product-id="<?= $product['product_id'] ?>">
 
                                         <span class="material-symbols-outlined">
                                             add_shopping_cart
@@ -404,6 +392,5 @@ $isLoggedIn = isset($_SESSION['customer_id']);
     }, 5000);
 
 </script>
-
-</body>
-</html>
+<script src="../../../public/assets/js/Products.js"></script>
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

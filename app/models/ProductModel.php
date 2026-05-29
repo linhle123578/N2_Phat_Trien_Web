@@ -6,6 +6,7 @@ class ProductModel {
         // Kết nối an toàn bảo mật lên hệ thống Cloud TiDB bằng cờ SSL bắt buộc
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
         mysqli_real_connect(
             $this->conn,
             "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -110,7 +111,8 @@ class ProductModel {
             return mysqli_query($this->conn, $update_item);
         } else {
             // Chưa có thì tạo bản ghi Item mới
-            $insert_item = "INSERT INTO cartitem (cart_id, product_id, quantity) VALUES ('$cart_id', '$prod_escaped', $quantity)";
+            $cart_item_id = 'CTI-' . strtoupper(substr(uniqid(), -8));
+            $insert_item = "INSERT INTO cartitem (cart_item_id, cart_id, product_id, quantity) VALUES ('$cart_item_id', '$cart_id', '$prod_escaped', $quantity)";
             return mysqli_query($this->conn, $insert_item);
         }
     }

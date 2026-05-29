@@ -12,7 +12,7 @@ class CheckoutController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (empty($_SESSION['checkout_items'])) {
-            header("Location: /app/views/customer/cart.php");
+            header("Location: ../../../app/views/customer/cart.php");
             exit();
         }
 
@@ -20,7 +20,7 @@ class CheckoutController
         $userModel = new UserModel();
 
         if (!isset($_SESSION['customer_id'])) {
-            header("Location: /app/views/customer/LogIn.php");
+            header("Location: ../../../app/views/customer/LogIn.php");
             exit();
         }
         $customer_id = $_SESSION['customer_id'];
@@ -183,7 +183,7 @@ class CheckoutController
             echo json_encode([
                 "status"       => "success",
                 "payment"      => "momo",
-                "redirect_url" => "/app/controllers/customer/MomoPaymentController.php?order_id=" . urlencode($order_id)
+                "redirect_url" => "MomoPaymentController.php?order_id=" . urlencode($order_id)
             ]);
         } else {
             echo json_encode([

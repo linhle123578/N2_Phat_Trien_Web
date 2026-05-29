@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../../models/admin/DashboardModel.php";
+require_once __DIR__ . "/../../models/DashboardModel.php";
 
 class DashboardController {
     

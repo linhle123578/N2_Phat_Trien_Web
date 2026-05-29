@@ -17,6 +17,7 @@ class SignUpModel {
 
         // Bắt buộc chứng chỉ SSL mã hóa đối với TiDB Cloud đám mây
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
         
         $success = @mysqli_real_connect(
             $this->conn,

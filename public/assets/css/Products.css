@@ -90,6 +90,7 @@ body {
 /* BANNER TÌM KIẾM */
 .search-banner {
     background-color: var(--dark-green);
+    margin-top: 76px;
 }
 
 /* SIDEBAR DANH MỤC */

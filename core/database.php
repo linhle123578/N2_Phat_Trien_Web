@@ -18,9 +18,11 @@ class Database {
 
         $this->conn = mysqli_init();
 
+        // Không sử dụng file pem nữa theo yêu cầu
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
-        $ok = mysqli_real_connect(
+        $ok = @mysqli_real_connect(
             $this->conn,
             $host,
             $user,

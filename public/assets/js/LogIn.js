@@ -1,20 +1,20 @@
-document.addEventListener("DOMContentLoaded", function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
     const serverAlert = document.getElementById("server-alert");
 
-    // Các thành phần form section điều khiển view ẩn/hiện
+    // CÃ¡c thÃ nh pháº§n form section Ä‘iá»u khiá»ƒn view áº©n/hiá»‡n
     const loginSection = document.getElementById("login-form-section");
     const forgotSection = document.getElementById("forgot-form-section");
     const resetSection = document.getElementById("reset-form-section");
 
-    // Link chuyển form trợ giúp nhanh
+    // Link chuyá»ƒn form trá»£ giÃºp nhanh
     const linkForgot = document.getElementById("linkForgotPassword");
     const btnBackToLogin = document.querySelectorAll(".btn-back-to-login");
 
-    // ── 1. ĐIỀU KHIỂN CHUYỂN ĐỔI FORM (GIAO DIỆN)
+    // â”€â”€ 1. ÄIá»€U KHIá»‚N CHUYá»‚N Äá»”I FORM (GIAO DIá»†N)
     if (linkForgot) {
         linkForgot.addEventListener("click", function (e) {
             e.preventDefault();
-            serverAlert.className = "alert d-none"; // Reset thông báo cũ
+            serverAlert.className = "alert d-none"; // Reset thÃ´ng bÃ¡o cÅ©
             loginSection.classList.add("d-none");
             forgotSection.classList.remove("d-none");
         });
@@ -29,8 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-// ── 2. XỬ LÝ ẨN / HIỆN MẬT KHẨU KHÁCH HÀNG (CẢ ĐĂNG NHẬP VÀ ĐỔI MẬT KHẨU)
-    // 2.1 Cho ô Đăng nhập cũ
+// â”€â”€ 2. Xá»¬ LÃ áº¨N / HIá»†N Máº¬T KHáº¨U KHÃCH HÃ€NG (Cáº¢ ÄÄ‚NG NHáº¬P VÃ€ Äá»”I Máº¬T KHáº¨U)
+    // 2.1 Cho Ã´ ÄÄƒng nháº­p cÅ©
     const togglePwd = document.getElementById("toggle-pwd");
     if (togglePwd) {
         togglePwd.addEventListener("click", function () {
@@ -46,31 +46,31 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 2. Xử lý Ẩn/Hiện Mật khẩu
+    // 2. Xá»­ lÃ½ áº¨n/Hiá»‡n Máº­t kháº©u
     const toggleResetPwds = document.querySelectorAll(".toggle-password-reset");
     toggleResetPwds.forEach(btn => {
         btn.addEventListener("click", function () {
-            const targetId = this.getAttribute("data-target"); // Lấy id của ô input cần ẩn/hiện
+            const targetId = this.getAttribute("data-target"); // Láº¥y id cá»§a Ã´ input cáº§n áº©n/hiá»‡n
             const pwdInput = document.getElementById(targetId);
             const eyeIcon = this.querySelector("i");
 
             if (pwdInput && pwdInput.type === "password") {
                 pwdInput.type = "text";
-                eyeIcon.className = "far fa-eye"; // Đổi thành mắt mở
+                eyeIcon.className = "far fa-eye"; // Äá»•i thÃ nh máº¯t má»Ÿ
             } else if (pwdInput) {
                 pwdInput.type = "password";
-                eyeIcon.className = "far fa-eye-slash"; // Đổi thành mắt đóng
+                eyeIcon.className = "far fa-eye-slash"; // Äá»•i thÃ nh máº¯t Ä‘Ã³ng
             }
         });
     });
 
-    // ── 3. AJAX ĐĂNG NHẬP HỆ THỐNG
+    // â”€â”€ 3. AJAX ÄÄ‚NG NHáº¬P Há»† THá»NG
     const formLogIn = document.getElementById("formLogIn");
     if (formLogIn) {
         formLogIn.addEventListener("submit", function (e) {
             e.preventDefault();
             
-            // Xóa sạch các thông báo lỗi Validation cũ
+            // XÃ³a sáº¡ch cÃ¡c thÃ´ng bÃ¡o lá»—i Validation cÅ©
             document.querySelectorAll(".invalid-msg").forEach(el => el.textContent = "");
             serverAlert.className = "alert d-none";
 
@@ -79,11 +79,11 @@ document.addEventListener("DOMContentLoaded", function () {
             let hasError = false;
 
             if (identity === "") {
-                document.getElementById("msg-identity").textContent = "Vui lòng nhập Email hoặc Số điện thoại.";
+                document.getElementById("msg-identity").textContent = "Vui lÃ²ng nháº­p Email hoáº·c Sá»‘ Ä‘iá»‡n thoáº¡i.";
                 hasError = true;
             }
             if (password === "") {
-                document.getElementById("msg-password").textContent = "Vui lòng nhập mật khẩu của bạn.";
+                document.getElementById("msg-password").textContent = "Vui lÃ²ng nháº­p máº­t kháº©u cá»§a báº¡n.";
                 hasError = true;
             }
 
@@ -91,16 +91,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const submitBtn = document.getElementById("btnLoginSubmit");
             submitBtn.disabled = true;
-            submitBtn.textContent = "Đang xử lý...";
+            submitBtn.textContent = "Äang xá»­ lÃ½...";
 
             const formData = new FormData(formLogIn);
 
-            fetch("../../controllers/customer/LogInController.php?action=login", {
+            let fetchUrl = "../app/controllers/customer/LogInController.php?action=login";
+            if (window.location.pathname.includes('/app/views/customer/')) {
+                fetchUrl = "../../../app/controllers/customer/LogInController.php?action=login";
+            }
+
+            fetch(fetchUrl, {
                 method: "POST",
                 body: formData
             })
             .then(res => {
-                if (!res.ok) throw new Error("Lỗi kết nối Server.");
+                if (!res.ok) throw new Error("Lá»—i káº¿t ná»‘i Server.");
                 return res.json();
             })
             .then(data => {
@@ -108,26 +113,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === "success") {
                     serverAlert.className = "alert alert-success";
                     serverAlert.textContent = data.message;
-                    // Đăng nhập thành công -> Điều hướng về Trang chủ
-                    setTimeout(() => { window.location.href = "../../views/customer/TrangChu.php"; }, 1500);
+                    // ÄÄƒng nháº­p khÃ¡ch hÃ ng -> Trang chá»§
+                    setTimeout(() => { window.location.href = "../../../app/views/customer/TrangChu.php"; }, 1200);
+                } else if (data.status === "admin") {
+                    serverAlert.className = "alert alert-success";
+                    serverAlert.textContent = data.message;
+                    // ÄÄƒng nháº­p admin -> Dashboard admin
+                    setTimeout(() => { window.location.href = "../../../app/controllers/admin/DashboardController.php"; }, 1200);
                 } else {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
                     submitBtn.disabled = false;
-                    submitBtn.textContent = "Đăng nhập";
+                    submitBtn.textContent = "ÄÄƒng nháº­p";
                 }
             })
             .catch(err => {
                 console.error(err);
                 serverAlert.className = "alert alert-danger";
-                serverAlert.textContent = "Không thể kết nối với hệ thống Cloud.";
+                serverAlert.textContent = "KhÃ´ng thá»ƒ káº¿t ná»‘i vá»›i há»‡ thá»‘ng Cloud. Chi tiáº¿t: " + err.message;
                 submitBtn.disabled = false;
-                submitBtn.textContent = "Đăng nhập";
+                submitBtn.textContent = "ÄÄƒng nháº­p";
             });
         });
     }
 
-    // ── 4. AJAX YÊU CẦU GỬI OTP QUÊN MẬT KHẨU KHÁCH HÀNG
+    // â”€â”€ 4. AJAX YÃŠU Cáº¦U Gá»¬I OTP QUÃŠN Máº¬T KHáº¨U KHÃCH HÃ€NG
     const formForgot = document.getElementById("formForgot");
     if (formForgot) {
         formForgot.addEventListener("submit", function (e) {
@@ -137,18 +147,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const email = document.getElementById("forgot_email").value.trim();
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                document.getElementById("msg-forgot-email").textContent = "Định dạng địa chỉ Email không đúng.";
+                document.getElementById("msg-forgot-email").textContent = "Äá»‹nh dáº¡ng Ä‘á»‹a chá»‰ Email khÃ´ng Ä‘Ãºng.";
                 return;
             }
 
             const btnForgot = document.getElementById("btnForgotSubmit");
             btnForgot.disabled = true;
-            btnForgot.textContent = "Đang gửi OTP...";
+            btnForgot.textContent = "Äang gá»­i OTP...";
+            const formData = new FormData(formForgot);
 
-            fetch("../../controllers/customer/LogInController.php?action=forgot", {
+            let fetchUrl = "../app/controllers/customer/LogInController.php?action=forgot";
+            if (window.location.pathname.includes('/app/views/customer/')) {
+                fetchUrl = "../../../app/controllers/customer/LogInController.php?action=forgot";
+            }
+
+            fetch(fetchUrl, {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: "email=" + encodeURIComponent(email)
+                body: formData
             })
             .then(res => res.json())
             .then(data => {
@@ -157,25 +172,25 @@ document.addEventListener("DOMContentLoaded", function () {
                     serverAlert.className = "alert alert-warning";
                     serverAlert.textContent = data.message;
                     
-                    // Chuyển sang Form nhập mã OTP đặt lại mật khẩu mới
+                    // Chuyá»ƒn sang Form nháº­p mÃ£ OTP Ä‘áº·t láº¡i máº­t kháº©u má»›i
                     forgotSection.classList.add("d-none");
                     resetSection.classList.remove("d-none");
                 } else {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
                     btnForgot.disabled = false;
-                    btnForgot.textContent = "Gửi mã xác thực";
+                    btnForgot.textContent = "Gá»­i mÃ£ xÃ¡c thá»±c";
                 }
             })
             .catch(err => {
                 console.error(err);
                 btnForgot.disabled = false;
-                btnForgot.textContent = "Gửi mã xác thực";
+                btnForgot.textContent = "Gá»­i mÃ£ xÃ¡c thá»±c";
             });
         });
     }
 
-    // ── 5. AJAX XÁC NHẬN OTP VÀ LƯU LẠI MẬT KHẨU MỚI HOÀN TẤT
+    // â”€â”€ 5. AJAX XÃC NHáº¬N OTP VÃ€ LÆ¯U Láº I Máº¬T KHáº¨U Má»šI HOÃ€N Táº¤T
     const formReset = document.getElementById("formReset");
     if (formReset) {
         formReset.addEventListener("submit", function (e) {
@@ -189,15 +204,15 @@ document.addEventListener("DOMContentLoaded", function () {
             let hasError = false;
 
             if (otp.length !== 6) {
-                document.getElementById("msg-otp").textContent = "Vui lòng nhập mã OTP gồm 6 chữ số.";
+                document.getElementById("msg-otp").textContent = "Vui lÃ²ng nháº­p mÃ£ OTP gá»“m 6 chá»¯ sá»‘.";
                 hasError = true;
             }
             if (newPass.length < 6) {
-                document.getElementById("msg-new-password").textContent = "Mật khẩu mới chứa tối thiểu từ 6 ký tự.";
+                document.getElementById("msg-new-password").textContent = "Máº­t kháº©u má»›i chá»©a tá»‘i thiá»ƒu tá»« 6 kÃ½ tá»±.";
                 hasError = true;
             }
             if (newPass !== confirmPass) {
-                document.getElementById("msg-confirm-new-password").textContent = "Xác nhận mật khẩu mới không khớp.";
+                document.getElementById("msg-confirm-new-password").textContent = "XÃ¡c nháº­n máº­t kháº©u má»›i khÃ´ng khá»›p.";
                 hasError = true;
             }
 
@@ -205,12 +220,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const btnReset = document.getElementById("btnResetSubmit");
             btnReset.disabled = true;
-            btnReset.textContent = "Đang cập nhật...";
+            btnReset.textContent = "Äang cáº­p nháº­t...";
+            const formData = new FormData(formReset);
 
-            fetch("../../controllers/customer/LogInController.php?action=reset", {
+            let fetchUrl = "../app/controllers/customer/LogInController.php?action=reset";
+            if (window.location.pathname.includes('/app/views/customer/')) {
+                fetchUrl = "../../../app/controllers/customer/LogInController.php?action=reset";
+            }
+
+            fetch(fetchUrl, {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `otp=${encodeURIComponent(otp)}&new_password=${encodeURIComponent(newPass)}&confirm_password=${encodeURIComponent(confirmPass)}`
+                body: formData
             })
             .then(res => res.json())
             .then(data => {
@@ -219,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     serverAlert.className = "alert alert-success";
                     serverAlert.textContent = data.message;
                     
-                    // Thành công hoàn toàn -> Đưa quay về Form đăng nhập chính
+                    // ThÃ nh cÃ´ng hoÃ n toÃ n -> ÄÆ°a quay vá» Form Ä‘Äƒng nháº­p chÃ­nh
                     setTimeout(() => {
                         resetSection.classList.add("d-none");
                         loginSection.classList.remove("d-none");
@@ -229,34 +249,34 @@ document.addEventListener("DOMContentLoaded", function () {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
                     btnReset.disabled = false;
-                    btnReset.textContent = "Lưu thay đổi & Đăng nhập";
+                    btnReset.textContent = "LÆ°u thay Ä‘á»•i & ÄÄƒng nháº­p";
                 }
             })
             .catch(err => {
                 console.error(err);
                 btnReset.disabled = false;
-                btnReset.textContent = "Lưu thay đổi & Đăng nhập";
+                btnReset.textContent = "LÆ°u thay Ä‘á»•i & ÄÄƒng nháº­p";
             });
         });
     }
 });
 
-    // ── 6. CHỌN PHÂN HỆ KHÁCH HÀNG / QUẢN LÝ
+    // â”€â”€ 6. CHá»ŒN PHÃ‚N Há»† KHÃCH HÃ€NG / QUáº¢N LÃ
     $(document).ready(function() {
-    // Xử lý sự kiện click chuyển đổi tab giữa Người dùng và Quản lý
+    // Xá»­ lÃ½ sá»± kiá»‡n click chuyá»ƒn Ä‘á»•i tab giá»¯a NgÆ°á»i dÃ¹ng vÃ  Quáº£n lÃ½
     $('.role-tab').on('click', function() {
         
-        // Loại bỏ trạng thái active của tab cũ và thêm vào tab vừa click
+        // Loáº¡i bá» tráº¡ng thÃ¡i active cá»§a tab cÅ© vÃ  thÃªm vÃ o tab vá»«a click
         $('.role-tab').removeClass('active');
         $(this).addClass('active');
         
-        // Lấy giá trị vai trò (customer hoặc admin)
+        // Láº¥y giÃ¡ trá»‹ vai trÃ² (customer hoáº·c admin)
         const selectedRole = $(this).data('role');
         
-        // Cập nhật giá trị vào input ẩn trong form để gửi lên PHP xử lý
+        // Cáº­p nháº­t giÃ¡ trá»‹ vÃ o input áº©n trong form Ä‘á»ƒ gá»­i lÃªn PHP xá»­ lÃ½
         $('#login_role').val(selectedRole);
         
-        // Nếu chọn Quản lý thì ẩn dòng "Đăng ký ngay" đi, chọn Người dùng thì hiện lại
+        // Náº¿u chá»n Quáº£n lÃ½ thÃ¬ áº©n dÃ²ng "ÄÄƒng kÃ½ ngay" Ä‘i, chá»n NgÆ°á»i dÃ¹ng thÃ¬ hiá»‡n láº¡i
         if (selectedRole === 'admin') {
             $('#signup-redirect-text').addClass('d-none');
         } else {

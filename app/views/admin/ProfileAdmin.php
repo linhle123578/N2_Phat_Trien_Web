@@ -4,6 +4,7 @@ $BASE_URL = '/n2_phat_trien_web';
 // ── Database connection ──────────────────────────────────────────────────────
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -85,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function pa_db_connect() {
         $c = mysqli_init();
         mysqli_ssl_set($c, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($c, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
         mysqli_real_connect($c,
             "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
             "3YHrkxqAKWynehu.root", "BzDRrZAdAT2jLuyd",
@@ -173,99 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tài khoản của tôi – Farm2Home Admin</title>
-
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <!-- Font Awesome 5 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../../public/assets/css/ProfileAdmin.css">
-</head>
-<body>
-
-<div class="pa-shell">
-
-    <!-- ══════════════════════════════════════════════
-         SIDEBAR
-    ═══════════════════════════════════════════════ -->
-    <aside class="pa-sidebar" id="paSidebar">
-        <div class="pa-brand">
-            <img src="../../../Media/Logo-trang.png" alt="Farm2Home Logo">
-        </div>
-
-        <!-- Admin mini card in sidebar -->
-        <div class="pa-sidebar-user">
-            <img src="../../../Media/<?= htmlspecialchars($admin['avatar'] ?? 'user_1.jpg') ?>"
-                 alt="avatar"
-                 onerror="this.src='../../../Media/user_1.jpg'">
-            <div>
-                <div class="pa-su-name"><?= htmlspecialchars($admin['full_name']) ?></div>
-                <div class="pa-su-role"><?= htmlspecialchars($admin['role'] ?? 'Quản trị viên') ?></div>
-            </div>
-        </div>
-
-        <nav class="pa-nav">
-            <a href="#" class="pa-link"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-bar-chart-line"></i><span>Thống kê</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-box-seam"></i><span>Sản phẩm</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-cart-check"></i><span>Đơn hàng</span></a>
-            <a href="#" class="pa-link active"><i class="bi bi-person-badge"></i><span>Tài khoản</span></a>
-            <a href="#" class="pa-link"><i class="bi bi-gear"></i><span>Cài đặt</span></a>
-            <a href="#" class="pa-link pa-link-logout"><i class="bi bi-box-arrow-left"></i><span>Đăng xuất</span></a>
-        </nav>
-    </aside>
-
-    <!-- ══════════════════════════════════════════════
-         MAIN CONTENT
-    ═══════════════════════════════════════════════ -->
-    <div class="pa-main">
-
-        <!-- Topbar -->
-        <header class="pa-topbar">
-            <div class="d-flex align-items-center gap-3">
-                <button class="pa-toggle d-lg-none" id="btnToggle">
-                    <i class="bi bi-list"></i>
-                </button>
-                <div>
-                    <h1 class="pa-page-title">Quản lý tài khoản</h1>
-                    <p class="pa-page-sub">Cập nhật thông tin cá nhân và bảo mật tài khoản.</p>
-                </div>
-            </div>
-            <div class="pa-topbar-right">
-                <button class="pa-notif-btn" title="Thông báo">
-                    <i class="bi bi-bell"></i>
-                    <span class="pa-notif-dot"></span>
-                </button>
-            </div>
-        </header>
-
-        <!-- Content -->
-        <section class="pa-content">
-
-            <!-- ── CARD 1: Personal Info ─────────────────── -->
-            <div class="pa-card mb-4">
-                <div class="pa-card-header">
-                    <i class="bi bi-shield-lock-fill"></i>
-                    <div>
-                        <h5 class="pa-card-title">Thông tin cá nhân</h5>
-                        <p class="pa-card-desc">Cập nhật họ tên, email và thông tin liên lạc của bạn.</p>
-                    </div>
-                </div>
-
-                <?php if ($msg_profile === 'success'): ?>
-                    <div class="alert alert-success alert-dismissible fade show mx-0 mb-3 rounded-3" role="alert">
-                        <i class="bi bi-check-circle-fill me-2"></i>Lưu thông tin thành công!
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
                 <?php endif; ?>
 
                 <form method="POST" action="">

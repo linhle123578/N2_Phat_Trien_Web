@@ -1,25 +1,18 @@
 <?php
+ob_start();
+include_once __DIR__ . '/../layouts/header.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// HEADER
-if (isset($_SESSION['customer_id'])) {
-
-    include __DIR__ . '/../layouts/loginheader.php';
-
-} else {
-
-    include __DIR__ . '/../layouts/header.php';
-}
-
-
 // 1. Bộ lọc định tuyến ngầm điều hướng xử lý dữ liệu database qua Controller đám mây
 if (!isset($cat_result) || !isset($prod_result)) {
     $queryString = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
-    header("Location: ../../controllers/customer/ProductController.php" . $queryString);
+    header("Location: ../../../app/controllers/customer/ProductController.php" . $queryString);
     exit();
 }
+
+
 
 /** @var string $category_filter */
 /** @var string $search_filter */
@@ -34,25 +27,29 @@ if (!isset($cat_result) || !isset($prod_result)) {
 /** @var mysqli_result $prod_result */
 ?>
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sản phẩm - Farm2Home</title>
+<?php
+    // Bắt buộc set lại biến page để header nhận diện đúng menu đang active (do trang này xài redirect URL)
+    if (!isset($_GET['page'])) {
+        $_GET['page'] = 'products';
+    }
+    $header_output = ob_get_clean();
+
+    $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../../../public/assets/css/Products.css">
-</head>
-<body>
+    ';
+    
+    $header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
+    echo $header_output;
+?>
    
 
     <section class="search-banner py-5">
         <div class="container text-center">
             <h2 class="text-white mb-4">Tất cả sản phẩm nông sản sạch</h2>
-            <form method="GET" action="../../views/customer/Products.php" class="search-box mx-auto position-relative" style="max-width: 600px;">
+            <form method="GET" action="../../../app/controllers/customer/ProductController.php" class="search-box mx-auto position-relative" style="max-width: 600px;">
                 <input type="text" name="search" class="form-control rounded-pill py-3 ps-5" 
                     placeholder="Tìm kiếm rau củ, trái cây, đặc sản..." 
                     value="<?= isset($search_filter) ? htmlspecialchars($search_filter) : '' ?>">
@@ -70,12 +67,12 @@ if (!isset($cat_result) || !isset($prod_result)) {
                 <div class="mb-4">
                     <h6 class="fw-bold mb-3">Danh mục sản phẩm</h6>
                     <div class="list-group sidebar-list">
-                        <a href="../../views/customer/Products.php" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
+                        <a href="../../../app/controllers/customer/ProductController.php" class="list-group-item <?= empty($category_filter) ? 'active' : '' ?>">
                             Tất cả sản phẩm
                         </a>
                         
                         <?php while ($cat = mysqli_fetch_assoc($cat_result)): ?>
-                            <a href="../../views/customer/Products.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
+                            <a href="../../../app/controllers/customer/ProductController.php?category=<?= $cat['category_id'] ?>&search=<?= urlencode($search_filter) ?>&sort=<?= urlencode($sort_filter) ?>" 
                             class="list-group-item <?= ($category_filter == $cat['category_id']) ? 'active' : '' ?>">
                                 <?= htmlspecialchars($cat['name']) ?>
                             </a>
@@ -111,7 +108,7 @@ if (!isset($cat_result) || !isset($prod_result)) {
                             <div class="col-xl-4 col-md-4 col-6">
                                 <div class="card h-100 product-card border-0 shadow-sm">
                                     <div class="position-relative">
-                                        <a href="../../views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="d-block">
+                                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="d-block">
                                             <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden;">
                                                 <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
                                                     alt="<?= htmlspecialchars($product['product_name']) ?>" 
@@ -121,7 +118,7 @@ if (!isset($cat_result) || !isset($prod_result)) {
                                     </div>
                                     
                                     <div class="card-body d-flex flex-column">
-                                <a href="../../views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-title-link">
+                                <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-title-link">
                                     <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
                                 </a>
                                         
@@ -150,15 +147,15 @@ if (!isset($cat_result) || !isset($prod_result)) {
                         <nav aria-label="Page navigation">
                             <ul class="pagination custom-pagination-wrapper mb-0">
                                 <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="../../views/customer/Products.php?page=<?= $page - 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-left"></i></a>
+                                    <a class="page-link" href="../../../app/controllers/customer/ProductController.php?page=<?= $page - 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-left"></i></a>
                                 </li>
                                 <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                                     <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
-                                        <a class="page-link" href="../../views/customer/Products.php?page=<?= $i ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><?= $i ?></a>
+                                        <a class="page-link" href="../../../app/controllers/customer/ProductController.php?page=<?= $i ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><?= $i ?></a>
                                     </li>
                                 <?php endfor; ?>
                                 <li class="page-item <?= ($page >= $total_pages) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="../../views/customer/Products.php?page=<?= $page + 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-right"></i></a>
+                                    <a class="page-link" href="../../../app/controllers/customer/ProductController.php?page=<?= $page + 1 ?><?= !empty($category_filter) ? '&category='.$category_filter : '' ?><?= !empty($search_filter) ? '&search='.urlencode($search_filter) : '' ?>&sort=<?= $sort_filter ?>"><i class="fas fa-chevron-right"></i></a>
                                 </li>
                             </ul>
                         </nav>
@@ -199,5 +196,5 @@ if (!isset($cat_result) || !isset($prod_result)) {
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/assets/js/Products.js"></script>
-</body>
-</html>
+
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

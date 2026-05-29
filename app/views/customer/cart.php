@@ -1,13 +1,17 @@
 <?php
-session_start();
+ob_start();
+include_once __DIR__ . '/../layouts/header.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (!isset($_SESSION['customer_id'])) {
-    header("Location: /N2_Phat_Trien_Web/app/views/customer/LogIn.php");
+    header("Location: ../../../app/views/customer/LogIn.php");
     exit();
 }
 
-include __DIR__ . '/../layouts/loginheader.php';
-require_once "../../models/CartModel.php";
+
+require_once __DIR__ . "/../../models/CartModel.php";
 
 
 
@@ -22,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 
 // 2. LẤY DỮ LIỆU TỪ DB 
 if (!isset($_SESSION['customer_id'])) {
-    header("Location:/N2_Phat_Trien_Web/app/views/customer/LogIn.php");
+    header("Location: ../../../app/views/customer/LogIn.php");
     exit();
 }
 $customer_id = $_SESSION['customer_id'];
@@ -31,42 +35,8 @@ $cartModel = new CartModel();
 $items = $cartModel->getCartItems($customer_id);
 $total_items = count($items);
 
-// Ép đồng bộ số lượng giỏ hàng cho Header của team
-$_SESSION['cart'] = array_fill(0, $total_items, 1);
-
-
-/*// Lọc lấy mỗi thanh <nav> từ header.php
-ob_start();
-include_once '../layouts/header.php';
-$raw_header = ob_get_clean();
-preg_match('/<nav.*<\/nav>/is', $raw_header, $nav_matches);
-$clean_header = $nav_matches[0] ?? '';*/
-
-// Lọc lấy mỗi khối <footer> từ footer.php
-ob_start();
-include_once '../layouts/footer.php';
-$raw_footer = ob_get_clean();
-preg_match('/<footer.*<\/footer>/is', $raw_footer, $footer_matches);
-$clean_footer = $footer_matches[0] ?? '';
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Giỏ Hàng - Farm2Home</title>
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
- <link rel="stylesheet"
-      href="/N2_Phat_Trien_Web/public/assets/css/layout.css">
-
-<link rel="stylesheet"
-      href="/N2_Phat_Trien_Web/public/assets/css/cart.css">
-</head>
-<body>
+<link rel="stylesheet" href="../../../public/assets/css/cart.css">
 
   <main class="cart-main">
     <div class="container">
@@ -83,7 +53,7 @@ $clean_footer = $footer_matches[0] ?? '';
               <div class="text-center py-5">
                 <i class="fas fa-shopping-cart fa-3x mb-3" style="color:#ccc;"></i>
                 <p style="color:#6c757d; font-size:1rem;">Giỏ hàng của bạn đang trống.</p>
-                <a href="TrangChu.php" class="back-link">
+                <a href="../../../app/views/customer/Products.php" class="back-link">
                   <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
                 </a>
               </div>
@@ -171,7 +141,7 @@ $clean_footer = $footer_matches[0] ?? '';
                 <span class="summary-total-value" id="summary-total">30.000đ</span>
               </div>
 
-              <form id="checkout-form" action="/N2_Phat_Trien_Web/app/controllers/customer/CartController.php" method="POST">
+              <form id="checkout-form" action="../../../app/controllers/customer/CartController.php" method="POST">
                 <input type="hidden" name="action" value="dat_hang">
                 <div id="selected-inputs"></div>
                 <button type="submit" class="btn-checkout">Tiến hành thanh toán</button>
@@ -190,11 +160,7 @@ $clean_footer = $footer_matches[0] ?? '';
     </div>
   </main>
 
-  <?= $clean_footer ?>
-
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="/N2_Phat_Trien_Web/public/assets/js/cart.js"></script>
+  <script src="../../../public/assets/js/cart.js"></script>
   
   <script>
   document.getElementById('checkout-form').addEventListener('submit', function(e) {
@@ -222,6 +188,4 @@ $clean_footer = $footer_matches[0] ?? '';
     });
   });
   </script>
-
-</body>
-</html>
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

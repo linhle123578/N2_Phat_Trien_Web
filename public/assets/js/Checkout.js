@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 padding:6px 16px;border-radius:8px;display:inline-block;
                                 margin-bottom:28px;letter-spacing:1px">—</div>
                     <br>
-                    <a href="/"
+                    <a href="../../../app/views/customer/TrangChu.php"
                        style="background:linear-gradient(102deg,#022409 0%,#183A1D 100%);
                               color:#C5EDC3;border:none;border-radius:9999px;
                               padding:14px 40px;font-weight:700;font-size:15px;

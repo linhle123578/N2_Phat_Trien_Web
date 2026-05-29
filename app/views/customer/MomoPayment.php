@@ -1,52 +1,26 @@
 <?php
 ob_start();
-include __DIR__ . '/../layouts/loginheader.php';
-$raw_header = ob_get_clean();
-if (preg_match('/<(nav|header)[^>]*>.*?<\/\1>/is', $raw_header, $m)) {
-    $clean_header = $m[0];
-} else {
-    $clean_header = $raw_header;
-}
-
-ob_start();
-include __DIR__ . '/../layouts/footer.php';
-$raw_footer = ob_get_clean();
-if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
-    $clean_footer = $m[0];
-} else {
-    $clean_footer = $raw_footer;
-}
-?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+include_once __DIR__ . '/../layouts/header.php';
+$extra_head = '
     <title>Thanh toán MoMo - Farm2Home</title>
-
-    <base href="/">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/public/assets/css/layout.css">
-    <link rel="stylesheet" href="/public/assets/css/Momo.css">
-
+    <link rel="stylesheet" href="../../../public/assets/css/Momo.css">
     <script>
-        const MOMO_ORDER_DATA = <?= json_encode([
+        const MOMO_ORDER_DATA = ' . json_encode([
             'order_id'     => $order_id      ?? null,
             'products'     => $order_products ?? [],
             'subtotal'     => $subtotal       ?? 0,
             'shipping_fee' => $shipping_fee   ?? 0,
             'total_amount' => $total_amount   ?? 0,
             'live_mode'    => true,
-        ]) ?>;
+        ]) . ';
     </script>
-</head>
-<body class="momo-page">
+';
+echo $extra_head;
+?>
 
-    <?= $clean_header ?>
-
-    <main class="momo-main">
+    <main class="momo-main" style="margin-top: 76px;">
         <div class="container">
 
             <!-- Title -->
@@ -77,8 +51,8 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
                             <?php foreach ($order_products as $prod): ?>
                                 <?php
                                     $img = !empty($prod['product_image'])
-                                        ? '/Media/' . htmlspecialchars($prod['product_image'])
-                                        : '/Media/no-image.png';
+                                         ? '../../../Media/' . htmlspecialchars($prod['product_image'])
+                                        : '../../../Media/no-image.png';
                                 ?>
                                 <div class="momo-order-item">
                                     <div class="item-img-wrap">
@@ -167,7 +141,7 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
 
             <!-- Back -->
             <div class="momo-action-row">
-                <a href="/app/controllers/customer/CheckoutController.php" class="btn-back-link">
+                <a href="../../../app/views/customer/Checkout.php" class="btn-back-link">
                     <span class="back-arrow">←</span>
                     Quay lại
                 </a>
@@ -176,7 +150,6 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
         </div>
     </main>
 
-    <?= $clean_footer ?>
 
     <!-- Success Modal -->
     <div class="momo-success-modal" id="momo-success-modal">
@@ -187,11 +160,11 @@ if (preg_match('/<footer[^>]*>.*?<\/footer>/is', $raw_footer, $m)) {
             <p class="success-modal-sub">Mã đơn hàng của bạn:</p>
             <div class="success-order-id" id="modal-order-id">—</div>
             <br>
-            <a href="/" class="btn-success-home">Về trang chủ</a>
+            <a href="../../../app/views/customer/TrangChu.php" class="btn-success-home">Về trang chủ</a>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/public/assets/js/Momo.js"></script>
-</body>
-</html>
+    <script src="../../../public/assets/js/Momo.js"></script>
+
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

@@ -22,8 +22,7 @@ class LogoutController
             setcookie('remember_token', '', time() - 3600, '/');
         }
         // Redirect về trang chủ
-        // Dùng đường dẫn tương đối từ views/customer/ lên root project
-        header('Location: /N2_Phat_Trien_Web/app/views/customer/TrangChu.php');
+        header('Location: ../../../app/views/customer/TrangChu.php');
         exit;
     }
 }

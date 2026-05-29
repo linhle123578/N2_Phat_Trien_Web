@@ -6,6 +6,7 @@ class CartModel {
         // Khởi tạo kết nối cho database đám mây (yêu cầu SSL)
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
         
         // Thực hiện kết nối tới TiDB Cloud
         $success = mysqli_real_connect(
@@ -30,7 +31,7 @@ class CartModel {
     // Lấy danh sách giỏ hàng
     public function getCartItems($customer_id) {
         $customer_id = $this->conn->real_escape_string($customer_id);
-        $sql = "SELECT ci.cart_item_id, ci.product_id, ci.quantity, ci.unit_price, p.product_name, p.product_image, p.stock
+        $sql = "SELECT ci.cart_item_id, ci.product_id, ci.quantity, p.price AS unit_price, p.product_name, p.product_image, p.stock
         FROM cart c
         JOIN cartitem ci ON c.cart_id = ci.cart_id
         JOIN product p ON ci.product_id = p.product_id
@@ -51,14 +52,13 @@ class CartModel {
         $id = $this->conn->real_escape_string($cart_item_id);
         return $this->conn->query("DELETE FROM cartitem WHERE cart_item_id = '$id'");
     }
-
     // Xử lý logic tạo đơn hàng
     public function createOrder($customer_id, $selected_ids, $qty_map) {
         $escaped_ids = array_map(fn($id) => $this->conn->real_escape_string($id), $selected_ids);
         $in = "'" . implode("','", $escaped_ids) . "'";
 
-        $sql_items = "SELECT ci.cart_item_id, ci.product_id, ci.unit_price 
-                      FROM cartitem ci WHERE ci.cart_item_id IN ($in)";
+        $sql_items = "SELECT ci.cart_item_id, ci.product_id, p.price AS unit_price 
+                      FROM cartitem ci JOIN product p ON ci.product_id = p.product_id WHERE ci.cart_item_id IN ($in)";
         $res = $this->conn->query($sql_items);
         $items = [];
         while ($r = $res->fetch_assoc()) $items[] = $r;

@@ -32,10 +32,9 @@ class ReturnRequestModel
     public function getOrderInfo(string $order_id, string $customer_id): ?array
     {
         $stmt = mysqli_prepare($this->conn,
-            "SELECT o.order_id, o.order_status, o.created_at, o.updated_at,
+            "SELECT o.order_id, o.order_status, o.created_at,
                     o.total_quantity_order,
-                    p.total_amount, p.payment_method,
-                    c.full_name, c.phone, c.email
+                    p.total_amount, p.payment_method
              FROM `order` o
              LEFT JOIN payment p ON o.order_id = p.order_id
              LEFT JOIN customer c ON o.customer_id = c.customer_id
@@ -146,15 +145,7 @@ class ReturnRequestModel
         if (!$info) {
             return ['eligible' => false, 'reason' => 'Không tìm thấy đơn hàng.'];
         }
-        if (!in_array($info['order_status'], ['delivered', 'Đã giao', 'Hoàn thành'])) {
-            return ['eligible' => false, 'reason' => 'Đơn hàng chưa được giao.'];
-        }
-        $diff_days = (time() - strtotime($info['created_at'])) / 86400;
-        if ($diff_days > 3) {
-            return ['eligible' => false, 'reason' => 'Đã quá 3 ngày kể từ khi nhận hàng.'];
-        }
-
-        // Kiểm tra đã có return chưa
+        // Kiểm tra đã có return chưa TRƯỚC!
         $stmt = mysqli_prepare($this->conn,
             "SELECT return_id FROM returnrequest
              WHERE order_id = ? LIMIT 1");
@@ -166,6 +157,14 @@ class ReturnRequestModel
 
         if ($exists) {
             return ['eligible' => false, 'reason' => 'Đơn hàng đã có yêu cầu trả hàng đang xử lý.'];
+        }
+
+        if (!in_array($info['order_status'], ['delivered', 'Đã giao', 'Hoàn thành'])) {
+            return ['eligible' => false, 'reason' => 'Đơn hàng chưa được giao.'];
+        }
+        $diff_days = (time() - strtotime($info['created_at'])) / 86400;
+        if ($diff_days > 3) {
+            return ['eligible' => false, 'reason' => 'Đã quá 3 ngày kể từ khi nhận hàng.'];
         }
         return ['eligible' => true, 'reason' => ''];
     }

@@ -1,25 +1,33 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-// ===== XỬ LÝ LOGIN =====
+    // ===== XỬ LÝ LOGIN =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $identity = $_POST['identity'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // ❌ KHÔNG CÒN ADMIN FIX CỨNG NỮA
-
-    // 👉 DEMO CUSTOMER LOGIN (tạm thời)
+    // Tạm thời fix cứng admin và customer để test
     if (!empty($identity) && !empty($password)) {
-
-        $_SESSION['role'] = 'customer';
-        $_SESSION['user'] = [
-            'name' => $identity,
-            'identity' => $identity
-        ];
-
-        header("Location: /N2_Phat_Trien_Web/app/views/customer/TrangChu.php");
-        exit();
+        if ($identity === 'admin' && $password === 'admin') {
+            $_SESSION['role'] = 'admin';
+            $_SESSION['admin_id'] = 1; // Thêm id ảo cho admin
+            $_SESSION['user'] = [
+                'name' => 'Admin Manager',
+                'identity' => $identity
+            ];
+            header("Location: ../../../app/controllers/admin/DashboardController.php"); // Sửa lại thành dashboard của admin
+            exit();
+        } else {
+            $_SESSION['role'] = 'customer';
+            $_SESSION['customer_id'] = 1; // Thêm id ảo cho customer
+            $_SESSION['user'] = [
+                'name' => $identity,
+                'identity' => $identity
+            ];
+            header("Location: ../../../app/views/customer/TrangChu.php");
+            exit();
+        }
     }
 
     // sai dữ liệu
@@ -29,13 +37,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 ob_start();
-include_once '../layouts/header.php';
+include_once __DIR__ . '/../layouts/header.php';
 $raw_header = ob_get_clean();
 preg_match('/<nav.*?>.*?<\/nav>/is', $raw_header, $m_head);
 $clean_header = $m_head[0] ?? '';
 
 ob_start();
-include_once '../layouts/footer.php';
+include_once __DIR__ . '/../layouts/footer.php';
 $raw_footer = ob_get_clean();
 preg_match('/<footer.*?>.*?<\/footer>/is', $raw_footer, $m_foot);
 $clean_footer = $m_foot[0] ?? '';
@@ -115,7 +123,7 @@ $clean_footer = $m_foot[0] ?? '';
                                       <button type="submit" id="btnLoginSubmit" class="btn-login-submit">Đăng nhập</button>
                                   </form>
                                   
-                                  <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="SignUp.php" class="signup-link-anchor">Đăng ký ngay</a></p>
+              <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="../../../app/views/customer/SignUp.php" class="signup-link-anchor">Đăng ký ngay</a></p>
                               </div>
 
                               <div id="forgot-form-section" class="d-none">

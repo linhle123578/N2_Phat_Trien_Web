@@ -119,8 +119,8 @@ function deleteItem(item) {
     
     if (!cartItemId) return;
 
-    // SỬA ĐƯỜNG DẪN THÀNH 'Cart.php' (Gọi lại chính file giao diện hiện tại)
-    fetch('Cart.php', { 
+    // SỬA ĐƯỜNG DẪN THÀNH 'CartController.php'
+    fetch('../app/controllers/customer/CartController.php', { 
         method : 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body   : 'cart_item_id=' + cartItemId
@@ -188,6 +188,11 @@ if (cartItems) {
             } else {
                 alert('Số lượng bạn chọn đã đạt mức tối đa của sản phẩm này!');
             }
+            return;
+        }
+
+        if (deleteBtn) {
+            deleteItem(item);
             return;
         }
     });

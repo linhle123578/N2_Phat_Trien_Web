@@ -1,22 +1,10 @@
 <!-- app/views/layouts/footer.php -->
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-
-    <title>Farm2Home</title>
-
-    <link rel="stylesheet"
-          href="/N2_Phat_Trien_Web/public/assets/css/layout.css">
-
-</head>
-<body>
 
  <footer class="footer-custom">
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-6 col-lg-5 mb-4 mb-lg-0">
-          <img src="../Media/Logo-trang.png" alt="Farm2Home" class="footer-logo mb-3">
+          <img src="../../../Media/Logo-trang.png" alt="Farm2Home" class="footer-logo mb-3">
           <p class="footer-desc">
             Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn,
             để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
@@ -35,8 +23,8 @@
         <div class="col-6 col-md-3 col-lg-3 mb-4 mb-md-0">
           <h5>Liên kết</h5>
           <ul class="list-unstyled">
-            <li><a href="#">Trang Chủ</a></li>
-            <li><a href="#">Sản Phẩm</a></li>
+            <li><a href="../../../app/views/customer/TrangChu.php">Trang Chủ</a></li>
+            <li><a href="../../../app/views/customer/Products.php">Sản Phẩm</a></li>
             <li><a href="#">Về Chúng Tôi</a></li>
             <li><a href="#">Liên Hệ</a></li>
             <li><a href="#">Chính Sách Bảo Mật</a></li>
@@ -80,3 +68,4 @@
   </footer>
 
 </body>
+</html>

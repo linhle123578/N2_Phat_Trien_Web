@@ -5,13 +5,13 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 ob_start();
-include_once '../layouts/header.php';
+include_once __DIR__ . '/../layouts/header.php';
 $raw_header = ob_get_clean();
 preg_match('/<nav.*?>.*?<\/nav>/is', $raw_header, $m_head);
 $clean_header = $m_head[0] ?? '';
 
 ob_start();
-include_once '../layouts/footer.php';
+include_once __DIR__ . '/../layouts/footer.php';
 $raw_footer = ob_get_clean();
 preg_match('/<footer.*?>.*?<\/footer>/is', $raw_footer, $m_foot);
 $clean_footer = $m_foot[0] ?? '';
@@ -129,7 +129,7 @@ $clean_footer = $m_foot[0] ?? '';
             </form>
 
             <div class="text-center mt-4 pt-1 text-redirect">
-              Đã có tài khoản? <a href="login.php" class="login-link-anchor">Đăng nhập</a>
+              Đã có tài khoản? <a href="../../../app/views/customer/LogIn.php" class="login-link-anchor">Đăng nhập</a>
             </div>
           </div>
 

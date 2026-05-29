@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/../../models/OrderModel.php";
 
-define('MOMO_LIVE_MODE',     true);
+define('MOMO_LIVE_MODE',     false);
 define('MOMO_PARTNER_CODE',  'MOMO_PARTNER_CODE'); // <-- Thay bằng Partner Code thật của bạn
 define('MOMO_ACCESS_KEY',    'MOMO_ACCESS_KEY');   // <-- Thay bằng Access Key thật của bạn
 define('MOMO_SECRET_KEY',    'MOMO_SECRET_KEY');   // <-- Thay bằng Secret Key thật của bạn

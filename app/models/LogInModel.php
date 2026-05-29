@@ -3,7 +3,7 @@ class LogInModel {
     private $conn;
 
     public function __construct() {
-        // 1. Cấu hình thông số kết nối TiDB Cloud đám mây (TRẢ VỀ NGUYÊN BẢN GỐC CHUẨN 100% CỦA BẠN)
+        // Cấu hình thông số kết nối TiDB Cloud
         $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
         $port = 4000;
         $user = "3YHrkxqAKWynehu.root";
@@ -12,13 +12,12 @@ class LogInModel {
 
         $this->conn = mysqli_init();
         if (!$this->conn) {
-            die(json_encode(["status" => "error", "message" => "mysqli_init thất bại"]));
+            die(json_encode(["status" => "error", "message" => "Khởi tạo kết nối thất bại"]));
         }
 
-        // Bắt buộc cấu hình chứng chỉ SSL đối với cổng kết nối TiDB Cloud
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
-        
-        // Thực hiện kết nối an toàn với Cloud (Giữ nguyên gốc để không bị lỗi Cloud)
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+
         $success = @mysqli_real_connect(
             $this->conn,
             $host,
@@ -31,11 +30,11 @@ class LogInModel {
         );
 
         if (!$success) {
-            echo json_encode(["status" => "error", "message" => "Không thể kết nối với hệ thống Cloud: " . mysqli_connect_error()]);
+            $err = mysqli_connect_error() ?: "Lỗi không xác định";
+            echo json_encode(["status" => "error", "message" => "Không thể kết nối với hệ thống Cloud. Chi tiết: " . $err]);
             exit();
         }
         
-        // Đảm bảo utf8mb4 để không lỗi font
         $this->conn->query("SET NAMES 'utf8mb4'");
     }
 

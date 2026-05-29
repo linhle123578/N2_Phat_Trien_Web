@@ -18,10 +18,21 @@ class LogInController {
         $user = $model->checkCredentials($identity, $password);
 
         if ($user) {
-            $_SESSION['customer_id'] = $user['customer_id'];
-            $_SESSION['customer_name'] = $user['full_name'];
-            
-            echo json_encode(["status" => "success", "message" => "Đăng nhập thành công!"]);
+            // Phân biệt admin (admin_id bắt đầu bằng ADM) vs customer
+            $uid = $user['customer_id'] ?? '';
+            if (str_starts_with((string)$uid, 'ADM')) {
+                // Là admin
+                $_SESSION['admin_id']   = $uid;
+                $_SESSION['admin_name'] = $user['full_name'];
+                $_SESSION['role']       = 'admin';
+                echo json_encode(["status" => "admin", "message" => "Đăng nhập thành công!"]);
+            } else {
+                // Là khách hàng
+                $_SESSION['customer_id']   = $uid;
+                $_SESSION['customer_name'] = $user['full_name'];
+                $_SESSION['role']          = 'customer';
+                echo json_encode(["status" => "success", "message" => "Đăng nhập thành công!"]);
+            }
             exit();
         } else {
             echo json_encode(["status" => "error", "message" => "Tài khoản hoặc mật khẩu không chính xác. Vui lòng thử lại!"]);

@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ORDER_DATA   = (typeof MOMO_ORDER_DATA !== 'undefined') ? MOMO_ORDER_DATA : {};
     const ORDER_ID     = ORDER_DATA.order_id     || '';
     const LIVE_MODE    = ORDER_DATA.live_mode     || false;
-    const CONTROLLER   = '/app/controllers/customer/MomoPaymentController.php';
+    const CONTROLLER   = 'MomoPaymentController.php';
 
     // ---- Thời gian QR còn hiệu lực (10 phút) ----
     const QR_DURATION  = 10*60; // giây

@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     $conn = mysqli_init();
 
     mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
     $connected = mysqli_real_connect(
         $conn,

@@ -1,3 +1,7 @@
+<?php
+ob_start();
+include_once __DIR__ . '/../layouts/header.php';
+?>
 // app/README.php
 
 <?php
@@ -16,3 +20,4 @@
 | - Views
 |
 */
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

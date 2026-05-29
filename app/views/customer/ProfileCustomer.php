@@ -1,9 +1,14 @@
 <?php
+ob_start();
+include_once __DIR__ . '/../layouts/header.php';
+?>
+﻿<?php
 
 
-// ── DB connection ────────────────────────────────────────────────────────────
+// -- DB connection ------------------------------------------------------------
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_real_connect(
     $conn,
     "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
@@ -16,7 +21,7 @@ mysqli_real_connect(
 );
 mysqli_set_charset($conn, "utf8mb4");
 
-// ── Load customer + account data ─────────────────────────────────────────────
+// -- Load customer + account data ---------------------------------------------
 $session_customer_id = $_SESSION['customer_id'] ?? 'CUS005';
 
 $customer = [
@@ -30,7 +35,7 @@ $customer = [
 ];
 
 try {
-    // FIX: join đúng theo schema: customer.account_id = account.account_id
+    // FIX: join d?ng theo schema: customer.account_id = account.account_id
     $sql = "
         SELECT c.customer_id, c.full_name, c.phone, c.gender,
                a.email, a.account_id
@@ -62,8 +67,8 @@ try {
     mysqli_stmt_close($stmt2);
 } catch (Exception $e) {}
 
-// ── Load addresses ────────────────────────────────────────────────────────────
-// FIX: dùng đúng các cột trong DB: province, district, ward, street_address, address_type
+// -- Load addresses ------------------------------------------------------------
+// FIX: đúng định dạng các cột trong DB: province, district, ward, street_address, address_type
 $addresses = [];
 try {
     $sql_addr = "SELECT address_id, receiver_name, address_type,
@@ -79,7 +84,7 @@ try {
     mysqli_stmt_close($stmt3);
 } catch (Exception $e) {}
 
-// ── Handle POST ───────────────────────────────────────────────────────────────
+// -- Handle POST ---------------------------------------------------------------
 $msg_profile  = '';
 $msg_password = '';
 $msg_address  = '';
@@ -87,6 +92,7 @@ $msg_address  = '';
 function pc_db_connect() {
     $c = mysqli_init();
     mysqli_ssl_set($c, NULL, NULL, NULL, NULL, NULL);
+        mysqli_options($c, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
     mysqli_real_connect($c,
         "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
         "3YHrkxqAKWynehu.root", "BzDRrZAdAT2jLuyd",
@@ -95,7 +101,7 @@ function pc_db_connect() {
     return $c;
 }
 
-// Helper: load lại địa chỉ sau POST
+// Helper: load l?i địa chỉ sau POST
 function reload_addresses(string $cid): array {
     $list = [];
     try {
@@ -116,7 +122,7 @@ function reload_addresses(string $cid): array {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // ── Lưu thông tin cá nhân (không còn avatar) ─────────────────────────────
+    // -- Lưu thông tin c? nhận (không cần avatar) -----------------------------
     if (isset($_POST['save_profile'])) {
         $fn  = trim($_POST['full_name'] ?? '');
         $ph  = trim($_POST['phone']     ?? '');
@@ -153,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ── Đổi mật khẩu ─────────────────────────────────────────────────────────
+    // -- Đổi mật khẩu ---------------------------------------------------------
     if (isset($_POST['save_password'])) {
         $old_pw  = $_POST['old_password']     ?? '';
         $new_pw  = $_POST['new_password']     ?? '';
@@ -193,8 +199,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ── Thêm địa chỉ ─────────────────────────────────────────────────────────
-    // FIX: INSERT đúng các cột DB: province, district, ward, street_address, address_type
+    // -- Thêm địa chỉ ---------------------------------------------------------
+    // FIX: INSERT d?ng các cột DB: province, district, ward, street_address, address_type
     if (isset($_POST['add_address'])) {
         $r_name    = trim($_POST['receiver_name']   ?? '');
         $r_phone   = trim($_POST['addr_phone']      ?? '');
@@ -240,7 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $addresses = reload_addresses($cid);
     }
 
-    // ── Đặt địa chỉ mặc định ─────────────────────────────────────────────────
+    // -- Đặt địa chỉ mặc định -------------------------------------------------
     if (isset($_POST['set_default_address'])) {
         $addr_id = trim($_POST['address_id'] ?? '');
         $cid     = $customer['customer_id'];
@@ -262,7 +268,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $addresses = reload_addresses($cid);
     }
 
-    // ── Xóa địa chỉ ──────────────────────────────────────────────────────────
+    // ?? X�a Địa chỉ ??????????????????????????????????????????????????????????
     if (isset($_POST['delete_address'])) {
         $addr_id = trim($_POST['address_id'] ?? '');
         $cid     = $customer['customer_id'];
@@ -284,7 +290,7 @@ mysqli_close($conn);
 
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
-// ── Build full address string từ các cột riêng ────────────────────────────────
+// // Build full address string t? c�c c?t ri�ng ????????????????????????????????
 function build_full_address(array $addr): string {
     $parts = array_filter([
         $addr['street_address'] ?? '',
@@ -295,36 +301,31 @@ function build_full_address(array $addr): string {
     return implode(', ', $parts);
 }
 
-//═══════════════════════════════════════════════════════════════
-ob_start();
-include '../../../app/views/layouts/loginheader.php';
-$header_output = ob_get_clean();
+//???????????????????????????????????????????????????????????????
 
 $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/N2_Phat_Trien_Web/public/assets/css/ProfileCustomer.css">
+    <link rel="stylesheet" href="../../../public/assets/css/ProfileCustomer.css">
 ';
-$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
-
-echo $header_output;
+echo $extra_head;
 ?>
 
 <div class="container" style="padding-top: 80px;">
 
     <!-- Breadcrumb -->
     <nav class="profile-breadcrumb">
-        <a href="../../../index.php">Trang chủ</a>
+        <a href="../../../public/index.php">Trang chủ</a>
         <span class="sep">›</span>
         <span class="current">Tài khoản của tôi</span>
     </nav>
 
-    <!-- ════════════ MAIN LAYOUT ════════════ -->
+    <!-- ------------ MAIN LAYOUT ------------ -->
     <div class="profile-layout">
 
-        <!-- ── SIDEBAR ──────────────────────────────────── -->
+        <!-- -- SIDEBAR ------------------------------------ -->
         <aside class="profile-sidebar">
             <div class="sidebar-card">
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
@@ -347,7 +348,7 @@ echo $header_output;
                 </ul>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-logout">
-                    <a href="#" id="btnLogout">
+                    <a href="../../../app/views/customer/logout.php" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">
                         <i class="bi bi-box-arrow-right"></i>
                         Đăng xuất
                     </a>
@@ -357,10 +358,10 @@ echo $header_output;
             </div>
         </aside>
 
-        <!-- ── MAIN CONTENT ─────────────────────────────── -->
+        <!-- -- MAIN CONTENT ------------------------------- -->
         <div class="profile-main-solo">
 
-        <!-- ── Section 1: Personal Info ──────────────────── -->
+        <!-- -- Section 1: Personal Info -------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-person-fill"></i></div>
@@ -378,7 +379,7 @@ echo $header_output;
             <?php endif; ?>
 
             <form method="POST" action="">
-                <!-- Đã xóa phần avatar theo yêu cầu -->
+                <!-- Đã xoá phần avatar theo yêu cầu -->
                 <div class="form-body-pad">
                     <div class="row g-3">
                         <div class="col-sm-6">
@@ -415,7 +416,7 @@ echo $header_output;
                                 <select class="form-select" id="fieldGender" name="gender"
                                         style="border-left:none;border-radius:0 var(--radius-input) var(--radius-input) 0;">
                                     <option value="Nam"  <?= $customer['gender'] === 'Nam'  ? 'selected' : '' ?>>Nam</option>
-                                    <option value="Nữ"   <?= $customer['gender'] === 'Nữ'   ? 'selected' : '' ?>>Nữ</option>
+                                    <option value="Nữ" <?= $customer['gender'] === 'Nữ' ? 'selected' : '' ?>>Nữ</option>
                                     <option value="Khác" <?= $customer['gender'] === 'Khác' ? 'selected' : '' ?>>Khác</option>
                                 </select>
                             </div>
@@ -430,7 +431,7 @@ echo $header_output;
             </form>
         </div>
 
-        <!-- ── Section 2: Addresses ───────────────────────── -->
+        <!-- -- Section 2: Addresses ------------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-geo-alt-fill"></i></div>
@@ -514,7 +515,7 @@ echo $header_output;
                                 <span>Đặt làm địa chỉ mặc định</span>
                             </label>
                             <div class="ms-auto d-flex gap-2">
-                                <button type="button" class="btn-cancel-addr" id="btnCancelAddAddr">Hủy</button>
+                                <button type="button" class="btn-cancel-addr" id="btnCancelAddAddr">Huỷ</button>
                                 <button type="submit" name="add_address" class="btn-save-main">
                                     <i class="bi bi-plus-circle me-1"></i>Thêm địa chỉ
                                 </button>
@@ -575,7 +576,7 @@ echo $header_output;
             </div>
         </div>
 
-        <!-- ── Section 3: Password ────────────────────────── -->
+        <!-- -- Section 3: Password -------------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-shield-lock-fill"></i></div>
@@ -647,68 +648,10 @@ echo $header_output;
 
     </div><!-- /.profile-layout -->
 
-<?php include '../../../app/views/layouts/footer.php'; ?>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
 
-<!-- ── Modal xác nhận đăng xuất (đặt ngoài mọi thứ, trước </body>) ── -->
-<div id="logoutOverlay" style="
-    display:none;
-    position:fixed;
-    top:0;left:0;right:0;bottom:0;
-    background:rgba(0,0,0,0.55);
-    z-index:99999;
-    align-items:center;
-    justify-content:center;
-">
-    <div style="
-        background:#fff;
-        border-radius:18px;
-        padding:36px 28px 28px;
-        max-width:360px;
-        width:90%;
-        box-shadow:0 20px 60px rgba(0,0,0,0.25);
-        text-align:center;
-        font-family:'Plus Jakarta Sans',sans-serif;
-        position:relative;
-        z-index:100000;
-    ">
-        <div style="width:60px;height:60px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:#c0392b;">
-            <i class="bi bi-box-arrow-right"></i>
-        </div>
-        <div style="font-size:1.08rem;font-weight:800;color:#1a2e1c;margin-bottom:8px;">Đăng xuất?</div>
-        <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">Bạn có chắc muốn đăng xuất khỏi tài khoản không?</div>
-        <div style="display:flex;gap:10px;">
-            <button id="btnLogoutCancel" style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;cursor:pointer;font-family:inherit;transition:background .15s;">Huỷ</button>
-            <a href="../../../app/views/customer/logout.php" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
-        </div>
-    </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var btnLogout       = document.getElementById('btnLogout');
-    var logoutOverlay   = document.getElementById('logoutOverlay');
-    var btnLogoutCancel = document.getElementById('btnLogoutCancel');
 
-    if (btnLogout && logoutOverlay) {
-        btnLogout.addEventListener('click', function (e) {
-            e.preventDefault();
-            logoutOverlay.style.display = 'flex';
-        });
-    }
-    if (btnLogoutCancel && logoutOverlay) {
-        btnLogoutCancel.addEventListener('click', function () {
-            logoutOverlay.style.display = 'none';
-        });
-    }
-    if (logoutOverlay) {
-        logoutOverlay.addEventListener('click', function (e) {
-            if (e.target === logoutOverlay) logoutOverlay.style.display = 'none';
-        });
-    }
-});
-</script>
-</body>
-</html>
+<?php include_once __DIR__ . '/../layouts/footer.php'; ?>
