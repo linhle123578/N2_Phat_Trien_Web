@@ -187,9 +187,5 @@ $total_items = count($items);
       container.appendChild(inpQty);
     });
   });
-<<<<<<< HEAD
   </script>
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
-  </script>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

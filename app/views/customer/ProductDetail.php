@@ -108,13 +108,8 @@ while ($row = mysqli_fetch_assoc($result_related)) {
 <div class="breadcrumb-section">
     <div class="container">
         <ol class="breadcrumb">
-<<<<<<< HEAD
             <li class="breadcrumb-item"><a href="../../../app/views/customer/TrangChu.php">Trang chủ</a></li>
             <li class="breadcrumb-item"><a href="../../../app/views/customer/Products.php">Sản phẩm</a></li>
-=======
-            <li class="breadcrumb-item"><a href="../../../public/index.php?page=TrangChu">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="../../../public/index.php?page=products">Sản phẩm</a></li>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             <li class="breadcrumb-item active"><?= htmlspecialchars($product['product_name']) ?></li>
         </ol>
     </div>
@@ -235,21 +230,13 @@ while ($row = mysqli_fetch_assoc($result_related)) {
                 <?php foreach ($related_products as $item): ?>
                 <div class="col-6 col-md-3 mb-3">
                     <div class="product-item">
-<<<<<<< HEAD
-                        <a href="../../../app/views/customer/ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-link">
-=======
-                        <a href="../../../public/index.php?page=productdetail&id=<?= urlencode($item['product_id']) ?>" class="product-link">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                        <a href="ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-link">
                             <div class="product-img-wrap">
                                 <img src="../../../Media/<?= htmlspecialchars($item['product_image']) ?>" alt="<?= htmlspecialchars($item['product_name']) ?>" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </a>
                         <div class="product-info">
-<<<<<<< HEAD
-                            <a href="../../../app/views/customer/ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-title-link">
-=======
-                            <a href="../../../public/index.php?page=productdetail&id=<?= urlencode($item['product_id']) ?>" class="product-title-link">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                            <a href="ProductDetail.php?id=<?= urlencode($item['product_id']) ?>" class="product-title-link">
                                 <div class="product-name-item"><?= htmlspecialchars($item['product_name']) ?></div>
                             </a>
                             <div class="product-price-item"><?= number_format($item['price'], 0, ',', '.') ?>₫ <span class="product-price-unit">/<?= htmlspecialchars($item['unit']) ?></span></div>
@@ -287,16 +274,9 @@ function requireLogin() {
 
     // Chuyển sang login kèm redirect
     window.location.href =
-<<<<<<< HEAD
         "../../../app/views/customer/LogIn.php?redirect="
         + encodeURIComponent(currentUrl);
 }
 </script>
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
-        "../../../public/index.php?page=login&redirect="
-        + encodeURIComponent(currentUrl);
-}
-</script>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

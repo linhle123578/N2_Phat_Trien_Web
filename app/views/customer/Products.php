@@ -108,11 +108,7 @@ if (!isset($cat_result) || !isset($prod_result)) {
                             <div class="col-xl-4 col-md-4 col-6">
                                 <div class="card h-100 product-card border-0 shadow-sm">
                                     <div class="position-relative">
-<<<<<<< HEAD
                                         <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="d-block">
-=======
-                                        <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>" class="d-block">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                                             <div class="product-img-wrapper" style="width: 100%; aspect-ratio: 1 / 1; overflow: hidden;">
                                                 <img src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>" 
                                                     alt="<?= htmlspecialchars($product['product_name']) ?>" 
@@ -122,11 +118,7 @@ if (!isset($cat_result) || !isset($prod_result)) {
                                     </div>
                                     
                                     <div class="card-body d-flex flex-column">
-<<<<<<< HEAD
                                 <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" class="product-title-link">
-=======
-                                <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>" class="product-title-link">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                                     <h6 class="product-title"><?= htmlspecialchars($product['product_name']) ?></h6>
                                 </a>
                                         

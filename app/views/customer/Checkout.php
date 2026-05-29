@@ -204,7 +204,6 @@ include_once __DIR__ . '/../layouts/header.php';
         </div>
     </div>
 
-<<<<<<< HEAD
 =======
     <?php include __DIR__ . '/../layouts/footer.php'; ?>
 >>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
@@ -215,7 +214,3 @@ include_once __DIR__ . '/../layouts/header.php';
 <<<<<<< HEAD
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
-</body>
-</html>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

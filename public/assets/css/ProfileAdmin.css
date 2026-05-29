@@ -39,110 +39,7 @@ body {
     min-height: 100vh;
 }
 
-/* ══════════════════════════════════════════════════
-   SIDEBAR
-══════════════════════════════════════════════════ */
-.pa-sidebar {
-    width: 240px;
-    flex: 0 0 240px;
-    background: var(--brand-green);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    padding: 0 0 24px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-    box-shadow: var(--shadow-sidebar);
-    transition: left var(--transition);
-    z-index: 1040;
-}
 
-/* Logo */
-.pa-brand {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 28px 20px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.1);
-}
-.pa-brand img {
-    max-width: 150px;
-    width: 100%;
-    object-fit: contain;
-}
-
-/* Sidebar user card */
-.pa-sidebar-user {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 18px 16px;
-    background: rgba(255,255,255,.08);
-    border-radius: 16px;
-    padding: 12px 14px;
-}
-.pa-sidebar-user img {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,.3);
-    flex-shrink: 0;
-}
-.pa-su-name {
-    font-weight: 700;
-    font-size: .9rem;
-    line-height: 1.2;
-}
-.pa-su-role {
-    font-size: .75rem;
-    color: rgba(255,255,255,.6);
-    margin-top: 2px;
-}
-
-/* Nav links */
-.pa-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding: 0 12px;
-    flex: 1;
-}
-.pa-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 14px;
-    color: rgba(255,255,255,.72);
-    text-decoration: none;
-    border-radius: 14px;
-    font-weight: 600;
-    font-size: .9rem;
-    transition: var(--transition);
-}
-.pa-link i { font-size: 1rem; flex-shrink: 0; }
-.pa-link:hover,
-.pa-link.active {
-    background: rgba(255,255,255,.13);
-    color: #fff;
-    transform: translateX(3px);
-}
-.pa-link.active {
-    background: rgba(255,255,255,.18);
-    color: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,.12);
-}
-.pa-link-logout {
-    margin-top: auto;
-    color: rgba(255,130,130,.85);
-}
-.pa-link-logout:hover {
-    background: rgba(239,68,68,.15);
-    color: #fca5a5;
-}
 
 /* ══════════════════════════════════════════════════
    MAIN
@@ -152,6 +49,7 @@ body {
     min-width: 0;
     display: flex;
     flex-direction: column;
+    margin-left: 220px;
 }
 
 /* ── Topbar ──────────────────────────────────────── */
@@ -440,14 +338,7 @@ body {
    RESPONSIVE
 ══════════════════════════════════════════════════ */
 @media (max-width: 991.98px) {
-    .pa-sidebar {
-        position: fixed;
-        left: -260px;
-        top: 0;
-        height: 100vh;
-    }
-    .pa-sidebar.open { left: 0; }
-
+    .pa-main { margin-left: 0; }
     .pa-topbar { padding: 14px 18px; }
     .pa-content { padding: 18px; }
 }

@@ -38,7 +38,7 @@ class DashboardModel {
             SELECT 
                 SUM(CASE WHEN MONTH(o.created_at) = MONTH(CURRENT_DATE()) AND YEAR(o.created_at) = YEAR(CURRENT_DATE()) THEN p.total_amount ELSE 0 END) AS current_month,
                 SUM(CASE WHEN MONTH(o.created_at) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(o.created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) THEN p.total_amount ELSE 0 END) AS last_month
-            FROM `order` o JOIN payment p ON o.order_id = p.order_id WHERE o.order_status = 'completed'";
+            FROM `order` o JOIN payment p ON o.order_id = p.order_id WHERE o.order_status IN ('completed', 'Hoàn thành')";
         $revRes = $this->conn->query($revQuery);
         if ($revRes && $row = $revRes->fetch_assoc()) {
             $stats['revenue_current'] = (float)$row['current_month'];
@@ -54,8 +54,8 @@ class DashboardModel {
         $orderQuery = "
             SELECT 
                 COUNT(order_id) as total,
-                SUM(CASE WHEN order_status IN ('pending', 'shipping') THEN 1 ELSE 0 END) as shipping,
-                SUM(CASE WHEN order_status = 'completed' THEN 1 ELSE 0 END) as completed
+                SUM(CASE WHEN order_status IN ('pending', 'shipping', 'Chờ xác nhận', 'Đang giao') THEN 1 ELSE 0 END) as shipping,
+                SUM(CASE WHEN order_status IN ('completed', 'Hoàn thành') THEN 1 ELSE 0 END) as completed
             FROM `order`";
         $orderRes = $this->conn->query($orderQuery);
         if ($orderRes && $row = $orderRes->fetch_assoc()) {
@@ -95,7 +95,7 @@ class DashboardModel {
             SELECT DATE_FORMAT(o.created_at, '%m/%Y') as month_label, SUM(p.total_amount) as total_rev, COUNT(o.order_id) as total_ord 
             FROM `order` o 
             JOIN payment p ON o.order_id = p.order_id
-            WHERE o.order_status = 'completed' AND o.created_at BETWEEN '$startDate' AND '$endDate'
+            WHERE o.order_status IN ('completed', 'Hoàn thành') AND o.created_at BETWEEN '$startDate' AND '$endDate'
             GROUP BY DATE_FORMAT(o.created_at, '%m/%Y') ORDER BY MIN(o.created_at) ASC";
         $trendRes = $this->conn->query($trendSql);
         while ($trendRes && $row = $trendRes->fetch_assoc()) {
@@ -111,7 +111,7 @@ class DashboardModel {
             JOIN `order` o ON oi.order_id = o.order_id
             JOIN product p ON oi.product_id = p.product_id
             JOIN category c ON p.category_id = c.category_id
-            WHERE o.order_status = 'completed' AND o.created_at BETWEEN '$startDate' AND '$endDate'
+            WHERE o.order_status IN ('completed', 'Hoàn thành') AND o.created_at BETWEEN '$startDate' AND '$endDate'
             GROUP BY c.category_id";
         $catRes = $this->conn->query($catSql);
         $totalCatRevenue = 0;
@@ -131,7 +131,7 @@ class DashboardModel {
             FROM orderitem oi
             JOIN `order` o ON oi.order_id = o.order_id
             JOIN product p ON oi.product_id = p.product_id
-            WHERE o.order_status = 'completed' AND o.created_at BETWEEN '$startDate' AND '$endDate'
+            WHERE o.order_status IN ('completed', 'Hoàn thành') AND o.created_at BETWEEN '$startDate' AND '$endDate'
             GROUP BY p.product_id ORDER BY total_sold DESC LIMIT 3";
         $topRes = $this->conn->query($topSql);
         while ($topRes && $row = $topRes->fetch_assoc()) {

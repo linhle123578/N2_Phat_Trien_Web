@@ -23,32 +23,13 @@ $analytics = $analytics ?? [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css">
     <link rel="stylesheet" href="../../../public/assets/css/Dashboard.css">
 </head>
 <body>
 
-    <div class="admin-sidebar" id="adminSidebar">
-        <div class="sidebar-brand">
-            <i class="fas fa-seedling mr-2"></i> FARM2HOME
-        </div>
-        <ul class="sidebar-menu">
-            <li class="sidebar-item active">
-                <a href="../../../app/controllers/admin/DashboardController.php"><i class="fas fa-th-large"></i> Dashboard</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="../../../app/views/admin/ProductAdmin.php"><i class="fas fa-box"></i> Quản lý sản phẩm</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="../../../app/views/admin/ControlOrder.php"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a>
-            </li>
-            <li class="sidebar-item">
-                <a href="../../../app/views/admin/ProfileAdmin.php"><i class="fas fa-user-cog"></i> Tài khoản</a>
-            </li>
-        </ul>
-        <div class="sidebar-footer-item">
-            <a href="../../../app/views/customer/logout.php"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-        </div>
-    </div>
+    <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
 
     <div class="admin-main-content">
         

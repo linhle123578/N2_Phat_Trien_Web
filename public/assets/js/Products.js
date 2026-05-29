@@ -5,8 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (sortSelect) {
         sortSelect.addEventListener("change", function () {
             const selectedSort = this.value;
-            // let targetUrl = `../../../app/views/customer/Products.php?sort=${selectedSort}`;
-            let targetUrl = `index.php?page=Products&sort=${selectedSort}`;
+            let targetUrl = `ProductController.php?sort=${selectedSort}`;
             if (typeof currentCategory !== 'undefined' && currentCategory) {
                 targetUrl += `&category=${currentCategory}`;
             }

@@ -1,55 +1,38 @@
-<!DOCTYPE html> 
-<html lang="vi"> 
-    <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Farm2Home – Quản lý đơn hàng</title> 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"> 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"> 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap"> 
-<link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css"> </head> <body> 
-
+<?php
+$currentPage = basename($_SERVER['PHP_SELF']);
+$pendingReturns = $pendingReturns ?? 0;
+?>
+<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
-
-    <div class="sidebar-logo">
-        <img src="../../../Media/Logo-trang.png" alt="Logo Farm2Home" style="width:38px; height:38px;">
-        <div class="logo-text">Farm2Home<small>Admin Dashboard</small></div>
+    <div class="sidebar-logo" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding-bottom: 24px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.1);">
+        <img src="../../../Media/Logo-trang.png" alt="Logo Farm2Home" style="width: 160px; height: auto; object-fit: contain;">
+        <div class="logo-text" style="font-size: 12px; font-weight: 400; opacity: 0.7; letter-spacing: 0.5px; padding-left: 4px;">Admin</div>
     </div>
 
-    <div style="display:flex;flex-direction:column;gap:3px">
-
-         <a href="../../../app/views/admin/Dashboard.php" class="nav-btn">
-            <span class="material-symbols-outlined">bar_chart</span>
-            Thống kê
+    <div style="display:flex;flex-direction:column;gap:12px">
+        <a href="../../../app/views/admin/Dashboard.php" class="nav-btn <?= ($currentPage === 'Dashboard.php' || $currentPage === 'DashboardController.php') ? 'active' : '' ?>">
+            <span class="material-symbols-outlined">dashboard</span>Dashboard
         </a>
 
-
-        <a href="../../../app/views/admin/ProductAdmin.php" class="nav-btn">
-            <span class="material-symbols-outlined">storefront</span>
-            Quản Lý Sản phẩm
+        <a href="../../../app/views/admin/ProductAdmin.php" class="nav-btn <?= ($currentPage === 'ProductAdmin.php') ? 'active' : '' ?>">
+            <span class="material-symbols-outlined">storefront</span>Sản phẩm
         </a>
 
-        <a href="../../../app/views/admin/ControlOrder.php" class="nav-btn active">
-            <span class="material-symbols-outlined">receipt_long</span>
-            Quản Lý Đơn hàng
-
-            <?php $pendingReturns = $pendingReturns ?? 0; ?>
-
+        <a href="../../../app/views/admin/ControlOrder.php" class="nav-btn <?= ($currentPage === 'ControlOrder.php') ? 'active' : '' ?>">
+            <span class="material-symbols-outlined">receipt_long</span>Đơn hàng
             <?php if ($pendingReturns > 0): ?>
                 <span class="notif-dot"><?= $pendingReturns ?></span>
             <?php endif; ?>
         </a>
 
-        <a href="../../../app/views/admin/ProfileAdmin.php" class="nav-btn">
-            <span class="material-symbols-outlined">person</span>
-            Tài khoản
+        <a href="../../../app/views/admin/ProfileAdmin.php" class="nav-btn <?= ($currentPage === 'ProfileAdmin.php') ? 'active' : '' ?>">
+            <span class="material-symbols-outlined">person</span>Tài khoản
         </a>
-
     </div>
 
     <div class="sidebar-footer">
         <a href="../../../app/views/customer/logout.php" class="nav-btn">
-            <span class="material-symbols-outlined">logout</span>
-            Đăng xuất
+            <span class="material-symbols-outlined">logout</span>Đăng xuất
         </a>
     </div>
-
 </div>

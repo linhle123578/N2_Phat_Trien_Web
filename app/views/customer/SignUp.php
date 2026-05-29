@@ -129,11 +129,7 @@ $clean_footer = $m_foot[0] ?? '';
             </form>
 
             <div class="text-center mt-4 pt-1 text-redirect">
-<<<<<<< HEAD
               Đã có tài khoản? <a href="../../../app/views/customer/LogIn.php" class="login-link-anchor">Đăng nhập</a>
-=======
-              Đã có tài khoản? <a href="../../../public/index.php?page=login" class="login-link-anchor">Đăng nhập</a>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             </div>
           </div>
 

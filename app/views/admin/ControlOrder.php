@@ -180,6 +180,7 @@ function pageUrl($p, $search, $filter) {
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css">
 <link rel="stylesheet" href="../../../public/assets/css/ControlOrder.css">
 </head>
 <body>
@@ -187,28 +188,7 @@ function pageUrl($p, $search, $filter) {
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-        <div class="logo-icon"><span class="material-symbols-outlined">eco</span></div>
-        <div class="logo-text">Farm2Home<small>Admin Dashboard</small></div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:3px">
-        <a href="../../../app/controllers/admin/DashboardController.php" class="nav-btn"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-        <a href="../../../app/controllers/admin/DashboardController.php" class="nav-btn"><span class="material-symbols-outlined">bar_chart</span>Thống kê</a>
-        <a href="../../../app/views/admin/ProductAdmin.php" class="nav-btn"><span class="material-symbols-outlined">storefront</span>Sản phẩm</a>
-        <a href="../../../app/views/admin/ControlOrder.php" class="nav-btn active">
-            <span class="material-symbols-outlined">receipt_long</span>Đơn hàng
-            <?php if($pendingReturns > 0): ?>
-            <span class="notif-dot"><?= $pendingReturns ?></span>
-            <?php endif; ?>
-        </a>
-        <a href="../../../app/views/admin/ProfileAdmin.php" class="nav-btn"><span class="material-symbols-outlined">person</span>Tài khoản</a>
-        <a href="#" class="nav-btn"><span class="material-symbols-outlined">settings</span>Cài đặt</a>
-    </div>
-    <div class="sidebar-footer">
-        <a href="../../../app/views/customer/logout.php" class="nav-btn"><span class="material-symbols-outlined">logout</span>Đăng xuất</a>
-    </div>
-</div>
+<?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
 
 <!-- MAIN -->
 <div class="main-wrap">

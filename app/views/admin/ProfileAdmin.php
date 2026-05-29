@@ -175,6 +175,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài khoản - Farm2Home Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+    <link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css">
+    <link rel="stylesheet" href="../../../public/assets/css/ProfileAdmin.css">
+</head>
+<body>
+<div class="pa-shell d-flex">
+    <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
+    <div class="pa-main flex-grow-1">
+        <section class="pa-content p-4">
+            <div class="pa-card mb-4">
+                <div class="pa-card-header">
+                    <i class="bi bi-person-fill"></i>
+                    <div>
+                        <h5 class="pa-card-title">Hồ sơ cá nhân</h5>
+                        <p class="pa-card-desc">Cập nhật thông tin tài khoản của bạn.</p>
+                    </div>
+                </div>
+                
+                <?php if ($msg_profile === 'success'): ?>
+                    <div class="alert alert-success alert-dismissible fade show mx-0 mb-3 rounded-3" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>Cập nhật hồ sơ thành công!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php elseif ($msg_profile === 'error'): ?>
+                    <div class="alert alert-danger alert-dismissible fade show mx-0 mb-3 rounded-3" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>Có lỗi xảy ra khi cập nhật.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <?php endif; ?>
+
                 <form method="POST" action="">
                     <div class="row g-4">
 

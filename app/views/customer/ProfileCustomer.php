@@ -311,8 +311,7 @@ $extra_head = '
 echo $extra_head;
 ?>
 
-<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/ProfileCustomer.css">
+
 <div class="container" style="padding-top: 80px;">
 
     <!-- Breadcrumb -->
@@ -331,13 +330,13 @@ echo $extra_head;
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li class="active">
-                        <a href="<?= BASE_URL ?>index.php?page=ProfileCustomer">
+                        <a href="ProfileCustomer.php">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li>
-                        <a href="<?= BASE_URL ?>index.php?page=OrderHistory">
+                        <a href="OrderHistory.php">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($customer['orders'] > 0): ?>
@@ -348,11 +347,7 @@ echo $extra_head;
                 </ul>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-logout">
-<<<<<<< HEAD
-                    <a href="../../../app/views/customer/logout.php" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">
-=======
-                    <a href="<?= BASE_URL ?>index.php?page=Logout" id="btnLogout">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                    <a href="logout.php" id="btnLogout">
                         <i class="bi bi-box-arrow-right"></i>
                         Đăng xuất
                     </a>
@@ -652,16 +647,12 @@ echo $extra_head;
 
     </div><!-- /.profile-layout -->
 
-<<<<<<< HEAD
-=======
 
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
 
-<<<<<<< HEAD
-=======
+
 <!-- ── Modal xác nhận đăng xuất (đặt ngoài mọi thứ, trước </body>) ── -->
 <div id="logoutOverlay" style="
     display:none;
@@ -691,11 +682,10 @@ echo $extra_head;
         <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">Bạn có chắc muốn đăng xuất khỏi tài khoản không?</div>
         <div style="display:flex;gap:10px;">
             <button id="btnLogoutCancel" style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;cursor:pointer;font-family:inherit;transition:background .15s;">Huỷ</button>
-            <a href="<?= BASE_URL ?>index.php?page=Logout" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
+            <a href="logout.php" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
         </div>
     </div>
 </div>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>

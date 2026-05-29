@@ -71,11 +71,7 @@ $BASE_URL = '/n2_phat_trien_web';
                <div class="sidebar-title">MENU TÀI KHOẢN</div>
                <ul class="sidebar-menu">
                    <li>
-<<<<<<< HEAD
-                       <a href="../../../app/views/customer/ProfileCustomer.php">
-=======
-                       <a href="index.php?page=profile">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                       <a href="ProfileCustomer.php">
                            <i class="bi bi-person-circle"></i>
                            Thông tin cá nhân
                        </a>
@@ -230,21 +226,13 @@ $BASE_URL = '/n2_phat_trien_web';
 
                                <!-- NÚT TRẢ HÀNG: chỉ hiện nếu đã giao trong vòng 3 ngày -->
                                <?php if (($status === 'delivered' || $status === 'Đã giao' || $status === 'Hoàn thành' || $status === 'completed') && $can_return): ?>
-<<<<<<< HEAD
-                               <a href="../../../app/views/customer/ReturnRequest.php?order_id=<?= $e($oid) ?>"
-=======
-                               <a href="index.php?page=return&order_id=<?= $e($oid) ?>"
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                               <a href="ReturnRequest.php?order_id=<?= $e($oid) ?>"
                                   class="btn-oh btn-oh-return">
                                    <i class="bi bi-arrow-return-left me-1"></i>Trả hàng
                                </a>
                                <?php elseif (($status === 'delivered' || $status === 'Đã giao' || $status === 'Hoàn thành' || $status === 'completed') && $is_returned): ?>
                                <!-- Đã có yêu cầu trả hàng -->
-<<<<<<< HEAD
-                               <a href="../../../app/views/customer/ReturnRequest.php?order_id=<?= $e($oid) ?>"
-=======
-                               <a href="index.php?page=return&order_id=<?= $e($oid) ?>"
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                               <a href="ReturnRequest.php?order_id=<?= $e($oid) ?>"
                                   class="btn-oh" style="background-color: #ff9800; color: white; border-color: #ff9800;">
                                    <i class="bi bi-info-circle me-1"></i>Xem yêu cầu trả hàng
                                </a>
@@ -275,11 +263,7 @@ $BASE_URL = '/n2_phat_trien_web';
                                </form>
                                <?php endif; ?>
 
-<<<<<<< HEAD
-                               <a href="../../../app/views/customer/OrderDetail.php?id=<?= $e($oid) ?>"
-=======
-                               <a href="index.php?page=orderdetail&id=<?= $e($oid) ?>"
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                               <a href="OrderDetail.php?id=<?= $e($oid) ?>"
                                   class="btn-oh btn-oh-primary">
                                    Chi tiết
                                </a>
@@ -295,14 +279,7 @@ $BASE_URL = '/n2_phat_trien_web';
    </div><!-- /.profile-layout -->
 </div>
 
-<<<<<<< HEAD
 
-
-=======
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
-
-
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 <script src="../../../public/assets/js/OrderHistory.js"></script>
 
 <script>
@@ -310,11 +287,7 @@ $BASE_URL = '/n2_phat_trien_web';
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
     var cartUrl = '../app/controllers/customer/CartController.php';
-<<<<<<< HEAD
-    var cartPageUrl = '../../../app/views/customer/cart.php';
-=======
-    var cartPageUrl = 'index.php?page=cart';
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+    var cartPageUrl = 'cart.php';
     var total = items.length;
     var done = 0;
     items.forEach(function(item) {
@@ -367,12 +340,4 @@ function rebuyOrder(items) {
         </div>
     </div>
 </div>
-<<<<<<< HEAD
-
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
-</body>
-</html>
-
-
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
