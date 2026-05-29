@@ -72,7 +72,7 @@ class ProductModel {
 
     public function getCartCount($customer_id) {
         $cus_escaped = mysqli_real_escape_string($this->conn, $customer_id);
-        $query = "SELECT SUM(ci.quantity) AS total_qty 
+        $query = "SELECT COUNT(ci.product_id) AS total_qty 
                   FROM cart c 
                   JOIN cartitem ci ON c.cart_id = ci.cart_id 
                   WHERE c.customer_id = '$cus_escaped'";

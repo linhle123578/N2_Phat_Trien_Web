@@ -135,7 +135,7 @@ $clean_footer = $m_foot[0] ?? '';
                                           <label class="field-label">Địa chỉ Gmail</label>
                                           <div class="input-group-custom">
                                               <span class="input-icon"><i class="far fa-envelope"></i></span>
-                                              <input type="email" id="forgot_email" class="field-input" placeholder="example@gmail.com">
+                                              <input type="email" id="forgot_email" name="email" class="field-input" placeholder="example@gmail.com">
                                           </div>
                                           <div class="invalid-msg" id="msg-forgot-email"></div>
                                       </div>
@@ -154,7 +154,7 @@ $clean_footer = $m_foot[0] ?? '';
                                           <label class="field-label">Mã xác thực OTP</label>
                                           <div class="input-group-custom">
                                               <span class="input-icon"><i class="fas fa-shield-alt"></i></span>
-                                              <input type="number" id="otp_code" class="field-input text-center font-weight-bold" placeholder="X X X X X X" style="letter-spacing: 3px;">
+                                              <input type="number" id="otp_code" name="otp" class="field-input text-center font-weight-bold" placeholder="X X X X X X" style="letter-spacing: 3px;">
                                           </div>
                                           <div class="invalid-msg" id="msg-otp"></div>
                                       </div>

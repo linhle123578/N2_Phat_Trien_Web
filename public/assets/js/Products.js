@@ -30,8 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const formData = new FormData();
             formData.append('product_id', productId);
 
+            formData.append('ajax', '1');
+
             // Đường dẫn tương đối từ thư mục views/customer/ sang controllers/customer/
-            fetch(`${BASE_URL}index.php?page=CartController&action=add`, {
+            fetch(`../../../app/controllers/customer/CartController.php`, {
                 method: 'POST',
                 body: formData
             })
@@ -40,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.status === 'not_logged_in') {
                     // Xử lý khi CHƯA đăng nhập: Hiện thông báo và đẩy sang trang đăng nhập
                     alert(data.message);
-                    window.location.href = `${BASE_URL}index.php?page=LogIn`; 
+                    window.location.href = `../../../app/views/customer/LogIn.php`; 
                 } else if (data.status === 'success') {
                     // Xử lý khi ĐÃ đăng nhập: Thông báo thành công và tăng số thực tế trên icon Navbar
                     alert(`Đã thêm thành công sản phẩm "${productTitle}" vào giỏ hàng hệ thống!`);

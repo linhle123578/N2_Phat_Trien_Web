@@ -239,7 +239,7 @@ function openEditModal(id) {
     document.getElementById('editCategory').value   = p.category_id || '';
     document.getElementById('editPrice').value      = p.price;
     document.getElementById('editStock').value      = p.stock;
-    document.getElementById('editUnit').value       = p.unit || 'kg';
+    document.getElementById('editUnit').value       = (p.unit || 'kg').toLowerCase();
     document.getElementById('editImageName').value  = p.product_image || '';
 
     // Show existing image in preview
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Save product
-    document.getElementById('saveProductBtn').addEventListener('click', () => {
+    document.getElementById('saveProductBtn').addEventListener('click', async () => {
         const editId = document.getElementById('editProductId').value.trim();
         const name   = document.getElementById('editName').value.trim();
         const catId  = document.getElementById('editCategory').value;
@@ -333,58 +333,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Image: prefer newly uploaded file name, fall back to text field
         const fileInput = document.getElementById('editImageFile');
-        const imageName = fileInput.files[0]
-            ? fileInput.files[0].name
-            : document.getElementById('editImageName').value.trim();
+        const fallbackImageName = document.getElementById('editImageName').value.trim();
 
         if (!name)       { showToast('Vui lòng nhập tên sản phẩm', 'warning'); return; }
         if (!catId)      { showToast('Vui lòng chọn danh mục', 'warning');     return; }
         if (price <= 0)  { showToast('Vui lòng nhập giá bán hợp lệ', 'warning'); return; }
 
-        if (editId) {
-            const p = products.find(x => String(x.product_id) === editId);
-            if (p) {
-                p.product_name  = name;
-                p.category_id   = catId;
-                p.price         = price;
-                p.stock         = stock;
-                p.unit          = unit;
-                p.product_image = imageName;
-            }
-            showToast('Đã cập nhật sản phẩm thành công', 'success');
-        } else {
-            const maxNum = products.reduce((mx, pr) => {
-                const n = parseInt(String(pr.product_id).replace(/\D/g,'')) || 0;
-                return n > mx ? n : mx;
-            }, 0);
-            const newId = 'SP' + String(maxNum + 1).padStart(3, '0');
-            products.push({
-                product_id:    newId,
-                product_name:  name,
-                category_id:   catId,
-                price,
-                stock,
-                unit,
-                product_image: imageName,
-                sold: 0
-            });
-            showToast('Đã thêm sản phẩm mới thành công', 'success');
+        const formData = new FormData();
+        formData.append('action', editId ? 'edit' : 'add');
+        if (editId) formData.append('product_id', editId);
+        formData.append('product_name', name);
+        formData.append('category_id', catId);
+        formData.append('price', price);
+        formData.append('stock', stock);
+        formData.append('unit', unit);
+        formData.append('product_image_name', fallbackImageName);
+
+        if (fileInput.files.length > 0) {
+            formData.append('image_file', fileInput.files[0]);
         }
 
-        productModal.hide();
-        applyFilters();
-        updateAlertCounters();
+        const btn = document.getElementById('saveProductBtn');
+        const oldText = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang lưu...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('../../../app/controllers/admin/ProductAdminController.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                showToast(result.message, 'success');
+                productModal.hide();
+                setTimeout(() => { window.location.reload(); }, 1000);
+            } else {
+                showToast(result.message || 'Lỗi lưu sản phẩm!', 'danger');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi kết nối đến server.', 'danger');
+        } finally {
+            btn.innerHTML = oldText;
+            btn.disabled = false;
+        }
     });
 
     // Confirm delete
-    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
         const id  = document.getElementById('deleteProductId').value;
-        const idx = products.findIndex(x => String(x.product_id) === String(id));
-        if (idx !== -1) products.splice(idx, 1);
-        deleteModal.hide();
-        applyFilters();
-        updateAlertCounters();
-        showToast('Đã xóa sản phẩm thành công', 'success');
+        
+        const btn = document.getElementById('confirmDeleteBtn');
+        const oldText = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xóa...';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('product_id', id);
+
+        try {
+            const response = await fetch('../../../app/controllers/admin/ProductAdminController.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.success) {
+                showToast(result.message, 'success');
+                deleteModal.hide();
+                setTimeout(() => { window.location.reload(); }, 1000);
+            } else {
+                showToast(result.message || 'Lỗi xóa sản phẩm!', 'danger');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi kết nối đến server.', 'danger');
+        } finally {
+            btn.innerHTML = oldText;
+            btn.disabled = false;
+        }
     });
 
     // Mobile sidebar

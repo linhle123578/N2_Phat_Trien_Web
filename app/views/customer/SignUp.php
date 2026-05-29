@@ -27,8 +27,8 @@ $clean_footer = $m_foot[0] ?? '';
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
-  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/SignUp.css">
+  <link rel="stylesheet" href="../../../public/assets/css/layout.css">
+  <link rel="stylesheet" href="../../../public/assets/css/SignUp.css">
 </head>
 <body class="signup-page">
 
@@ -87,7 +87,7 @@ $clean_footer = $m_foot[0] ?? '';
                   <label class="form-label field-label">Email</label>
                   <div class="input-group-custom">
                     <span class="input-icon"><i class="far fa-envelope"></i></span>
-                    <input type="email" name="email" id="email" class="form-control field-input" placeholder="example@email.com" required>
+                    <input type="email" name="email" id="email" class="form-control field-input" placeholder="example@email.com" autocomplete="off" required>
                   </div>
                   <div class="invalid-msg" id="msg-email"></div>
                 </div>
@@ -98,7 +98,7 @@ $clean_footer = $m_foot[0] ?? '';
                   <label class="form-label field-label">Mật khẩu</label>
                   <div class="input-group-custom">
                     <span class="input-icon"><i class="fas fa-lock"></i></span>
-                    <input type="password" name="password" id="password" class="form-control field-input" placeholder="••••••••" required>
+                    <input type="password" name="password" id="password" class="form-control field-input" placeholder="••••••••" autocomplete="new-password" required>
                     <span class="toggle-eye" id="toggle-pwd-1"><i class="far fa-eye-slash"></i></span>
                   </div>
                   <div class="invalid-msg" id="msg-password"></div>
@@ -108,7 +108,7 @@ $clean_footer = $m_foot[0] ?? '';
                   <label class="form-label field-label">Xác nhận mật khẩu</label>
                   <div class="input-group-custom">
                     <span class="input-icon"><i class="fas fa-check-circle"></i></span>
-                    <input type="password" name="confirm_password" id="confirm_password" class="form-control field-input" placeholder="••••••••" required>
+                    <input type="password" name="confirm_password" id="confirm_password" class="form-control field-input" placeholder="••••••••" autocomplete="new-password" required>
                     <span class="toggle-eye" id="toggle-pwd-2"><i class="far fa-eye-slash"></i></span>
                   </div>
                   <div class="invalid-msg" id="msg-confirm-password"></div>

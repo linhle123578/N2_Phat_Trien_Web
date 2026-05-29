@@ -75,9 +75,11 @@ document.addEventListener("DOMContentLoaded", function () {
             hasError = true;
         }
 
-        // Bắt lỗi Số điện thoại
-        if (!isPhoneValidAndAvailable) {
-            document.getElementById("msg-phone").textContent = "Số điện thoại trùng lặp hoặc chưa đúng định dạng.";
+        // Bắt lỗi Số điện thoại bằng Regex thay vì chờ trạng thái AJAX (để tránh race condition)
+        const phoneValue = document.getElementById("phone").value.trim();
+        const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+        if (!phoneRegex.test(phoneValue)) {
+            document.getElementById("msg-phone").textContent = "Số điện thoại chưa đúng định dạng.";
             hasError = true;
         }
 
@@ -124,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.status === "success") {
                 serverAlert.classList.add("alert-success");
                 serverAlert.textContent = data.message;
-                setTimeout(() => { window.location.href = "login.php"; }, 2000);
+                setTimeout(() => { window.location.href = "LogIn.php"; }, 2000);
             } else {
                 serverAlert.classList.add("alert-danger");
                 serverAlert.textContent = data.message;

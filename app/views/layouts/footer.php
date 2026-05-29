@@ -9,26 +9,24 @@
             Farm2Home mang nông sản sạch, tươi ngon và an toàn đến tận tay bạn,
             để mỗi bữa ăn luôn trọn vẹn sự an tâm và chất lượng.
           </p>
+          <?php
+          $isLoggedInFooter = isset($_SESSION['user']) || isset($_SESSION['customer_id']);
+          if (!$isLoggedInFooter):
+          ?>
           <form class="subscribe-form">
             <div class="row no-gutters subscribe-row">
-              <div class="col-12 col-sm">
-                <input type="email" class="form-control subscribe-input" placeholder="Email của bạn...">
-              </div>
               <div class="col-12 col-sm-auto mt-2 mt-sm-0">
-                <button type="button" class="btn btn-subscribe w-100">Đăng ký</button>
+                <a href="../../../app/views/customer/SignUp.php" class="btn btn-subscribe w-100 d-inline-block text-center" style="line-height: 25px;">Đăng ký</a>
               </div>
             </div>
           </form>
+          <?php endif; ?>
         </div>
         <div class="col-6 col-md-3 col-lg-3 mb-4 mb-md-0">
           <h5>Liên kết</h5>
           <ul class="list-unstyled">
             <li><a href="../../../app/views/customer/TrangChu.php">Trang Chủ</a></li>
             <li><a href="../../../app/views/customer/Products.php">Sản Phẩm</a></li>
-            <li><a href="#">Về Chúng Tôi</a></li>
-            <li><a href="#">Liên Hệ</a></li>
-            <li><a href="#">Chính Sách Bảo Mật</a></li>
-            <li><a href="#">Điều Khoản Sử Dụng</a></li>
           </ul>
         </div>
         <div class="col-6 col-md-3 col-lg-4">
@@ -61,7 +59,6 @@
         <div class="col-12 col-md-4 text-center text-md-right">
           <span>Thanh toán an toàn:</span>
           <span class="footer-badge ml-1" style="font-size:.75rem;">MoMo</span>
-          <span class="footer-badge" style="font-size:.75rem;">VNPay</span>
         </div>
       </div>
     </div>

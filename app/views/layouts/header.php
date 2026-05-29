@@ -1,12 +1,16 @@
-<!-- app/views/layouts/header.php -->
 <?php
+// app/views/layouts/header.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$currentPage = $_GET['page'] ?? 'TrangChu';
+
+$currentScript = strtolower(basename($_SERVER['PHP_SELF'], '.php'));
+$isHome = ($currentScript === 'trangchu' || $currentScript === 'index');
+$isProduct = ($currentScript === 'products' || $currentScript === 'productdetail' || $currentScript === 'productcontroller' || $currentScript === 'productdetailcontroller');
+
 $isLoggedIn = isset($_SESSION['user']) || isset($_SESSION['customer_id']);
 
-// Kh?i t?o s? ??m gi? hàng an toàn
+// Khởi tạo số đếm giỏ hàng an toàn
 $cartCount = 0;
 if (isset($_SESSION['customer_id'])) {
     if (!class_exists('ProductModel')) {
@@ -25,10 +29,12 @@ if (isset($_SESSION['customer_id'])) {
 
     <!-- Bootstrap 4 CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
-    <!-- CSS Chu?n cho Header (l?y t? loginheader c? vì nó ??p h?n và ?? style) -->
+    <!-- CSS Chuẩn cho Header -->
     <link rel="stylesheet" href="../../../public/assets/css/loginheader.css">
 </head>
 <body>
@@ -49,23 +55,17 @@ if (isset($_SESSION['customer_id'])) {
 
         <div class="collapse navbar-collapse" id="navbarNav1">
             <!-- MENU CENTER -->
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item <?= ($currentPage == 'TrangChu') ? 'active' : '' ?>">
+            <ul class="navbar-nav mx-auto navbar-center-custom">
+                <li class="nav-item <?= $isHome ? 'active' : '' ?>">
                     <a class="nav-link" href="../../../app/views/customer/TrangChu.php">Trang Chủ</a>
                 </li>
-                <li class="nav-item <?= ($currentPage == 'products' || $currentPage == 'productdetail') ? 'active' : '' ?>">
+                <li class="nav-item <?= $isProduct ? 'active' : '' ?>">
                     <a class="nav-link" href="../../../app/views/customer/Products.php">Sản Phẩm</a>
                 </li>
             </ul>
 
             <!-- RIGHT ACTIONS -->
-            <div class="nav-right-actions">
-                <!-- NOTIFICATION -->
-                <a href="#" class="action-icon">
-                    <i class="far fa-bell"></i>
-                    <span class="icon-badge">1</span>
-                </a>
-
+            <div class="nav-right-actions ml-auto">
                 <!-- CART -->
                 <a href="../../../app/views/customer/cart.php" class="action-icon">
                     <i class="fas fa-shopping-cart"></i>

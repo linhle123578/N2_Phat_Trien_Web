@@ -84,6 +84,10 @@ class CartController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['customer_id'])) {
+            if (isset($_POST['ajax'])) {
+                echo json_encode(['status' => 'not_logged_in', 'message' => 'Vui lòng đăng nhập để sử dụng giỏ hàng.']);
+                exit();
+            }
             header("Location: ../../../app/views/customer/LogIn.php");
             exit();
         }
@@ -99,8 +103,21 @@ class CartController
             $productModel->addToCart($customer_id, $product_id, $quantity);
         }
 
+        if (isset($_POST['ajax'])) {
+            $cartModel = new CartModel();
+            $items = $cartModel->getCartItems($customer_id);
+            echo json_encode(['status' => 'success', 'new_cart_count' => count($items)]);
+            exit();
+        }
+
         if (isset($_POST['buy_now'])) {
-            header("Location: ../../../app/views/customer/cart.php");
+            $_SESSION['checkout_items'] = [
+                [
+                    'product_id' => $product_id,
+                    'quantity' => $quantity
+                ]
+            ];
+            header("Location: ../../../app/controllers/customer/CheckoutController.php");
         } else {
             $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/cart.php';
             header("Location: " . $referer);

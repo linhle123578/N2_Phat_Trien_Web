@@ -10,7 +10,7 @@ $pendingReturns = $pendingReturns ?? 0;
     </div>
 
     <div style="display:flex;flex-direction:column;gap:12px">
-        <a href="../../../app/views/admin/Dashboard.php" class="nav-btn <?= ($currentPage === 'Dashboard.php' || $currentPage === 'DashboardController.php') ? 'active' : '' ?>">
+        <a href="../../../app/controllers/admin/DashboardController.php" class="nav-btn <?= ($currentPage === 'Dashboard.php' || $currentPage === 'DashboardController.php') ? 'active' : '' ?>">
             <span class="material-symbols-outlined">dashboard</span>Dashboard
         </a>
 
@@ -31,7 +31,7 @@ $pendingReturns = $pendingReturns ?? 0;
     </div>
 
     <div class="sidebar-footer">
-        <a href="../../../app/views/customer/logout.php" class="nav-btn">
+        <a href="../../../app/views/customer/logout.php" class="nav-btn" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">
             <span class="material-symbols-outlined">logout</span>Đăng xuất
         </a>
     </div>

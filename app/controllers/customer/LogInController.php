@@ -100,7 +100,7 @@ class LogInController {
             // ĐỔI LẠI THÀNH "otp_sent" ĐỂ KHỚP VỚI KHỐI XỬ LÝ HIỂN THỊ TRONG LogIn.js CỦA BẠN
             echo json_encode(["status" => "otp_sent", "message" => "Mã OTP đã được gửi tới Email của bạn!"]);
         } else {
-            echo json_encode(["status" => "error", "message" => "Không thể gửi mail qua Resend API. Mã phản hồi: " . $httpCode]);
+            echo json_encode(["status" => "error", "message" => "Không thể gửi mail qua Resend API. Mã phản hồi: " . $httpCode . " - Chi tiết: " . $response]);
         }
         exit();
     }
@@ -111,7 +111,7 @@ class LogInController {
         
         $otp_input = trim($_POST['otp'] ?? '');
         $new_pass = $_POST['new_password'] ?? '';
-        $confirm_pass = $_POST['confirm_password'] ?? ''; // Khớp hoàn toàn với trường nhận của dữ liệu AJAX gửi lên
+        $confirm_pass = $_POST['confirm_new_password'] ?? ''; // Khớp hoàn toàn với name trong form html
 
         $session_data = $_SESSION['reset_password_session'] ?? null;
 

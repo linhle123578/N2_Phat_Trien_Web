@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPlaceOrder.disabled   = true;
 
         // Đường dẫn absolute đến controller
-        fetch('<?= BASE_URL ?>app/controllers/customer/CheckoutController.php', {
+        fetch('../../../app/controllers/customer/CheckoutController.php', {
             method:  'POST',
             headers: { 'Content-Type': 'application/json' },
             body:    JSON.stringify(orderPayload)
@@ -193,11 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 padding:6px 16px;border-radius:8px;display:inline-block;
                                 margin-bottom:28px;letter-spacing:1px">—</div>
                     <br>
-<<<<<<< HEAD
                     <a href="../../../app/views/customer/TrangChu.php"
-=======
-                    <a href="../../../public/index.php?page=TrangChu"
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                        style="background:linear-gradient(102deg,#022409 0%,#183A1D 100%);
                               color:#C5EDC3;border:none;border-radius:9999px;
                               padding:14px 40px;font-weight:700;font-size:15px;

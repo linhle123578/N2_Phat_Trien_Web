@@ -52,58 +52,23 @@ $query_related = "SELECT * FROM product WHERE category_id = ? AND product_id != 
 $stmt_related = mysqli_prepare($conn, $query_related);
 mysqli_stmt_bind_param($stmt_related, "ss", $product['category_id'], $product['product_id']);
 mysqli_stmt_execute($stmt_related);
-mysqli_real_connect(
-    $conn,
-    "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com",
-    "3YHrkxqAKWynehu.root",
-    "BzDRrZAdAT2jLuyd",
-    "db_web_farm2home",
-    4000,
-    NULL,
-    MYSQLI_CLIENT_SSL
-);
-
-if (!$conn) {
-    die("Lỗi kết nối Database: " . mysqli_connect_error());
-}
-
-mysqli_set_charset($conn, "utf8");
-$current_id = isset($_GET['id']) ? $_GET['id'] : '';
-
-if (empty($current_id)) {
-    // Nếu không truyền ID trên URL, tự động lấy sản phẩm đầu tiên trong database để hiển thị
-    $query = "SELECT * FROM product LIMIT 1";
-    $result = mysqli_query($conn, $query);
-    $product = mysqli_fetch_assoc($result);
-} else {
-    // Ngược lại, lấy đúng sản phẩm có ID được chọn (dùng Prepared Statement để bảo mật)
-    $query = "SELECT * FROM product WHERE product_id = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $current_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $product = mysqli_fetch_assoc($result);
-}
-
-// Nếu không tìm thấy sản phẩm nào tương ứng trong DB
-if (!$product) {
-    die("Sản phẩm không tồn tại hoặc cơ sở dữ liệu chưa có dữ liệu!");
-}
-
-// 3. Lấy các sản phẩm liên quan (Cùng danh mục category_id và loại trừ sản phẩm hiện tại)
-$query_related = "SELECT * FROM product WHERE category_id = ? AND product_id != ? LIMIT 4";
-$stmt_related = mysqli_prepare($conn, $query_related);
-mysqli_stmt_bind_param($stmt_related, "ss", $product['category_id'], $product['product_id']);
-mysqli_stmt_execute($stmt_related);
 $result_related = mysqli_stmt_get_result($stmt_related);
 
 $related_products = [];
 while ($row = mysqli_fetch_assoc($result_related)) {
     $related_products[] = $row;
 }
-?>
-<title><?= htmlspecialchars($product['product_name']) ?> - Farm2Home</title>
+
+$header_output = ob_get_clean();
+$extra_head = '
+<title>' . htmlspecialchars($product['product_name']) . ' - Farm2Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="../../../public/assets/css/ProductDetail.css" rel="stylesheet"/>
+';
+$header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
+echo $header_output;
+?>
 
 <div class="breadcrumb-section">
     <div class="container">
@@ -216,7 +181,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
 
     <div class="tab-card">
         <div class="nav-tabs-custom">
-            <button class="tab-btn active">Mô tả sản phẩm</button>
+            <button class="tab-btn active" style="cursor: default;">Mô tả sản phẩm</button>
         </div>
         <div class="tab-content-panel active">
             <p><?= nl2br(htmlspecialchars($product['product_description'])) ?></p>
@@ -260,7 +225,7 @@ while ($row = mysqli_fetch_assoc($result_related)) {
 </div>
 </div>
 </main>
-<?php include __DIR__ . '/../layouts/footer.php'; ?>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProductDetail.js"></script>

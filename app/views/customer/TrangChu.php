@@ -287,12 +287,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                                     </a>
                                 </h6>
 
-                                <p class="small text-muted mb-2">
 
-                                    Đơn vị:
-                                    <?= htmlspecialchars($product['unit']) ?>
-
-                                </p>
 
                                 <p class="small text-muted mb-2">
 

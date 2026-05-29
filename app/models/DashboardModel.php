@@ -36,9 +36,9 @@ class DashboardModel {
         // Lấy doanh thu tháng này vs tháng trước (Chỉ tính đơn 'completed')
         $revQuery = "
             SELECT 
-                SUM(CASE WHEN MONTH(o.created_at) = MONTH(CURRENT_DATE()) AND YEAR(o.created_at) = YEAR(CURRENT_DATE()) THEN p.total_amount ELSE 0 END) AS current_month,
-                SUM(CASE WHEN MONTH(o.created_at) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(o.created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) THEN p.total_amount ELSE 0 END) AS last_month
-            FROM `order` o JOIN payment p ON o.order_id = p.order_id WHERE o.order_status IN ('completed', 'Hoàn thành')";
+                SUM(CASE WHEN MONTH(o.created_at) = MONTH(CURRENT_DATE()) AND YEAR(o.created_at) = YEAR(CURRENT_DATE()) THEN (SELECT IFNULL(SUM(oi.quantity * oi.price), 0) FROM orderitem oi WHERE oi.order_id = o.order_id) ELSE 0 END) AS current_month,
+                SUM(CASE WHEN MONTH(o.created_at) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(o.created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) THEN (SELECT IFNULL(SUM(oi.quantity * oi.price), 0) FROM orderitem oi WHERE oi.order_id = o.order_id) ELSE 0 END) AS last_month
+            FROM `order` o WHERE o.order_status IN ('completed', 'Hoàn thành')";
         $revRes = $this->conn->query($revQuery);
         if ($revRes && $row = $revRes->fetch_assoc()) {
             $stats['revenue_current'] = (float)$row['current_month'];
@@ -92,9 +92,10 @@ class DashboardModel {
 
         // 2.1 Xu hướng kinh doanh (Đường đôi)
         $trendSql = "
-            SELECT DATE_FORMAT(o.created_at, '%m/%Y') as month_label, SUM(p.total_amount) as total_rev, COUNT(o.order_id) as total_ord 
+            SELECT DATE_FORMAT(o.created_at, '%m/%Y') as month_label, 
+                   IFNULL(SUM((SELECT SUM(oi.quantity * oi.price) FROM orderitem oi WHERE oi.order_id = o.order_id)), 0) as total_rev, 
+                   COUNT(o.order_id) as total_ord 
             FROM `order` o 
-            JOIN payment p ON o.order_id = p.order_id
             WHERE o.order_status IN ('completed', 'Hoàn thành') AND o.created_at BETWEEN '$startDate' AND '$endDate'
             GROUP BY DATE_FORMAT(o.created_at, '%m/%Y') ORDER BY MIN(o.created_at) ASC";
         $trendRes = $this->conn->query($trendSql);

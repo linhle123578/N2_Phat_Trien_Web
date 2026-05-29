@@ -16,9 +16,18 @@
 
 .custom-navbar .nav-link {
     color: #6c757d !important;
-    font-weight: 500;
-    font-size: 0.95rem;
+    font-weight: 600;
+    font-size: 1.15rem;
     transition: color 0.3s;
+}
+
+@media (min-width: 992px) {
+    .navbar-center-custom {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+    }
 }
 
 .custom-navbar .nav-link:hover {
