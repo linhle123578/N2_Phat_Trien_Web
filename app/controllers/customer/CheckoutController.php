@@ -12,11 +12,7 @@ class CheckoutController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (empty($_SESSION['checkout_items'])) {
-<<<<<<< HEAD
             header("Location: ../../../app/views/customer/cart.php");
-=======
-            header("Location: ../../../public/index.php?page=cart");
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
 
@@ -24,11 +20,7 @@ class CheckoutController
         $userModel = new UserModel();
 
         if (!isset($_SESSION['customer_id'])) {
-<<<<<<< HEAD
             header("Location: ../../../app/views/customer/LogIn.php");
-=======
-            header("Location: ../../../public/index.php?page=login");
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
         $customer_id = $_SESSION['customer_id'];

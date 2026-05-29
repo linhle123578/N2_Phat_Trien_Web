@@ -175,8 +175,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 ?>
 <!DOCTYPE html>
-                <?php endif; ?>
-
                 <form method="POST" action="">
                     <div class="row g-4">
 

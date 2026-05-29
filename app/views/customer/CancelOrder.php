@@ -1,9 +1,6 @@
 <?php
-<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -32,16 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
 }
 
 // Quay lại trang lịch sử đơn hàng
-<<<<<<< HEAD
 $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/OrderHistory.php';
 header("Location: " . $referer);
 exit;
 ?>
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
-$referer = $_SERVER['HTTP_REFERER'] ?? '../../../public/index.php?page=orders';
-header("Location: " . $referer);
-exit;
-?>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

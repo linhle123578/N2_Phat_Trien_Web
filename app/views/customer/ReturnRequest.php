@@ -1,10 +1,7 @@
 ﻿<?php
-<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
 
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 /**
  * Entry point: ReturnRequest.php
  * File gộp chung form và success page.

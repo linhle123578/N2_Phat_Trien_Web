@@ -22,11 +22,7 @@ class LogoutController
             setcookie('remember_token', '', time() - 3600, '/');
         }
         // Redirect về trang chủ
-<<<<<<< HEAD
         header('Location: ../../../app/views/customer/TrangChu.php');
-=======
-        header('Location: ../../../public/index.php?page=TrangChu');
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         exit;
     }
 }

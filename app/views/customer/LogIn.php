@@ -16,11 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => 'Admin Manager',
                 'identity' => $identity
             ];
-<<<<<<< HEAD
             header("Location: ../../../app/controllers/admin/DashboardController.php"); // Sửa lại thành dashboard của admin
-=======
-            header("Location: ../../../public/index.php?page=dashboard"); // Sửa lại thành dashboard của admin
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         } else {
             $_SESSION['role'] = 'customer';
@@ -29,11 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => $identity,
                 'identity' => $identity
             ];
-<<<<<<< HEAD
             header("Location: ../../../app/views/customer/TrangChu.php");
-=======
-            header("Location: ../../../public/index.php?page=TrangChu");
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
     }

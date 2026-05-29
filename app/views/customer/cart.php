@@ -1,19 +1,12 @@
 <?php
-<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 if (!isset($_SESSION['customer_id'])) {
-<<<<<<< HEAD
     header("Location: ../../../app/views/customer/LogIn.php");
-=======
-    header("Location: ../../../public/index.php?page=login");
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     exit();
 }
 
@@ -33,11 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_item_id'])) {
 
 // 2. LẤY DỮ LIỆU TỪ DB 
 if (!isset($_SESSION['customer_id'])) {
-<<<<<<< HEAD
     header("Location: ../../../app/views/customer/LogIn.php");
-=======
-    header("Location: ../../../public/index.php?page=login");
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     exit();
 }
 $customer_id = $_SESSION['customer_id'];
@@ -64,11 +53,7 @@ $total_items = count($items);
               <div class="text-center py-5">
                 <i class="fas fa-shopping-cart fa-3x mb-3" style="color:#ccc;"></i>
                 <p style="color:#6c757d; font-size:1rem;">Giỏ hàng của bạn đang trống.</p>
-<<<<<<< HEAD
                 <a href="../../../app/views/customer/Products.php" class="back-link">
-=======
-                <a href="../../../public/index.php?page=products" class="back-link">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                   <i class="fas fa-arrow-left"></i> Tiếp tục mua sắm
                 </a>
               </div>

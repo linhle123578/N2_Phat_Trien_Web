@@ -36,11 +36,7 @@ if (isset($_SESSION['customer_id'])) {
 <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
     <div class="container">
         <!-- LOGO -->
-<<<<<<< HEAD
         <a class="navbar-brand" href="../../../app/views/customer/TrangChu.php">
-=======
-        <a class="navbar-brand" href="../../../public/index.php?page=TrangChu">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             <img src="../../../Media/Logo.png" alt="Farm2Home">
         </a>
 
@@ -55,17 +51,10 @@ if (isset($_SESSION['customer_id'])) {
             <!-- MENU CENTER -->
             <ul class="navbar-nav mx-auto">
                 <li class="nav-item <?= ($currentPage == 'TrangChu') ? 'active' : '' ?>">
-<<<<<<< HEAD
                     <a class="nav-link" href="../../../app/views/customer/TrangChu.php">Trang Chủ</a>
                 </li>
                 <li class="nav-item <?= ($currentPage == 'products' || $currentPage == 'productdetail') ? 'active' : '' ?>">
                     <a class="nav-link" href="../../../app/views/customer/Products.php">Sản Phẩm</a>
-=======
-                    <a class="nav-link" href="../../../public/index.php?page=TrangChu">Trang Chủ</a>
-                </li>
-                <li class="nav-item <?= ($currentPage == 'products' || $currentPage == 'productdetail') ? 'active' : '' ?>">
-                    <a class="nav-link" href="../../../public/index.php?page=products">Sản Phẩm</a>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 </li>
             </ul>
 
@@ -78,11 +67,7 @@ if (isset($_SESSION['customer_id'])) {
                 </a>
 
                 <!-- CART -->
-<<<<<<< HEAD
                 <a href="../../../app/views/customer/cart.php" class="action-icon">
-=======
-                <a href="../../../public/index.php?page=cart" class="action-icon">
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                     <i class="fas fa-shopping-cart"></i>
                     <span class="icon-badge" id="cart-count"><?= $cartCount ?></span>
                 </a>
@@ -91,19 +76,11 @@ if (isset($_SESSION['customer_id'])) {
 
                 <!-- LOGIN / ACCOUNT -->
                 <?php if ($isLoggedIn): ?>
-<<<<<<< HEAD
                     <a href="../../../app/views/customer/ProfileCustomer.php" class="btn-login">Tài khoản</a>
                     <a href="../../../app/views/customer/logout.php" class="btn btn-register" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">Đăng xuất</a>
                 <?php else: ?>
                     <a href="../../../app/views/customer/LogIn.php" class="btn-login">Đăng Nhập</a>
                     <a href="../../../app/views/customer/SignUp.php" class="btn btn-register">Đăng Ký</a>
-=======
-                    <a href="../../../public/index.php?page=profile" class="btn-login">Tài khoản</a>
-                    <a href="../../../app/views/customer/logout.php" class="btn btn-register" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">Đăng xuất</a>
-                <?php else: ?>
-                    <a href="../../../public/index.php?page=login" class="btn-login">Đăng Nhập</a>
-                    <a href="../../../public/index.php?page=signup" class="btn btn-register">Đăng Ký</a>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 <?php endif; ?>
             </div>
         </div>

@@ -28,18 +28,10 @@ if (!isset($cat_result) || !isset($prod_result)) {
 ?>
 
 <?php
-<<<<<<< HEAD
-=======
-    ob_start();
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     // Bắt buộc set lại biến page để header nhận diện đúng menu đang active (do trang này xài redirect URL)
     if (!isset($_GET['page'])) {
         $_GET['page'] = 'products';
     }
-<<<<<<< HEAD
-=======
-    include __DIR__ . '/../layouts/header.php';
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     $header_output = ob_get_clean();
 
     $extra_head = '

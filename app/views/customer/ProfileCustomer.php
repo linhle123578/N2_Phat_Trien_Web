@@ -301,24 +301,12 @@ function build_full_address(array $addr): string {
     return implode(', ', $parts);
 }
 
-<<<<<<< HEAD
-//???????????????????????????????????????????????????????????????
-=======
-//═══════════════════════════════════════════════════════════════
-ob_start();
-//include '../../../app/views/layouts/loginheader.php';
-$header_output = ob_get_clean();
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
-
 $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<<<<<<< HEAD
     <link rel="stylesheet" href="../../../public/assets/css/ProfileCustomer.css">
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 ';
 echo $extra_head;
 ?>

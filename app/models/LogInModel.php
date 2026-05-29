@@ -3,11 +3,7 @@ class LogInModel {
     private $conn;
 
     public function __construct() {
-<<<<<<< HEAD
         // Cấu hình thông số kết nối TiDB Cloud
-=======
-        // 1. Cấu hình thông số kết nối TiDB Cloud đám mây
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
         $port = 4000;
         $user = "3YHrkxqAKWynehu.root";
@@ -22,13 +18,6 @@ class LogInModel {
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
-<<<<<<< HEAD
-=======
-        // Bỏ qua xác thực chứng chỉ SSL
-        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
-        
-        // Thực hiện kết nối an toàn với Cloud (Giữ nguyên gốc để không bị lỗi Cloud)
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         $success = @mysqli_real_connect(
             $this->conn,
             $host,

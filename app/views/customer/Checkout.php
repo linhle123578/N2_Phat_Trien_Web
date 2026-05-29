@@ -1,9 +1,6 @@
 <?php
-<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     $extra_head = '
     <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
