@@ -1,6 +1,9 @@
 <?php
+<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     $extra_head = '
     <link href="https://unpkg.com/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -204,9 +207,18 @@ include_once __DIR__ . '/../layouts/header.php';
         </div>
     </div>
 
+<<<<<<< HEAD
+=======
+    <?php include __DIR__ . '/../layouts/footer.php'; ?>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
     <!-- Scripts -->
     <script src="https://unpkg.com/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/assets/js/checkout.js"></script>
+<<<<<<< HEAD
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
+=======
+</body>
+</html>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

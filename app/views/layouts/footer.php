@@ -23,8 +23,13 @@
         <div class="col-6 col-md-3 col-lg-3 mb-4 mb-md-0">
           <h5>Liên kết</h5>
           <ul class="list-unstyled">
+<<<<<<< HEAD
             <li><a href="../../../app/views/customer/TrangChu.php">Trang Chủ</a></li>
             <li><a href="../../../app/views/customer/Products.php">Sản Phẩm</a></li>
+=======
+            <li><a href="../../../public/index.php?page=TrangChu">Trang Chủ</a></li>
+            <li><a href="../../../public/index.php?page=products">Sản Phẩm</a></li>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             <li><a href="#">Về Chúng Tôi</a></li>
             <li><a href="#">Liên Hệ</a></li>
             <li><a href="#">Chính Sách Bảo Mật</a></li>

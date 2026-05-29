@@ -1,6 +1,9 @@
 <?php
+<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +95,17 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 <title>Farm2Home - Nông Sản Sạch</title>
 
 
+<<<<<<< HEAD
+=======
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <link rel="stylesheet"
+          href="../../../public/assets/css/Trang_chu.css"/>
+</head>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 <?php include __DIR__ . '/Chatbot.php'; ?>
 
 <main>
@@ -240,7 +254,11 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                 Sản phẩm nổi bật
             </h2>
 
+<<<<<<< HEAD
             <a href="../../../app/views/customer/Products.php"
+=======
+            <a href="../../../public/index.php?page=products"
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                class="font-weight-bold text-dark border-bottom"
                style="text-decoration: none;">
 
@@ -269,7 +287,11 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                 </span>
 
+<<<<<<< HEAD
                                 <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>">
+=======
+                                <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                                     <img
         src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>"
         alt="<?= htmlspecialchars($product['product_name']) ?>"
@@ -282,7 +304,11 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                             <div class="card-body p-4 text-left">
 
                                 <h6 class="font-weight-bold">
+<<<<<<< HEAD
                                     <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>" style="color: inherit; text-decoration: none;" class="product-title">
+=======
+                                    <a href="../../../public/index.php?page=productdetail&id=<?= $product['product_id'] ?>" style="color: inherit; text-decoration: none;">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                                         <?= htmlspecialchars($product['product_name']) ?>
                                     </a>
                                 </h6>
@@ -391,6 +417,10 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
     }, 5000);
 
+<<<<<<< HEAD
 </script>
 <script src="../../../public/assets/js/Products.js"></script>
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
+=======
+</script>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

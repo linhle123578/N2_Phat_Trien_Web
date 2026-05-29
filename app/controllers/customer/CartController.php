@@ -10,7 +10,11 @@ class CartController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (!isset($_SESSION['customer_id'])) {
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/LogIn.php");
+=======
+            header("Location: ../../../public/index.php?page=login");
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
 
@@ -46,7 +50,11 @@ class CartController
         if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (!isset($_SESSION['customer_id'])) {
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/LogIn.php");
+=======
+            header("Location: ../../../public/index.php?page=login");
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
         
@@ -58,7 +66,11 @@ class CartController
 
         // Nếu không chọn sản phẩm nào mà bấm thanh toán
         if (empty($selected)) {
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/msg=noselect");
+=======
+            header("Location: ../../../public/index.php?page=cart&msg=noselect");
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         exit();
         }
 
@@ -84,7 +96,11 @@ class CartController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['customer_id'])) {
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/LogIn.php");
+=======
+            header("Location: ../../../public/index.php?page=login");
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
 
@@ -100,9 +116,15 @@ class CartController
         }
 
         if (isset($_POST['buy_now'])) {
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/cart.php");
         } else {
             $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/cart.php';
+=======
+            header("Location: ../../../public/index.php?page=cart");
+        } else {
+            $referer = $_SERVER['HTTP_REFERER'] ?? '../../../public/index.php?page=cart';
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             header("Location: " . $referer);
         }
         exit();

@@ -38,7 +38,13 @@ class DashboardModel {
             SELECT 
                 SUM(CASE WHEN MONTH(o.created_at) = MONTH(CURRENT_DATE()) AND YEAR(o.created_at) = YEAR(CURRENT_DATE()) THEN p.total_amount ELSE 0 END) AS current_month,
                 SUM(CASE WHEN MONTH(o.created_at) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) AND YEAR(o.created_at) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) THEN p.total_amount ELSE 0 END) AS last_month
+<<<<<<< HEAD
             FROM `order` o JOIN payment p ON o.order_id = p.order_id WHERE o.order_status = 'completed'";
+=======
+            FROM `order` o 
+            LEFT JOIN payment p ON o.order_id = p.order_id 
+            WHERE o.order_status = 'completed'";
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         $revRes = $this->conn->query($revQuery);
         if ($revRes && $row = $revRes->fetch_assoc()) {
             $stats['revenue_current'] = (float)$row['current_month'];
@@ -94,7 +100,11 @@ class DashboardModel {
         $trendSql = "
             SELECT DATE_FORMAT(o.created_at, '%m/%Y') as month_label, SUM(p.total_amount) as total_rev, COUNT(o.order_id) as total_ord 
             FROM `order` o 
+<<<<<<< HEAD
             JOIN payment p ON o.order_id = p.order_id
+=======
+            LEFT JOIN payment p ON o.order_id = p.order_id 
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             WHERE o.order_status = 'completed' AND o.created_at BETWEEN '$startDate' AND '$endDate'
             GROUP BY DATE_FORMAT(o.created_at, '%m/%Y') ORDER BY MIN(o.created_at) ASC";
         $trendRes = $this->conn->query($trendSql);
@@ -141,3 +151,7 @@ class DashboardModel {
         return $analytics;
     }
 }
+<<<<<<< HEAD
+=======
+?>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

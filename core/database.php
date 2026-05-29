@@ -21,6 +21,12 @@ class Database {
         // Không sử dụng file pem nữa theo yêu cầu
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+<<<<<<< HEAD
+=======
+
+        // Bỏ qua xác thực chứng chỉ SSL
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
         $ok = @mysqli_real_connect(
             $this->conn,

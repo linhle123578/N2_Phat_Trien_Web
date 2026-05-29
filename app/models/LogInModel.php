@@ -3,7 +3,11 @@ class LogInModel {
     private $conn;
 
     public function __construct() {
+<<<<<<< HEAD
         // Cấu hình thông số kết nối TiDB Cloud
+=======
+        // 1. Cấu hình thông số kết nối TiDB Cloud đám mây
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         $host = "gateway01.ap-southeast-1.prod.alicloud.tidbcloud.com";
         $port = 4000;
         $user = "3YHrkxqAKWynehu.root";
@@ -18,6 +22,13 @@ class LogInModel {
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
+<<<<<<< HEAD
+=======
+        // Bỏ qua xác thực chứng chỉ SSL
+        mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
+        
+        // Thực hiện kết nối an toàn với Cloud (Giữ nguyên gốc để không bị lỗi Cloud)
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         $success = @mysqli_real_connect(
             $this->conn,
             $host,
@@ -39,35 +50,37 @@ class LogInModel {
     }
 
     /**
-     * 2. XỬ LÝ KIỂM TRA ĐĂNG NHẬP (Giữ nguyên gốc chuẩn cũ của bạn)
+     * 2. XỬ LÝ KIỂM TRA ĐĂNG NHẬP
      */
-    public function checkCredentials($identity, $password) {
+    public function checkCredentials($identity, $password, $role = 'customer') {
         $identity = $this->conn->real_escape_string($identity);
         $md5_password = md5($password);
         
-        // Luồng 1: Khách hàng
-        $sql = "SELECT c.customer_id, c.full_name, c.phone, a.email, a.account_password 
-                FROM account a
-                INNER JOIN customer c ON a.account_id = c.account_id
-                WHERE (a.email = '$identity' OR c.phone = '$identity') 
-                  AND a.account_password = '$md5_password'
-                LIMIT 1";
-                
-        $result = $this->conn->query($sql);
-        if ($result && $result->num_rows > 0) {
-            return $result->fetch_assoc();
-        }
+        if ($role === 'customer') {
+            // Luồng 1: Khách hàng
+            $sql = "SELECT c.customer_id, c.full_name, c.phone, a.email, a.account_password 
+                    FROM account a
+                    INNER JOIN customer c ON a.account_id = c.account_id
+                    WHERE (a.email = '$identity' OR c.phone = '$identity') 
+                      AND a.account_password = '$md5_password'
+                    LIMIT 1";
+                    
+            $result = $this->conn->query($sql);
+            if ($result && $result->num_rows > 0) {
+                return $result->fetch_assoc();
+            }
+        } else if ($role === 'admin') {
+            // Luồng 2: Quản lý
+            $sql_admin = "SELECT adm.admin_id AS customer_id, adm.full_name, adm.phone, a.email, a.account_password 
+                          FROM account a
+                          INNER JOIN admin adm ON a.account_id = adm.account_id
+                          WHERE (a.email = '$identity' OR adm.phone = '$identity') AND a.account_password = '$md5_password'
+                          LIMIT 1";
 
-        // Luồng 2: Quản lý
-        $sql_admin = "SELECT adm.admin_id AS customer_id, adm.department AS full_name, NULL AS phone, a.email, a.account_password 
-                      FROM account a
-                      INNER JOIN admin adm ON a.account_id = adm.account_id
-                      WHERE a.email = '$identity' AND a.account_password = '$md5_password'
-                      LIMIT 1";
-
-        $result_admin = $this->conn->query($sql_admin);
-        if ($result_admin && $result_admin->num_rows > 0) {
-            return $result_admin->fetch_assoc();
+            $result_admin = $this->conn->query($sql_admin);
+            if ($result_admin && $result_admin->num_rows > 0) {
+                return $result_admin->fetch_assoc();
+            }
         }
         
         return false;

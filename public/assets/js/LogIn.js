@@ -95,12 +95,16 @@
 
             const formData = new FormData(formLogIn);
 
+<<<<<<< HEAD
             let fetchUrl = "../app/controllers/customer/LogInController.php?action=login";
             if (window.location.pathname.includes('/app/views/customer/')) {
                 fetchUrl = "../../../app/controllers/customer/LogInController.php?action=login";
             }
 
             fetch(fetchUrl, {
+=======
+            fetch("../app/controllers/customer/LogInController.php?action=login", {
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 method: "POST",
                 body: formData
             })
@@ -113,6 +117,7 @@
                 if (data.status === "success") {
                     serverAlert.className = "alert alert-success";
                     serverAlert.textContent = data.message;
+<<<<<<< HEAD
                     // ÄÄƒng nháº­p khÃ¡ch hÃ ng -> Trang chá»§
                     setTimeout(() => { window.location.href = "../../../app/views/customer/TrangChu.php"; }, 1200);
                 } else if (data.status === "admin") {
@@ -120,6 +125,15 @@
                     serverAlert.textContent = data.message;
                     // ÄÄƒng nháº­p admin -> Dashboard admin
                     setTimeout(() => { window.location.href = "../../../app/controllers/admin/DashboardController.php"; }, 1200);
+=======
+                    // Đăng nhập khách hàng -> Trang chủ
+                    setTimeout(() => { window.location.href = "index.php?page=TrangChu"; }, 1200);
+                } else if (data.status === "admin") {
+                    serverAlert.className = "alert alert-success";
+                    serverAlert.textContent = data.message;
+                    // Đăng nhập admin -> Dashboard admin
+                    setTimeout(() => { window.location.href = "../app/controllers/admin/DashboardController.php"; }, 1200);
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 } else {
                     serverAlert.className = "alert alert-danger";
                     serverAlert.textContent = data.message;
@@ -156,12 +170,16 @@
             btnForgot.textContent = "Äang gá»­i OTP...";
             const formData = new FormData(formForgot);
 
+<<<<<<< HEAD
             let fetchUrl = "../app/controllers/customer/LogInController.php?action=forgot";
             if (window.location.pathname.includes('/app/views/customer/')) {
                 fetchUrl = "../../../app/controllers/customer/LogInController.php?action=forgot";
             }
 
             fetch(fetchUrl, {
+=======
+            fetch("../app/controllers/customer/LogInController.php?action=forgot", {
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 method: "POST",
                 body: formData
             })
@@ -223,12 +241,16 @@
             btnReset.textContent = "Äang cáº­p nháº­t...";
             const formData = new FormData(formReset);
 
+<<<<<<< HEAD
             let fetchUrl = "../app/controllers/customer/LogInController.php?action=reset";
             if (window.location.pathname.includes('/app/views/customer/')) {
                 fetchUrl = "../../../app/controllers/customer/LogInController.php?action=reset";
             }
 
             fetch(fetchUrl, {
+=======
+            fetch("../app/controllers/customer/LogInController.php?action=reset", {
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                 method: "POST",
                 body: formData
             })

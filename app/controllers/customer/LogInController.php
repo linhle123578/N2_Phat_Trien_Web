@@ -8,6 +8,7 @@ class LogInController {
         
         $identity = trim($_POST['identity'] ?? '');
         $password = $_POST['password'] ?? '';
+        $role = $_POST['role'] ?? 'customer'; // Default is customer
 
         if (empty($identity) || empty($password)) {
             echo json_encode(["status" => "error", "message" => "Vui lòng nhập đầy đủ tài khoản và mật khẩu."]);
@@ -15,7 +16,7 @@ class LogInController {
         }
 
         $model = new LogInModel();
-        $user = $model->checkCredentials($identity, $password);
+        $user = $model->checkCredentials($identity, $password, $role);
 
         if ($user) {
             // Phân biệt admin (admin_id bắt đầu bằng ADM) vs customer

@@ -1,6 +1,9 @@
 <?php
+<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 $extra_head = '
     <title>Thanh toán MoMo - Farm2Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -141,7 +144,11 @@ echo $extra_head;
 
             <!-- Back -->
             <div class="momo-action-row">
+<<<<<<< HEAD
                 <a href="../../../app/views/customer/Checkout.php" class="btn-back-link">
+=======
+                <a href="../../../public/index.php?page=checkout" class="btn-back-link">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                     <span class="back-arrow">←</span>
                     Quay lại
                 </a>
@@ -150,6 +157,10 @@ echo $extra_head;
         </div>
     </main>
 
+<<<<<<< HEAD
+=======
+    <?php include __DIR__ . '/../layouts/footer.php'; ?>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
     <!-- Success Modal -->
     <div class="momo-success-modal" id="momo-success-modal">
@@ -160,11 +171,20 @@ echo $extra_head;
             <p class="success-modal-sub">Mã đơn hàng của bạn:</p>
             <div class="success-order-id" id="modal-order-id">—</div>
             <br>
+<<<<<<< HEAD
             <a href="../../../app/views/customer/TrangChu.php" class="btn-success-home">Về trang chủ</a>
+=======
+            <a href="../../../public/index.php?page=TrangChu" class="btn-success-home">Về trang chủ</a>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../../../public/assets/js/Momo.js"></script>
+<<<<<<< HEAD
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
+=======
+</body>
+</html>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

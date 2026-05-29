@@ -16,7 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => 'Admin Manager',
                 'identity' => $identity
             ];
+<<<<<<< HEAD
             header("Location: ../../../app/controllers/admin/DashboardController.php"); // Sửa lại thành dashboard của admin
+=======
+            header("Location: ../../../public/index.php?page=dashboard"); // Sửa lại thành dashboard của admin
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         } else {
             $_SESSION['role'] = 'customer';
@@ -25,7 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'name' => $identity,
                 'identity' => $identity
             ];
+<<<<<<< HEAD
             header("Location: ../../../app/views/customer/TrangChu.php");
+=======
+            header("Location: ../../../public/index.php?page=TrangChu");
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             exit();
         }
     }
@@ -123,7 +131,11 @@ $clean_footer = $m_foot[0] ?? '';
                                       <button type="submit" id="btnLoginSubmit" class="btn-login-submit">Đăng nhập</button>
                                   </form>
                                   
+<<<<<<< HEAD
               <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="../../../app/views/customer/SignUp.php" class="signup-link-anchor">Đăng ký ngay</a></p>
+=======
+              <p class="text-redirect" id="signup-redirect-text">Bạn chưa có tài khoản? <a href="../../../public/index.php?page=signup" class="signup-link-anchor">Đăng ký ngay</a></p>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                               </div>
 
                               <div id="forgot-form-section" class="d-none">

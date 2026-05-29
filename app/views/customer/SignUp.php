@@ -27,8 +27,8 @@ $clean_footer = $m_foot[0] ?? '';
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../../public/assets/css/layout.css">
-  <link rel="stylesheet" href="../../../public/assets/css/SignUp.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+  <link rel="stylesheet" href="<?= BASE_URL ?>assets/css/SignUp.css">
 </head>
 <body class="signup-page">
 
@@ -129,7 +129,11 @@ $clean_footer = $m_foot[0] ?? '';
             </form>
 
             <div class="text-center mt-4 pt-1 text-redirect">
+<<<<<<< HEAD
               Đã có tài khoản? <a href="../../../app/views/customer/LogIn.php" class="login-link-anchor">Đăng nhập</a>
+=======
+              Đã có tài khoản? <a href="../../../public/index.php?page=login" class="login-link-anchor">Đăng nhập</a>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
             </div>
           </div>
 

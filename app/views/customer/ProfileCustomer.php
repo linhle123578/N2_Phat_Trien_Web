@@ -301,18 +301,30 @@ function build_full_address(array $addr): string {
     return implode(', ', $parts);
 }
 
+<<<<<<< HEAD
 //???????????????????????????????????????????????????????????????
+=======
+//═══════════════════════════════════════════════════════════════
+ob_start();
+//include '../../../app/views/layouts/loginheader.php';
+$header_output = ob_get_clean();
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 $extra_head = '
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<<<<<<< HEAD
     <link rel="stylesheet" href="../../../public/assets/css/ProfileCustomer.css">
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 ';
 echo $extra_head;
 ?>
 
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/layout.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>assets/css/ProfileCustomer.css">
 <div class="container" style="padding-top: 80px;">
 
     <!-- Breadcrumb -->
@@ -331,13 +343,13 @@ echo $extra_head;
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li class="active">
-                        <a href="#">
+                        <a href="<?= BASE_URL ?>index.php?page=ProfileCustomer">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li>
-                        <a href="../../../app/views/customer/OrderHistory.php">
+                        <a href="<?= BASE_URL ?>index.php?page=OrderHistory">
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($customer['orders'] > 0): ?>
@@ -348,7 +360,11 @@ echo $extra_head;
                 </ul>
                 <div class="sidebar-divider"></div>
                 <div class="sidebar-logout">
+<<<<<<< HEAD
                     <a href="../../../app/views/customer/logout.php" onclick="return confirm('Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?');">
+=======
+                    <a href="<?= BASE_URL ?>index.php?page=Logout" id="btnLogout">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                         <i class="bi bi-box-arrow-right"></i>
                         Đăng xuất
                     </a>
@@ -648,10 +664,50 @@ echo $extra_head;
 
     </div><!-- /.profile-layout -->
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
 
+<<<<<<< HEAD
+=======
+<!-- ── Modal xác nhận đăng xuất (đặt ngoài mọi thứ, trước </body>) ── -->
+<div id="logoutOverlay" style="
+    display:none;
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.55);
+    z-index:99999;
+    align-items:center;
+    justify-content:center;
+">
+    <div style="
+        background:#fff;
+        border-radius:18px;
+        padding:36px 28px 28px;
+        max-width:360px;
+        width:90%;
+        box-shadow:0 20px 60px rgba(0,0,0,0.25);
+        text-align:center;
+        font-family:'Plus Jakarta Sans',sans-serif;
+        position:relative;
+        z-index:100000;
+    ">
+        <div style="width:60px;height:60px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:#c0392b;">
+            <i class="bi bi-box-arrow-right"></i>
+        </div>
+        <div style="font-size:1.08rem;font-weight:800;color:#1a2e1c;margin-bottom:8px;">Đăng xuất?</div>
+        <div style="font-size:0.88rem;color:#6b7c6e;margin-bottom:24px;line-height:1.6;">Bạn có chắc muốn đăng xuất khỏi tài khoản không?</div>
+        <div style="display:flex;gap:10px;">
+            <button id="btnLogoutCancel" style="flex:1;padding:11px;border-radius:999px;border:1.5px solid #dde8da;background:none;font-weight:600;font-size:0.9rem;color:#6b7c6e;cursor:pointer;font-family:inherit;transition:background .15s;">Huỷ</button>
+            <a href="<?= BASE_URL ?>index.php?page=Logout" style="flex:1;padding:11px;border-radius:999px;border:none;background:#c0392b;color:#fff;font-weight:700;font-size:0.9rem;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;transition:background .15s;">Đăng xuất</a>
+        </div>
+    </div>
+</div>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>

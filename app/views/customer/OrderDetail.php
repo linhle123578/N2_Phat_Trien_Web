@@ -1,6 +1,9 @@
 <?php
+<<<<<<< HEAD
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -156,7 +159,11 @@ echo $extra_head;
     <nav class="profile-breadcrumb">
         <a href="index.php">Trang chủ</a>
         <span class="sep">›</span>
+<<<<<<< HEAD
         <a href="../../../app/views/customer/OrderHistory.php">Lịch sử đơn hàng</a>
+=======
+        <a href="index.php?page=orders">Lịch sử đơn hàng</a>
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
         <span class="sep">›</span>
         <span class="current"><?= e($order_id) ?></span>
     </nav>
@@ -169,13 +176,17 @@ echo $extra_head;
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="../../../app/views/customer/ProfileCustomer.php">
+                        <a href="index.php?page=profile">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
                     </li>
                     <li class="active">
+<<<<<<< HEAD
                         <a href="../../../app/views/customer/OrderHistory.php">
+=======
+                        <a href="index.php?page=orders">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                             <i class="bi bi-bag-check"></i>
                             Lịch sử đơn hàng
                             <?php if ($order_count > 0): ?>
@@ -199,7 +210,11 @@ echo $extra_head;
 
             <!-- Nút quay lại + tiêu đề -->
             <div class="od-topbar">
+<<<<<<< HEAD
                 <a href="../../../app/views/customer/OrderHistory.php" class="btn-back">
+=======
+                <a href="index.php?page=orders" class="btn-back">
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
                     <i class="bi bi-arrow-left me-1"></i>Quay lại
                 </a>
                 <span class="oh-status-badge <?= status_class($order['order_status']) ?>">
@@ -431,7 +446,11 @@ document.getElementById('btnLogout')?.addEventListener('click', (e) => {
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
     var cartUrl = '../app/controllers/customer/CartController.php';
+<<<<<<< HEAD
     var cartPageUrl = '../../../app/views/customer/cart.php';
+=======
+    var cartPageUrl = 'index.php?page=cart';
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
     var total = items.length;
     var done = 0;
     items.forEach(function(item) {
@@ -444,5 +463,8 @@ function rebuyOrder(items) {
     });
 }
 </script>
+<<<<<<< HEAD
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
+=======
+>>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
