@@ -30,11 +30,12 @@ class OrderModel {
      *   total_quantity_order, created_at
      * Trả về order_id hoặc false nếu lỗi
      */
-    public function createOrder($customer_id, $address_id, $shipping_fee, $total_amount, $payment_method) {
+    public function createOrder($customer_id, $address_id, $shipment_id, $total_amount, $payment_method) {
         $order_id = 'ORD-' . strtoupper(substr(uniqid(), -8));
         $cid      = $this->conn->real_escape_string($customer_id);
         $oid_esc  = $this->conn->real_escape_string($order_id);
         $addr_id  = $address_id ? "'" . $this->conn->real_escape_string($address_id) . "'" : "NULL";
+        $ship_id  = $shipment_id ? "'" . $this->conn->real_escape_string($shipment_id) . "'" : "NULL";
 
         // Đếm tổng số lượng sản phẩm từ session (nếu có, không thì để 0)
         $checkout_items = $_SESSION['checkout_items'] ?? [];
@@ -45,9 +46,9 @@ class OrderModel {
 
         $ok = $this->conn->query(
             "INSERT INTO `order`
-                (order_id, customer_id, address_id, order_status, total_quantity_order, created_at)
+                (order_id, customer_id, address_id, shipment_id, order_status, total_quantity_order, created_at)
              VALUES
-                ('$oid_esc', '$cid', $addr_id, 'Chờ xác nhận', $total_qty, NOW())"
+                ('$oid_esc', '$cid', $addr_id, $ship_id, 'Chờ xác nhận', $total_qty, NOW())"
         );
 
         if (!$ok) {
@@ -64,13 +65,6 @@ class OrderModel {
              VALUES ('$pay_id', '$oid_esc', $total, '$pay_method', 'pending', NOW())"
         );
 
-        // Tạo dữ liệu vận chuyển
-        $shp_id = 'SHP-' . strtoupper(substr(uniqid(), -8));
-        $this->conn->query(
-            "INSERT INTO shipment (shipment_id, order_id, shipment_method, shipment_status, estimated_date)
-             VALUES ('$shp_id', '$oid_esc', 'Giao hàng tiêu chuẩn', 'Đang chuẩn bị', DATE_ADD(NOW(), INTERVAL 3 DAY))"
-        );
-
         return $order_id;
     }
 
@@ -80,7 +74,10 @@ class OrderModel {
     public function getOrderById($order_id) {
         $oid = $this->conn->real_escape_string($order_id);
         $res = $this->conn->query(
-            "SELECT * FROM `order` WHERE order_id = '$oid' LIMIT 1"
+            "SELECT o.*, s.shipment_method, s.price as shipment_price 
+             FROM `order` o 
+             LEFT JOIN shipment s ON o.shipment_id = s.shipment_id 
+             WHERE o.order_id = '$oid' LIMIT 1"
         );
         return $res ? $res->fetch_assoc() : null;
     }
@@ -147,5 +144,18 @@ class OrderModel {
             "UPDATE product SET stock = GREATEST(0, stock - $qty) WHERE product_id = '$pid'"
         );
     }
+
+    /**
+     * Lấy danh sách các phương thức giao hàng
+     */
+    public function getAllShipments() {
+        $res = $this->conn->query("SELECT * FROM shipment");
+        $shipments = [];
+        if ($res) {
+            while ($row = $res->fetch_assoc()) {
+                $shipments[] = $row;
+            }
+        }
+        return $shipments;
+    }
 }
-?>

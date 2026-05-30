@@ -4,7 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Config & biến trạng thái
     // ----------------------------------------------------------------
     const subtotal         = typeof DB_SUBTOTAL !== 'undefined' ? DB_SUBTOTAL : 0;
-    let   currentShippingFee = 25000;
+    
+    let currentShippingFee = 0;
+    const initialShippingRadio = document.querySelector('input[name="shipping"]:checked');
+    if (initialShippingRadio) {
+        currentShippingFee = parseFloat(initialShippingRadio.dataset.price || 0);
+    }
 
     // Đọc thông tin khách hàng từ data-attributes (PHP render sẵn - chính xác hơn)
     const nameEl    = document.getElementById('display-name');
@@ -143,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 r.closest('.radio-card')?.classList.remove('active');
             });
             e.target.closest('.radio-card')?.classList.add('active');
-            currentShippingFee = parseInt(e.target.value);
+            currentShippingFee = parseFloat(e.target.dataset.price || 0);
             updateTotal();
         });
     });
@@ -173,12 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const selectedShipping = document.querySelector('input[name="shipping"]:checked')?.value;
+        
         const orderPayload = {
             name:           customerData.name,
             phone:          customerData.phone,
             address_id:     customerData.address_id,
             new_address:    customerData.new_address,
             shipping_fee:   currentShippingFee,
+            shipment_id:    selectedShipping,
             total_amount:   totalAmount,
             payment_method: selectedPayment
         };

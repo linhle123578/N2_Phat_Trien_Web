@@ -205,7 +205,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <!-- HEADER -->
         <header class="admin-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar" onclick="openSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
                 <div>
@@ -406,5 +406,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const PA_BASE_URL = <?= json_encode($BASE_URL, JSON_UNESCAPED_UNICODE) ?>;
 </script>
 <script src="../../../public/assets/js/ProfileAdmin.js"></script>
+<script>
+function openSidebar()  {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('paOverlay').classList.add('show');
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('paOverlay').classList.remove('show');
+}
+document.getElementById('paOverlay').onclick = closeSidebar;
+</script>
 </body>
 </html>

@@ -54,8 +54,9 @@ mysqli_stmt_execute($stmt);
 $payment = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
 
-$stmt = mysqli_prepare($conn, "SELECT * FROM shipment WHERE order_id = ? LIMIT 1");
-mysqli_stmt_bind_param($stmt, 's', $order_id);
+$shipment_id_val = $order['shipment_id'] ?? '';
+$stmt = mysqli_prepare($conn, "SELECT * FROM shipment WHERE shipment_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, 's', $shipment_id_val);
 mysqli_stmt_execute($stmt);
 $shipment = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);

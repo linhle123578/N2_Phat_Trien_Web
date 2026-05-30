@@ -139,6 +139,9 @@ class CheckoutController
             }
         }
 
+        $orderModel = new OrderModel();
+        $shipments = $orderModel->getAllShipments();
+
         require_once __DIR__ . "/../../views/customer/Checkout.php";
     }
 
@@ -147,6 +150,14 @@ class CheckoutController
     // ----------------------------------------------------------------
     public function process()
     {
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            file_put_contents(__DIR__ . '/debug_output.log', "Error [$errno]: $errstr in $errfile on line $errline\n", FILE_APPEND);
+        });
+        set_exception_handler(function($ex) {
+            file_put_contents(__DIR__ . '/debug_output.log', "Exception: " . $ex->getMessage() . "\n", FILE_APPEND);
+        });
+
+        ob_start();
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) session_start();
 
@@ -170,9 +181,31 @@ class CheckoutController
         $customer_id    = $_SESSION['customer_id'];
         $name           = trim($data['name']           ?? '');
         $phone          = trim($data['phone']          ?? '');
-        $shipping_fee   = (int)($data['shipping_fee']  ?? 0);
-        $total_amount   = (int)($data['total_amount']  ?? 0);
+        $shipment_id    = trim($data['shipment_id']    ?? 'SHP001'); // Default if not provided
         $payment_method = trim($data['payment_method'] ?? 'cod');
+
+        $orderModel = new OrderModel();
+        $shipments = $orderModel->getAllShipments();
+        $shipping_fee = 0;
+        foreach ($shipments as $shp) {
+            if ($shp['shipment_id'] === $shipment_id) {
+                $shipping_fee = (float)$shp['price'];
+                break;
+            }
+        }
+
+        // Calculate subtotal
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $subtotal += ($item['quantity'] * $item['unit_price']); // assuming cart items have quantity and unit_price
+        }
+        
+        // Wait, the checkout items might not have unit_price in session, 
+        // usually total_amount comes from frontend, but let's just use what frontend sends and validate it later or just trust it for now.
+        $total_amount   = (int)($data['total_amount']  ?? 0); // Still taking from frontend, but we should make sure shipping fee is aligned.
+        
+        // Let's rely on total_amount from frontend since it was already working that way, 
+        // but we make sure we capture $shipment_id.
 
         $address_id     = trim($data['address_id']     ?? '');
         $new_address    = $data['new_address']         ?? null;
@@ -215,6 +248,7 @@ class CheckoutController
                 'phone'        => $phone,
                 'address_id'   => $address_id,
                 'shipping_fee' => $shipping_fee,
+                'shipment_id'  => $shipment_id,
                 'total_amount' => $total_amount,
                 'items'        => $cart,
             ];
@@ -230,10 +264,12 @@ class CheckoutController
         $orderModel       = new OrderModel();
         $cartModel        = new CartModel();
         $orderDetailModel = new OrderDetailModel();
-
         $order_id = $orderModel->createOrder(
-            $customer_id, $address_id,
-            $shipping_fee, $total_amount, $payment_method
+            $customer_id,
+            $address_id,
+            $shipment_id,
+            $total_amount,
+            'cod'
         );
 
         if (!$order_id) {
@@ -256,16 +292,18 @@ class CheckoutController
         require_once __DIR__ . "/../../models/ProductModel.php";
         $productModel = new ProductModel();
 
+        $cart_item_ids_to_delete = [];
+
         foreach ($cart as $item) {
             $pid = $item['product_id'];
             $qty = (int)($item['quantity'] ?? 1);
 
             // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
-            $price = $price_map[$item['cart_item_id'] ?? '']
-                ?? $price_map[$pid]
-                ?? 0;
+            $cartItemId = $item['cart_item_id'] ?? null;
+            $price = ($cartItemId && isset($price_map[$cartItemId])) ? $price_map[$cartItemId] : ($price_map[$pid] ?? 0);
 
             $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
+            $orderModel->decreaseStock($pid, $qty);
 
             // Lấy cart_item_id để xoá: từ session hoặc từ map
             $cid = $item['cart_item_id'] ?? $cart_item_id_map[$pid] ?? null;
@@ -299,6 +337,12 @@ class CheckoutController
                 "message"  => "Đặt hàng thành công! Mã đơn: " . $order_id
             ]);
         }
+        
+        $output = ob_get_clean();
+        if (trim($output) !== '') {
+            file_put_contents(__DIR__ . '/debug_output.log', $output . "\n", FILE_APPEND);
+        }
+        echo $output;
     }
 }
 

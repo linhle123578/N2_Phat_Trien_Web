@@ -79,7 +79,7 @@ class OrderHistoryModel
     {
         if ($tab === 'all') {
             $sql = "SELECT o.order_id, o.order_status, o.total_quantity_order,
-                           o.created_at,
+                           o.created_at, o.shipment_id, o.address_id,
                            p.total_amount, p.payment_method
                     FROM `order` o
                     LEFT JOIN payment p ON o.order_id = p.order_id
@@ -100,7 +100,7 @@ class OrderHistoryModel
             
             $placeholders = implode(',', array_fill(0, count($allowed_statuses), '?'));
             $sql = "SELECT o.order_id, o.order_status, o.total_quantity_order,
-                           o.created_at,
+                           o.created_at, o.shipment_id, o.address_id,
                            p.total_amount, p.payment_method
                     FROM `order` o
                     LEFT JOIN payment p ON o.order_id = p.order_id

@@ -23,11 +23,14 @@ $analytics = $analytics ?? [
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
     <link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css">
     <link rel="stylesheet" href="../../../public/assets/css/Dashboard.css">
 </head>
 <body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
     <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
 
@@ -37,7 +40,7 @@ $analytics = $analytics ?? [
         <!-- HEADER -->
         <header class="admin-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar" onclick="openSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
                 <div>
@@ -213,5 +216,9 @@ $analytics = $analytics ?? [
         const pieData = <?= json_encode($analytics['categories']['percentages']) ?>;
     </script>
     <script src="../../../public/assets/js/Dashboard.js?v=<?= time() ?>"></script>
+    <script>
+    function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
+    </script>
 </body>
 </html>

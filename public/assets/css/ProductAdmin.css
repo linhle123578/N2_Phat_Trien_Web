@@ -305,9 +305,15 @@ body {
 @keyframes toastSlide { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
 
 /* ── RESPONSIVE ── */
-@media (max-width: 767.98px) {
+@media (max-width: 991.98px) {
     .alert-card { flex-direction: column; text-align: center; }
     .alert-counters-row { flex-direction: column; }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-content { margin-left: 0 !important; }
+}
+@media (min-width: 992px) {
+    .d-lg-none { display: none !important; }
 }
 
 .sold-count { font-weight: 700; color: #374151; }

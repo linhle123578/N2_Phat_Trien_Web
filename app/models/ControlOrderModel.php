@@ -163,11 +163,7 @@ class OrderModel {
              WHERE order_id='$order_id'"
         );
 
-        mysqli_query(
-            $this->conn,
-            "DELETE FROM shipment
-             WHERE order_id='$order_id'"
-        );
+
 
         mysqli_query(
             $this->conn,
@@ -463,4 +459,3 @@ class OrderModel {
         return $orders;
     }
 }
-?>

@@ -72,4 +72,3 @@ class UserModel {
         return false;
     }
 }
-?>

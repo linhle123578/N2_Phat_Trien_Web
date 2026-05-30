@@ -98,30 +98,31 @@ include_once __DIR__ . '/../layouts/header.php';
                     <section class="box-beige mb-4">
                         <h3 class="section-title mb-3">🚚 PHƯƠNG THỨC VẬN CHUYỂN</h3>
                         <div class="d-flex flex-column gap-3">
-                            <label class="inner-card radio-card active p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="shipping" value="25000" checked>
-                                <div class="d-flex justify-content-between align-items-center w-100">
-                                    <div>
-                                        <div class="d-flex align-items-center gap-2 mb-1">
-                                            <h4 class="fs-6 fw-bold m-0" style="color: #022409;">Giao hàng tiêu chuẩn</h4>
-                                            <span class="badge text-dark" style="background-color: #F1BF4F; font-size: 10px;">RẺ NHẤT</span>
+                            <?php if(!empty($shipments)): ?>
+                                <?php foreach($shipments as $index => $shp): 
+                                    $price = (float)$shp['price'];
+                                    $isChecked = ($index === 0) ? 'checked' : '';
+                                    $isActive = ($index === 0) ? 'active' : '';
+                                ?>
+                                <label class="inner-card radio-card <?= $isActive ?> p-3 d-flex align-items-center gap-3 m-0">
+                                    <input type="radio" name="shipping" value="<?= $shp['shipment_id'] ?>" data-price="<?= $price ?>" <?= $isChecked ?>>
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <div>
+                                            <div class="d-flex align-items-center gap-2 mb-1">
+                                                <h4 class="fs-6 fw-bold m-0" style="color: #022409;"><?= htmlspecialchars($shp['shipment_method']) ?></h4>
+                                                <?php if($index === 0): ?>
+                                                <span class="badge text-dark" style="background-color: #F1BF4F; font-size: 10px;">RẺ NHẤT</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <small class="text-gray"><?= htmlspecialchars($shp['description'] ?? '') ?></small>
                                         </div>
-                                        <small class="text-gray">Nhận hàng trong vòng 1 - 2 ngày</small>
+                                        <span class="fw-bold" style="color: #183A1D;"><?= number_format($price, 0, ',', '.') ?>đ</span>
                                     </div>
-                                    <span class="fw-bold" style="color: #183A1D;">25.000đ</span>
-                                </div>
-                            </label>
-                            
-                            <label class="inner-card radio-card p-3 d-flex align-items-center gap-3 m-0">
-                                <input type="radio" name="shipping" value="55000">
-                                <div class="d-flex justify-content-between align-items-center w-100">
-                                    <div>
-                                        <h4 class="fs-6 fw-bold mb-1" style="color: #022409;">Giao hàng hỏa tốc</h4>
-                                        <small class="text-gray">Nhận hàng trong vòng 2 giờ</small>
-                                    </div>
-                                    <span class="fw-bold" style="color: #183A1D;">55.000đ</span>
-                                </div>
-                            </label>
+                                </label>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-warning">Không có phương thức giao hàng nào!</div>
+                            <?php endif; ?>
                         </div>
                     </section>
 

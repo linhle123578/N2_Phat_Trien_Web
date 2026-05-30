@@ -44,7 +44,6 @@ if (isset($_POST['handle_return'])) {
 if (isset($_POST['delete_order'])) {
     $order_id = mysqli_real_escape_string($conn, $_POST['order_id']);
     mysqli_query($conn, "DELETE FROM returnrequest WHERE order_id='$order_id'");
-    mysqli_query($conn, "DELETE FROM shipment    WHERE order_id='$order_id'");
     mysqli_query($conn, "DELETE FROM orderitem   WHERE order_id='$order_id'");
     mysqli_query($conn, "DELETE FROM payment     WHERE order_id='$order_id'");
     mysqli_query($conn, "DELETE FROM `order`     WHERE order_id='$order_id'");
@@ -118,10 +117,12 @@ $page         = min($page, $totalPages);
 $offset       = ($page - 1) * $perPage;
 
 $sql = "
-SELECT o.order_id, c.full_name, o.order_status, o.created_at, p.total_amount
+SELECT o.order_id, c.full_name, o.order_status, o.created_at, p.total_amount, o.shipment_id,
+       s.shipment_method, s.price as shipment_price
 FROM `order` o
 LEFT JOIN customer c ON o.customer_id = c.customer_id
 LEFT JOIN payment  p ON o.order_id    = p.order_id
+LEFT JOIN shipment s ON o.shipment_id = s.shipment_id
 $where
 ORDER BY o.created_at DESC
 LIMIT $perPage OFFSET $offset
@@ -152,13 +153,15 @@ while ($row = mysqli_fetch_assoc($result)) {
     $returnInfo = $rq ? mysqli_fetch_assoc($rq) : null;
 
     $orders[] = [
-        "id"         => $row['order_id'],
-        "name"       => $row['full_name'],
-        "status"     => $row['order_status'],
-        "time"       => date('H:i:s d-m-Y', strtotime($row['created_at'])),
-        "amount"     => $amount,
-        "items"      => $items,
-        "returnInfo" => $returnInfo,
+        "id"             => $row['order_id'],
+        "name"           => $row['full_name'],
+        "status"         => $row['order_status'],
+        "time"           => date('H:i:s d-m-Y', strtotime($row['created_at'])),
+        "amount"         => $amount,
+        "shipment_method" => $row['shipment_method'] ?? null,
+        "shipment_price" => $row['shipment_price'] ? (float)$row['shipment_price'] : null,
+        "items"          => $items,
+        "returnInfo"     => $returnInfo,
     ];
 }
 
@@ -521,9 +524,19 @@ function removeAccents($str) {
             <div class="section-divider">Sản phẩm đã đặt</div>
             <div id="m-products"></div>
 
-            <div class="modal-total mt-2">
-                <span>Tổng thanh toán</span>
-                <strong id="m-amount"></strong>
+            <div class="modal-total mt-2" style="flex-direction:column;gap:6px;align-items:stretch">
+                <div class="d-flex justify-content-between" style="font-size:13px;color:var(--text-soft)">
+                    <span>Tạm tính</span>
+                    <span id="m-subtotal"></span>
+                </div>
+                <div class="d-flex justify-content-between" id="m-ship-row" style="font-size:13px;color:var(--text-soft)">
+                    <span id="m-ship-label">Phí vận chuyển</span>
+                    <span id="m-ship-fee"></span>
+                </div>
+                <div class="d-flex justify-content-between" style="padding-top:8px;border-top:1px solid #e5e0ce;font-weight:700">
+                    <span>Tổng thanh toán</span>
+                    <strong id="m-amount"></strong>
+                </div>
             </div>
 
             <!-- KHU VỰC TRẢ HÀNG (hiện khi có returnInfo) -->
@@ -640,6 +653,20 @@ function openModal(o) {
     document.getElementById('m-time').textContent  = o.time;
     document.getElementById('m-amount').textContent = fmt(o.amount);
 
+    // Tạm tính & phí ship
+    const shipPrice = o.shipment_price || 0;
+    const itemsTotal = (o.items||[]).reduce((s,i) => s + i.price * i.quantity, 0);
+    const subtotal   = o.amount > 0 ? (o.amount - shipPrice) : itemsTotal;
+    document.getElementById('m-subtotal').textContent = fmt(subtotal);
+    const shipRow = document.getElementById('m-ship-row');
+    if (o.shipment_method) {
+        document.getElementById('m-ship-label').textContent = 'Phí vận chuyển (' + o.shipment_method + ')';
+        document.getElementById('m-ship-fee').textContent   = fmt(shipPrice);
+        shipRow.style.display = '';
+    } else {
+        shipRow.style.display = 'none';
+    }
+
     const sc = statusClass[o.status] || 'badge-pending';
     document.getElementById('m-status').innerHTML =
         `<span class="status-badge ${sc}">${statusLabels[o.status]||o.status}</span>`;
@@ -647,8 +674,14 @@ function openModal(o) {
     // Sản phẩm
     let html = '';
     (o.items||[]).forEach(item => {
+        const imgSrc = item.product_image
+            ? '/N2_Phat_Trien_Web/Media/' + item.product_image
+            : '';
+        const imgHtml = imgSrc
+            ? `<img src="${imgSrc}" alt="${item.product_name}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\'material-symbols-outlined\' style=\'font-size:24px;color:#aaa\'>eco</span>'">`
+            : `<span class="material-symbols-outlined" style="font-size:24px;color:#aaa">eco</span>`;
         html += `<div class="product-card">
-            <div class="product-img-placeholder"><span class="material-symbols-outlined">eco</span></div>
+            <div class="product-img-placeholder" style="background:#f5f0e0;display:flex;align-items:center;justify-content:center;overflow:hidden">${imgHtml}</div>
             <div style="flex:1;min-width:0">
                 <div class="product-name">${item.product_name}</div>
                 <div class="product-qty">SL: ${item.quantity} &nbsp;·&nbsp; Đơn giá: ${fmt(item.price)}</div>

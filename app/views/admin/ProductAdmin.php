@@ -61,6 +61,8 @@ mysqli_close($conn);
 
 <div class="admin-wrapper d-flex">
 
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- SIDEBAR -->
     <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
 
@@ -70,7 +72,7 @@ mysqli_close($conn);
         <!-- HEADER -->
         <header class="admin-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
             <div class="d-flex align-items-center gap-3">
-                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar" onclick="openSidebar()">
                     <i class="bi bi-list"></i>
                 </button>
                 <div>
@@ -286,5 +288,9 @@ mysqli_close($conn);
     const MEDIA_PATH = '../../../Media/';
 </script>
 <script src="../../../public/assets/js/ProductAdmin.js"></script>
+<script>
+function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
+</script>
 </body>
 </html>

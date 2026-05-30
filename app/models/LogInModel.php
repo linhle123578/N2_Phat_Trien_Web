@@ -123,4 +123,3 @@ class LogInModel {
         return $this->conn->query($sql);
     }
 }
-?>
