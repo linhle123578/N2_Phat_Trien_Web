@@ -12,8 +12,6 @@ if (!isset($cat_result) || !isset($prod_result)) {
     exit();
 }
 
-
-
 /** @var string $category_filter */
 /** @var string $search_filter */
 /** @var string $sort_filter */

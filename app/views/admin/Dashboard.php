@@ -31,40 +31,25 @@ $analytics = $analytics ?? [
 
     <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
 
-    <div class="admin-main-content">
-        
-        <header class="admin-header">
-            <div class="header-left">
-                <h5 class="mb-0 font-weight-bold text-dark">Hệ Thống Báo Cáo Kinh Doanh</h5>
-            </div>
-            <div class="header-right d-flex align-items-center">
-                <div class="dropdown">
-                    <div class="admin-profile dropdown-toggle d-flex align-items-center" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
-                        <span class="mr-2 font-weight-bold text-muted small">Xin chào, Admin</span>
-                        <i class="fas fa-user-circle fa-2x text-primary"></i>
-                    </div>
-                    <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="profileMenu">
-                        <a class="dropdown-item py-2" href="#"><i class="fas fa-user-cog mr-2 text-muted"></i> Hồ sơ cá nhân</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item py-2 text-danger" href="#"><i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất</a>
-                    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content flex-grow-1 d-flex flex-column">
+
+        <!-- HEADER -->
+        <header class="admin-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h5 class="mb-0 fw-bold">Thống kê Kinh doanh</h5>
                 </div>
             </div>
         </header>
 
+
         <main class="admin-dashboard-body">
             <div class="container-fluid p-0">
                 
-                <div class="row mb-4 align-items-center">
-                    <div class="col-sm-6">
-                        <h1 class="page-title mb-0"><i class="fas fa-chart-line mr-2"></i>Tổng Quan Kinh Doanh</h1>
-                        <p class="text-muted mb-0 small">Dữ liệu phân tích báo cáo thời gian thực của hệ thống.</p>
-                    </div>
-                    <div class="col-sm-6 text-sm-right mt-3 mt-sm-0">
-                        <span class="realtime-badge"><span class="dot"></span>Cập nhật trực tiếp</span>
-                    </div>
-                </div>
-
                 <div class="row mb-4">
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="overview-card shadow-sm border-0">
