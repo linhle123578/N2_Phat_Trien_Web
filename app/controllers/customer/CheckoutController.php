@@ -213,7 +213,7 @@ class CheckoutController
             $_SESSION['pending_order'] = [
                 'name'         => $name,
                 'phone'        => $phone,
-                'address'      => $address,
+                'address_id'   => $address_id,
                 'shipping_fee' => $shipping_fee,
                 'total_amount' => $total_amount,
                 'items'        => $cart,

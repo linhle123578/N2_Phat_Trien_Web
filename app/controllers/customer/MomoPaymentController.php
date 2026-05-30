@@ -117,9 +117,7 @@ class MomoPaymentController
 
         $order_id = $orderModel->createOrder(
             $customer_id,
-            $pending['name'],
-            $pending['phone'],
-            $pending['address'],
+            $pending['address_id'] ?? null,
             $pending['shipping_fee'],
             $pending['total_amount'],
             'momo'
