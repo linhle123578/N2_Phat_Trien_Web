@@ -60,7 +60,7 @@ echo $extra_head;
                                     </div>
                                     <div class="item-info">
                                         <div class="item-name"><?= htmlspecialchars($prod['product_name'] ?? 'Sản phẩm') ?></div>
-                                        <div class="item-meta">x<?= (int)($prod['quantity'] ?? 1) ?> <?= htmlspecialchars($prod['unit'] ?? 'Bó/Túi') ?></div>
+                                        <div class="item-meta">x<?= (int)($prod['quantity'] ?? 1) ?><?= !empty($prod['unit']) ? ' ' . htmlspecialchars($prod['unit']) : '' ?></div>
                                     </div>
                                     <div class="item-price">
                                         <?= number_format(($prod['price'] ?? 0) * ($prod['quantity'] ?? 1), 0, ',', '.') ?>đ
@@ -141,7 +141,7 @@ echo $extra_head;
 
             <!-- Back -->
             <div class="momo-action-row">
-                <a href="../../../app/views/customer/Checkout.php" class="btn-back-link">
+                <a href="/app/controllers/customer/CheckoutController.php" class="btn-back-link">
                     <span class="back-arrow">←</span>
                     Quay lại
                 </a>
@@ -162,8 +162,6 @@ echo $extra_head;
             <p class="success-modal-sub">Cảm ơn bạn đã tin tưởng Farm2Home</p>
             <p class="success-modal-sub">Mã đơn hàng của bạn:</p>
             <div class="success-order-id" id="modal-order-id">—</div>
-            <br>
-<<<<<<< HEAD
             <a href="../../../app/views/customer/TrangChu.php" class="btn-success-home">Về trang chủ</a>
         </div>
     </div>

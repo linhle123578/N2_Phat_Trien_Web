@@ -127,5 +127,15 @@ class OrderModel {
         }
         return true;
     }
+    /**
+     * Trừ tồn kho sản phẩm sau khi đơn hàng được xác nhận
+     */
+    public function decreaseStock($product_id, $quantity) {
+        $pid = $this->conn->real_escape_string($product_id);
+        $qty = (int)$quantity;
+        return $this->conn->query(
+            "UPDATE product SET stock = GREATEST(0, stock - $qty) WHERE product_id = '$pid'"
+        );
+    }
 }
 ?>

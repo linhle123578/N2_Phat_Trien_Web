@@ -57,22 +57,31 @@ include_once __DIR__ . '/../layouts/header.php';
                                         ? "../../../Media/" . htmlspecialchars($product['image'])
                                         : "../../../Media/no-image.png";
                                 ?>
-                                    <div class="inner-card p-3 d-flex align-items-center gap-3 flex-wrap">
-                                        <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="product-img rounded">
-                                        <div class="d-flex flex-grow-1 justify-content-between align-items-center flex-wrap gap-2">
-                                            <div class="col-name">
-                                                <h4 class="fs-6 fw-bold mb-1"><?= htmlspecialchars($product['name']) ?></h4>
-                                                <small class="text-gray">PHÂN LOẠI: <?= htmlspecialchars($product['unit'] ?? 'Bó/Túi') ?></small>
+                                    <div class="inner-card p-3">
+                                        <div class="row align-items-center g-2">
+                                            <!-- Ảnh -->
+                                            <div class="col-auto">
+                                                <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="product-img rounded">
                                             </div>
-                                            <div class="text-center">
+                                            <!-- Tên sản phẩm -->
+                                            <div class="col">
+                                                <h4 class="fs-6 fw-bold mb-1"><?= htmlspecialchars($product['name']) ?></h4>
+                                                <?php if (!empty($product['unit'])): ?>
+                                                <small class="text-gray">PHÂN LOẠI: <?= htmlspecialchars($product['unit']) ?></small>
+                                                <?php endif; ?>
+                                            </div>
+                                            <!-- Đơn giá -->
+                                            <div class="col-auto text-center" style="min-width:100px">
                                                 <small class="text-gray d-block">Đơn giá</small>
                                                 <span class="fw-semibold"><?= number_format($product['price'], 0, ',', '.') ?>đ</span>
                                             </div>
-                                            <div class="text-center">
+                                            <!-- Số lượng -->
+                                            <div class="col-auto text-center" style="min-width:80px">
                                                 <small class="text-gray d-block">Số lượng</small>
                                                 <span class="fw-semibold"><?= $product['quantity'] ?></span>
                                             </div>
-                                            <div class="text-end">
+                                            <!-- Thành tiền -->
+                                            <div class="col-auto text-end" style="min-width:110px">
                                                 <small class="text-gray d-block">Thành tiền</small>
                                                 <span class="text-orange fs-5"><?= number_format($product['total_price'], 0, ',', '.') ?>đ</span>
                                             </div>

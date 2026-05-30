@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Lấy config từ PHP ----
     const ORDER_DATA   = (typeof MOMO_ORDER_DATA !== 'undefined') ? MOMO_ORDER_DATA : {};
-    const ORDER_ID     = ORDER_DATA.order_id     || '';
     const LIVE_MODE    = ORDER_DATA.live_mode     || false;
     const CONTROLLER   = 'MomoPaymentController.php';
+
+    // order_id có thể null nếu đây là pending flow (chưa tạo đơn)
+    let   ORDER_ID     = ORDER_DATA.order_id     || null;
 
     // ---- Thời gian QR còn hiệu lực (10 phút) ----
     const QR_DURATION  = 10*60; // giây
@@ -36,11 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnRefresh        = document.getElementById('btn-refresh-qr');
     const successModal      = document.getElementById('momo-success-modal');
     const modalOrderId      = document.getElementById('modal-order-id');
-
-    if (!ORDER_ID) {
-        console.error('MomoPayment: ORDER_ID không tồn tại');
-        return;
-    }
 
     // ================================================================
     // 1. KHỞI ĐỘNG: Tạo QR ngay khi load trang
@@ -64,10 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRefresh.classList.remove('show');
         timerBadge.classList.remove('expired');
 
+        const body = new URLSearchParams({ action: 'create_qr' });
+        if (ORDER_ID) body.append('order_id', ORDER_ID);
+
         fetch(CONTROLLER, {
             method:  'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body:    new URLSearchParams({ action: 'create_qr', order_id: ORDER_ID })
+            body:    body
         })
         .then(r => r.json())
         .then(data => {
@@ -165,14 +165,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function checkPaymentStatus() {
         if (paymentDone || qrExpired) return;
 
+        const body = new URLSearchParams({ action: 'check_status' });
+        if (ORDER_ID) body.append('order_id', ORDER_ID);
+
         fetch(CONTROLLER, {
             method:  'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body:    new URLSearchParams({ action: 'check_status', order_id: ORDER_ID })
+            body:    body
         })
         .then(r => r.json())
         .then(data => {
-            if (data.paid === true || data.order_status === 'Đang giao') {
+            if (data.paid === true) {
+                // Lưu order_id thật vừa được tạo (từ pending flow)
+                if (data.order_id && !ORDER_ID) {
+                    ORDER_ID = data.order_id;
+                }
                 onPaymentSuccess();
             }
         })
@@ -189,13 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timerInterval);
         stopPolling();
 
-        // Hiện overlay thành công trên QR
         qrExpiredOverlay.classList.remove('show');
         qrSuccessOverlay.classList.add('show');
 
-        // Hiện modal sau 800ms
         setTimeout(() => {
-            if (modalOrderId) modalOrderId.textContent = ORDER_ID;
+            if (modalOrderId) modalOrderId.textContent = ORDER_ID || '—';
             if (successModal) successModal.classList.add('show');
         }, 800);
     }
