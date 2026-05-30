@@ -94,6 +94,14 @@ class CartModel {
         }
         return $order_id;
     }
+    // Cập nhật số lượng sản phẩm trong giỏ hàng
+    public function updateQuantity($cart_item_id, $quantity) {
+        $id  = $this->conn->real_escape_string($cart_item_id);
+        $qty = max(1, (int)$quantity);
+        return $this->conn->query(
+            "UPDATE cartitem SET quantity = $qty WHERE cart_item_id = '$id'"
+        );
+    }
     
 }
 

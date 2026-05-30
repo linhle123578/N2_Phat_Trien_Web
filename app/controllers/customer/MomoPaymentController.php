@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/../../models/OrderModel.php";
 
-define('MOMO_LIVE_MODE',     false);
+define('MOMO_LIVE_MODE',     true);
 define('MOMO_PARTNER_CODE',  'MOMO_PARTNER_CODE'); // <-- Thay bằng Partner Code thật của bạn
 define('MOMO_ACCESS_KEY',    'MOMO_ACCESS_KEY');   // <-- Thay bằng Access Key thật của bạn
 define('MOMO_SECRET_KEY',    'MOMO_SECRET_KEY');   // <-- Thay bằng Secret Key thật của bạn
@@ -24,39 +24,142 @@ class MomoPaymentController
     // ----------------------------------------------------------------
     public function showPage($order_id)
     {
-        $order = $this->orderModel->getOrderById($order_id);
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
-        if (!$order) {
-            die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Không tìm thấy đơn hàng: " . htmlspecialchars($order_id) . "</h3>");
+        if (!isset($_SESSION['customer_id'])) {
+            header("Location: /app/views/customer/LogIn.php");
+            exit();
         }
 
-        $customer_id = $_SESSION['customer_id'] ?? 'CUS005';
-        if ($order['customer_id'] !== (string)$customer_id) {
-            die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Bạn không có quyền xem đơn hàng này.</h3>");
+        // Nếu có order_id thật (đã thanh toán xong và redirect về) → hiện order đó
+        if ($order_id) {
+            $order = $this->orderModel->getOrderById($order_id);
+            if (!$order) {
+                die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Không tìm thấy đơn hàng</h3>");
+            }
+            $customer_id = $_SESSION['customer_id'];
+            if ($order['customer_id'] !== (string)$customer_id) {
+                die("<h3 style='font-family:sans-serif;color:#B91C1C;padding:40px'>Bạn không có quyền xem đơn hàng này.</h3>");
+            }
+            $order_products = $this->orderModel->getOrderItems($order_id);
+            $subtotal = 0;
+            foreach ($order_products as $p) {
+                $subtotal += (int)$p['price'] * (int)$p['quantity'];
+            }
+            $shipping_fee = (int)($_SESSION['last_order_shipping'] ?? 25000);
+            $total_amount = $subtotal + $shipping_fee;
+            require_once __DIR__ . "/../../views/customer/MomoPayment.php";
+            return;
         }
 
-        // Lấy danh sách sản phẩm của đơn
-        $order_products = $this->orderModel->getOrderItems($order_id);
+        // Chưa có order_id → dùng pending_order từ session để hiện trang QR
+        $pending = $_SESSION['pending_order'] ?? [];
+        if (empty($pending)) {
+            header("Location: /app/controllers/customer/CheckoutController.php");
+            exit();
+        }
 
-        // Tính subtotal từ order items
+        // Hiện thông tin sản phẩm từ session (chưa tạo đơn thật)
+        $cart        = $pending['items'] ?? ($_SESSION['checkout_items'] ?? []);
+        $shipping_fee = (int)($pending['shipping_fee'] ?? 25000);
+        $total_amount = (int)($pending['total_amount'] ?? 0);
+
+        // Lấy tên/giá sản phẩm từ cart DB để hiện lên UI
+        require_once __DIR__ . "/../../models/CartModel.php";
+        $cartModel = new CartModel();
+        $all_cart_items = $cartModel->getCartItems($_SESSION['customer_id']);
+        $cart_map = [];
+        foreach ($all_cart_items as $ci) {
+            $cart_map[$ci['product_id']] = $ci;
+        }
+
+        $order_products = [];
         $subtotal = 0;
-        foreach ($order_products as $p) {
-            $subtotal += (int)$p['price'] * (int)$p['quantity'];
+        foreach ($cart as $item) {
+            $pid = $item['product_id'];
+            $qty = (int)($item['quantity'] ?? 1);
+            $ci  = $cart_map[$pid] ?? null;
+            if ($ci) {
+                $order_products[] = [
+                    'product_name'  => $ci['product_name'],
+                    'product_image' => $ci['product_image'],
+                    'price'         => $ci['unit_price'],
+                    'quantity'      => $qty,
+                    'unit'          => $ci['unit'] ?? '',
+                ];
+                $subtotal += $ci['unit_price'] * $qty;
+            }
         }
 
-        // Session 'last_order_shipping' được lưu bởi CheckoutController khi đặt hàng
-        $shipping_fee = (int)($_SESSION['last_order_shipping'] ?? 25000); // default 25k
-        $total_amount = $subtotal + $shipping_fee;
-
-        // Truyền sang view
-        $order_data = [
-            'order_id'     => $order_id,
-            'total_amount' => $total_amount,
-            'order_status' => $order['order_status'] ?? 'Chờ xác nhận',
-            'live_mode'    => MOMO_LIVE_MODE,
-        ];
+        // order_id = null ở đây, JS sẽ gọi action=create_qr_pending
+        $order_id = null;
 
         require_once __DIR__ . "/../../views/customer/MomoPayment.php";
+    }
+
+    // Tạo đơn từ pending_order trong session (chỉ gọi khi MoMo xác nhận paid)
+    private function createOrderFromSession()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $pending     = $_SESSION['pending_order']  ?? [];
+        $cart        = $pending['items'] ?? ($_SESSION['checkout_items'] ?? []);
+        $customer_id = $_SESSION['customer_id']    ?? null;
+
+        if (!$pending || !$cart || !$customer_id) return null;
+
+        require_once __DIR__ . "/../../models/OrderDetailModel.php";
+        require_once __DIR__ . "/../../models/CartModel.php";
+
+        $orderModel       = new OrderModel();
+        $cartModel        = new CartModel();
+        $orderDetailModel = new OrderDetailModel();
+
+        $order_id = $orderModel->createOrder(
+            $customer_id,
+            $pending['name'],
+            $pending['phone'],
+            $pending['address'],
+            $pending['shipping_fee'],
+            $pending['total_amount'],
+            'momo'
+        );
+        if (!$order_id) return null;
+
+        // Trạng thái sau thanh toán MoMo thành công → Chờ xác nhận
+        $orderModel->updateStatus($order_id, 'Chờ xác nhận');
+
+        $all_cart_items = $cartModel->getCartItems($customer_id);
+        $price_map        = [];
+        $cart_item_id_map = [];
+        foreach ($all_cart_items as $ci) {
+            $price_map[$ci['product_id']]        = $ci['unit_price'];
+            $cart_item_id_map[$ci['product_id']] = $ci['cart_item_id'];
+        }
+
+        foreach ($cart as $item) {
+            $pid   = $item['product_id'];
+            $qty   = (int)($item['quantity'] ?? 1);
+            $price = $price_map[$pid] ?? 0;
+
+            // Lưu order detail
+            $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
+
+            // Trừ tồn kho
+            $orderModel->decreaseStock($pid, $qty);
+
+            // Xóa khỏi cart DB
+            $cid = $cart_item_id_map[$pid] ?? null;
+            if ($cid) $cartModel->deleteItem($cid);
+        }
+
+        $_SESSION['last_order_id']       = $order_id;
+        $_SESSION['last_order_shipping'] = $pending['shipping_fee'];
+        unset($_SESSION['pending_order']);
+        unset($_SESSION['checkout_items']);
+        unset($_SESSION['checkout_info']);
+
+        return $order_id;
     }
 
     // POST action=create_qr
@@ -64,25 +167,45 @@ class MomoPaymentController
     public function createQR($order_id)
     {
         header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
+        // Nếu chưa có order_id (pending), lấy amount từ session
+        if (!$order_id) {
+            $pending = $_SESSION['pending_order'] ?? [];
+            if (empty($pending)) {
+                echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy thông tin đơn hàng']);
+                return;
+            }
+            $amount     = (int)($pending['total_amount'] ?? 0);
+            $ref_id     = 'PENDING-' . $_SESSION['customer_id'] . '-' . time();
+            $_SESSION['momo_pending_ref'] = $ref_id;
+
+            if (MOMO_LIVE_MODE) {
+                $result = $this->callMomoAPI($ref_id, $amount);
+            } else {
+                $result = $this->mockQR($ref_id, $amount);
+            }
+            echo json_encode($result);
+            return;
+        }
+
+        // Có order_id → đơn đã tồn tại (user quay lại trang)
         $order = $this->orderModel->getOrderById($order_id);
         if (!$order) {
             echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy đơn hàng']);
             return;
         }
 
-        if (in_array($order['order_status'], ['Đang giao', 'Hoàn thành'])) {
+        if (in_array($order['order_status'], ['Chờ xác nhận', 'Đang giao', 'Hoàn thành'])) {
             echo json_encode(['status' => 'already_paid', 'order_id' => $order_id]);
             return;
         }
 
-        // Tính lại total từ items vì DB không lưu total_amount
         $items = $this->orderModel->getOrderItems($order_id);
         $subtotal = 0;
         foreach ($items as $p) {
             $subtotal += (int)$p['price'] * (int)$p['quantity'];
         }
-        if (session_status() === PHP_SESSION_NONE) session_start();
         $shipping_fee = (int)($_SESSION['last_order_shipping'] ?? 25000);
         $amount = $subtotal + $shipping_fee;
 
@@ -100,7 +223,30 @@ class MomoPaymentController
     public function checkStatus($order_id)
     {
         header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
+        // Nếu chưa có order_id → check trạng thái pending qua MoMo ref
+        if (!$order_id) {
+            if (!MOMO_LIVE_MODE) {
+                // Demo mode: chưa paid
+                echo json_encode(['status' => 'ok', 'paid' => false, 'order_id' => null]);
+                return;
+            }
+            $ref_id      = $_SESSION['momo_pending_ref'] ?? '';
+            $momo_result = $ref_id ? $this->queryMomoStatus($ref_id) : null;
+            if ($momo_result && isset($momo_result['resultCode']) && $momo_result['resultCode'] == 0) {
+                $new_order_id = $this->createOrderFromSession();
+                if ($new_order_id) {
+                    $this->orderModel->updateMomoPayment($new_order_id, 'Chờ xác nhận', $momo_result['transId'] ?? null);
+                    echo json_encode(['status' => 'ok', 'paid' => true, 'order_id' => $new_order_id]);
+                    return;
+                }
+            }
+            echo json_encode(['status' => 'ok', 'paid' => false, 'order_id' => null]);
+            return;
+        }
+
+        // Có order_id → đơn đã tồn tại
         $order = $this->orderModel->getOrderById($order_id);
         if (!$order) {
             echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy đơn hàng']);
@@ -108,23 +254,17 @@ class MomoPaymentController
         }
 
         $order_status = $order['order_status'] ?? 'Chờ xác nhận';
+        $paid = in_array($order_status, ['Chờ xác nhận', 'Đang giao', 'Hoàn thành']);
 
-        if (MOMO_LIVE_MODE) {
+        if (!$paid && MOMO_LIVE_MODE) {
             $momo_result = $this->queryMomoStatus($order_id);
-            if ($momo_result && isset($momo_result['resultCode'])) {
-                if ($momo_result['resultCode'] == 0) {
-                    $this->orderModel->updateMomoPayment(
-                        $order_id,
-                        'Đang giao',
-                        $momo_result['transId'] ?? null
-                    );
-                    $order_status = 'Đang giao';
-                    $this->clearCart($order_id);
-                }
+            if ($momo_result && isset($momo_result['resultCode']) && $momo_result['resultCode'] == 0) {
+                $this->orderModel->updateMomoPayment($order_id, 'Chờ xác nhận', $momo_result['transId'] ?? null);
+                $order_status = 'Chờ xác nhận';
+                $paid = true;
             }
         }
 
-        $paid = in_array($order_status, ['Đang giao', 'Hoàn thành']);
         echo json_encode([
             'status'       => 'ok',
             'order_status' => $order_status,
@@ -138,19 +278,22 @@ class MomoPaymentController
     public function mockConfirm($order_id)
     {
         header('Content-Type: application/json');
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         if (MOMO_LIVE_MODE) {
             echo json_encode(['status' => 'error', 'message' => 'Không khả dụng ở chế độ live']);
             return;
         }
 
-        $ok = $this->orderModel->updateMomoPayment($order_id, 'Đang giao', 'MOCK-TXN-' . strtoupper(substr(uniqid(), -6)));
-        if ($ok) {
-            $this->clearCart($order_id);
-            echo json_encode(['status' => 'success', 'order_id' => $order_id, 'message' => 'Mock: thanh toán thành công!']);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Lỗi cập nhật trạng thái']);
+        // Tạo đơn thật từ pending_order
+        $new_order_id = $this->createOrderFromSession();
+        if (!$new_order_id) {
+            echo json_encode(['status' => 'error', 'message' => 'Lỗi tạo đơn hàng']);
+            return;
         }
+
+        $this->orderModel->updateMomoPayment($new_order_id, 'Chờ xác nhận', 'MOCK-TXN-' . strtoupper(substr(uniqid(), -6)));
+        echo json_encode(['status' => 'success', 'order_id' => $new_order_id, 'message' => 'Mock: thanh toán thành công!']);
     }
 
     // POST action=ipn
@@ -229,7 +372,7 @@ class MomoPaymentController
 
         $payload = json_encode([
             'partnerCode'  => $partnerCode,
-            'accessKey'    => $accessKey,      
+            'accessKey'    => $accessKey,
             'requestId'    => $requestId,
             'amount'       => (int)$amount,
             'orderId'      => $momo_order_id,
@@ -240,7 +383,7 @@ class MomoPaymentController
             'requestType'  => $requestType,
             'signature'    => $signature,
             'lang'         => 'vi',
-            'orderGroupId' => '',              
+            'orderGroupId' => '',
         ]);
 
         $ch = curl_init(MOMO_ENDPOINT);
@@ -250,11 +393,11 @@ class MomoPaymentController
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
             CURLOPT_TIMEOUT        => 10,
-            CURLOPT_SSL_VERIFYPEER => false,  
-            CURLOPT_SSL_VERIFYHOST => false,  
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
         ]);
         $response  = curl_exec($ch);
-        $curl_err  = curl_error($ch);        
+        $curl_err  = curl_error($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
@@ -284,7 +427,7 @@ class MomoPaymentController
 
         return [
             'status'  => 'error',
-            'message' => 'MoMo Error: ' . $errorMsg, 
+            'message' => 'MoMo Error: ' . $errorMsg,
             'code'    => $result['resultCode'] ?? -1,
         ];
     }
@@ -427,9 +570,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Unknown action: ' . $action]);
     }
 } else {
-    if (!$order_id) {
-        header("Location: /");
-        exit();
-    }
-    $ctrl->showPage($order_id);
+    // GET: order_id có thể rỗng (pending flow) hoặc có giá trị (đã tạo đơn)
+    $ctrl->showPage($order_id ?: null);
 }

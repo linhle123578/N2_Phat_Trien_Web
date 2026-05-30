@@ -80,6 +80,30 @@ class CartController
         exit();
     }
 
+    // Hàm cập nhật số lượng qua AJAX
+    public function updateQty()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $cart_item_id = $_POST['cart_item_id'] ?? '';
+            $quantity     = (int)($_POST['quantity'] ?? 1);
+
+            if (!$cart_item_id || $quantity < 1) {
+                echo json_encode(['status' => 'error', 'message' => 'Dữ liệu không hợp lệ']);
+                return;
+            }
+
+            $cartModel = new CartModel();
+            $result    = $cartModel->updateQuantity($cart_item_id, $quantity);
+
+            if ($result) {
+                echo json_encode(['status' => 'success']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Lỗi cập nhật']);
+            }
+        }
+    }
+
     public function add()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -129,16 +153,13 @@ class CartController
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cartController = new CartController();
     
-    // Nếu có truyền cart_item_id qua POST (AJAX xóa)
-    if (isset($_POST['cart_item_id'])) {
+    if (isset($_POST['cart_item_id']) && isset($_POST['quantity'])) {
+        $cartController->updateQty();
+    } elseif (isset($_POST['cart_item_id'])) {
         $cartController->delete();
-    } 
-    // Nếu có truyền product_id qua POST (Thêm vào giỏ hoặc Mua ngay)
-    elseif (isset($_POST['product_id'])) {
+    } elseif (isset($_POST['product_id'])) {
         $cartController->add();
-    } 
-    // Nếu bấm nút Thanh Toán trong giỏ hàng
-    else {
+    } else {
         $cartController->checkout();
     }
 }

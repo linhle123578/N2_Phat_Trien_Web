@@ -16,6 +16,20 @@ function setItemQty(item, qty) {
 
     updateItemTotal(item);
     updateQtyButtons(item);
+    saveQtyToDB(item, safeQty);
+}
+
+// Lưu số lượng lên DB qua AJAX
+function saveQtyToDB(item, qty) {
+    const deleteBtn  = item.querySelector('.delete-btn');
+    const cartItemId = deleteBtn ? deleteBtn.dataset.id : null;
+    if (!cartItemId) return;
+
+    fetch('../../../app/controllers/customer/CartController.php', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body:    'cart_item_id=' + encodeURIComponent(cartItemId) + '&quantity=' + qty
+    }).catch(err => console.warn('Lưu qty thất bại:', err));
 }
 
 function getItemUnitPrice(item) {
