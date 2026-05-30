@@ -251,9 +251,9 @@ $BASE_URL = '/n2_phat_trien_web';
                                 </button>
                                 <?php endif; ?>
 
-                               <?php if ($status === 'pending'): ?>
+                               <?php if ($status === 'pending' || $status === 'Chờ xác nhận'): ?>
                                <form method="POST"
-                                     action="../app/views/customer/CancelOrder.php"
+                                     action="CancelOrder.php"
                                      style="display:inline;"
                                      onsubmit="return confirm('Huỷ đơn hàng này?')">
                                    <input type="hidden" name="order_id" value="<?= $e($oid) ?>">
@@ -286,14 +286,15 @@ $BASE_URL = '/n2_phat_trien_web';
 // Mua lại: thêm từng sản phẩm vào giỏ rồi chuyển sang trang giỏ hàng
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
-    var cartUrl = '../app/controllers/customer/CartController.php';
-    var cartPageUrl = 'cart.php';
+    var cartUrl = '../../../app/controllers/customer/CartController.php';
+    var cartPageUrl = '../../../app/views/customer/cart.php';
     var total = items.length;
     var done = 0;
     items.forEach(function(item) {
         var fd = new FormData();
         fd.append('product_id', item.product_id);
         fd.append('quantity', item.quantity);
+        fd.append('ajax', '1');
         fetch(cartUrl, { method: 'POST', body: fd })
             .then(function() {
                 done++;

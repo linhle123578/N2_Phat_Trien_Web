@@ -33,14 +33,9 @@ class ReturnRequestModel
     {
         $stmt = mysqli_prepare($this->conn,
             "SELECT o.order_id, o.order_status, o.created_at,
-<<<<<<< HEAD
                     o.total_quantity_order,
-                    p.total_amount, p.payment_method
-=======
                     p.total_amount, p.payment_method,
-                    p.total_amount, p.payment_method,
-                    c.full_name, c.phone, c.email
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
+                    c.full_name, c.phone
              FROM `order` o
              LEFT JOIN payment p ON o.order_id = p.order_id
              LEFT JOIN customer c ON o.customer_id = c.customer_id

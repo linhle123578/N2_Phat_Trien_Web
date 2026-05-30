@@ -71,6 +71,16 @@ mysqli_stmt_close($stmt);
 $counts = $model->getOrderCounts($customer_id);
 $order_count = $counts['all'];
 
+// Kiểm tra trạng thái trả hàng
+$status = $order['order_status'];
+$can_return = false;
+$is_returned = false;
+if ($status === 'delivered' || $status === 'Hoàn thành' || $status === 'Đã giao' || $status === 'completed') {
+    $can_return = $model->isReturnEligible($order_id, 3);
+    $is_returned = $model->hasExistingReturn($order_id);
+    if ($is_returned) $can_return = false;
+}
+
 // Xử lý XÁC NHẬN ĐÃ NHẬN HÀNG
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_received'])) {
     $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'delivered' WHERE order_id = ?");
@@ -403,6 +413,16 @@ echo $extra_head;
                 </form>
                 <?php endif; ?>
 
+                <?php if ($is_returned): ?>
+                    <a href="../../../app/views/customer/ReturnRequest.php?order_id=<?= urlencode($order_id) ?>" class="btn-od" style="background-color: #ff9800; color: white; border-color: #ff9800; display: inline-flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-info-circle me-1"></i>Xem yêu cầu trả hàng
+                    </a>
+                <?php elseif ($can_return): ?>
+                    <a href="../../../app/views/customer/ReturnRequest.php?order_id=<?= urlencode($order_id) ?>" class="btn-od" style="background-color: #dc3545; color: white; border-color: #dc3545; display: inline-flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-arrow-return-left me-1"></i>Trả hàng
+                    </a>
+                <?php endif; ?>
+
                 <?php
                 $od_rebuy_items = array_map(fn($it) => ['product_id' => $it['product_id'], 'quantity' => (int)$it['quantity']], $items);
                 ?>
@@ -430,7 +450,7 @@ document.getElementById('btnLogout')?.addEventListener('click', (e) => {
 // Mua lại: thêm từng sản phẩm vào giỏ rồi chuyển sang trang giỏ hàng
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
-    var cartUrl = '../app/controllers/customer/CartController.php';
+    var cartUrl = '../../../app/controllers/customer/CartController.php';
     var cartPageUrl = '../../../app/views/customer/cart.php';
     var total = items.length;
     var done = 0;
@@ -438,14 +458,12 @@ function rebuyOrder(items) {
         var fd = new FormData();
         fd.append('product_id', item.product_id);
         fd.append('quantity', item.quantity);
+        fd.append('ajax', '1');
         fetch(cartUrl, { method: 'POST', body: fd })
             .then(function() { done++; if (done === total) window.location.href = cartPageUrl; })
             .catch(function() { done++; if (done === total) window.location.href = cartPageUrl; });
     });
 }
 </script>
-<<<<<<< HEAD
 
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
-=======
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f

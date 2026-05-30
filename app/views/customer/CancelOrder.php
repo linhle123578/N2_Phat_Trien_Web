@@ -21,9 +21,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
     );
     mysqli_set_charset($conn, "utf8mb4");
 
-    $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'cancelled' WHERE order_id = ? AND order_status = 'pending'");
+    // 1. Fetch items to restore stock
+    $stmtItems = mysqli_prepare($conn, "SELECT product_id, quantity FROM orderitem WHERE order_id = ?");
+    mysqli_stmt_bind_param($stmtItems, 's', $order_id);
+    mysqli_stmt_execute($stmtItems);
+    $resultItems = mysqli_stmt_get_result($stmtItems);
+    $items = [];
+    while ($row = mysqli_fetch_assoc($resultItems)) {
+        $items[] = $row;
+    }
+    mysqli_stmt_close($stmtItems);
+
+    // 2. Update order status to 'cancelled'
+    $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'cancelled' WHERE order_id = ? AND (order_status = 'pending' OR order_status = 'Chờ xác nhận')");
     mysqli_stmt_bind_param($stmt, 's', $order_id);
     mysqli_stmt_execute($stmt);
+
+    // 3. If successfully updated, restore stock
+    if (mysqli_stmt_affected_rows($stmt) > 0) {
+        $stmtUpdateStock = mysqli_prepare($conn, "UPDATE product SET stock = stock + ? WHERE product_id = ?");
+        foreach ($items as $item) {
+            mysqli_stmt_bind_param($stmtUpdateStock, 'is', $item['quantity'], $item['product_id']);
+            mysqli_stmt_execute($stmtUpdateStock);
+        }
+        mysqli_stmt_close($stmtUpdateStock);
+    }
+
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
 }
@@ -33,5 +56,3 @@ $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/OrderHistory
 header("Location: " . $referer);
 exit;
 ?>
-
-<?php include_once __DIR__ . '/../layouts/footer.php'; ?>

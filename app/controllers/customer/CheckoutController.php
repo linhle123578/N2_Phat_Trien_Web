@@ -50,29 +50,66 @@ class CheckoutController
             $customer_info['address']  = $_SESSION['checkout_info']['address'] ?: $customer_info['address'];
         }
 
-        $all_cart_items = $cartModel->getCartItems($customer_id);
-        $selected_ids   = array_column($_SESSION['checkout_items'], 'product_id');
-
         $checkout_products = [];
         $subtotal = 0;
 
-        if ($all_cart_items) {
-            foreach ($all_cart_items as $item) {
-                if (
-                    in_array($item['product_id'],   $selected_ids)
-                ) {
-                    $product = [
-                        'name'         => $item['product_name'],
-                        'image'        => $item['product_image'],
-                        'price'        => $item['unit_price'],
+        $is_buy_now = false;
+        if (!empty($_SESSION['checkout_items'])) {
+            foreach ($_SESSION['checkout_items'] as $item) {
+                if (isset($item['is_buy_now']) && $item['is_buy_now'] === true) {
+                    $is_buy_now = true;
+                    break;
+                }
+            }
+        }
+
+        if ($is_buy_now) {
+            require_once __DIR__ . "/../../models/ProductModel.php";
+            $productModel = new ProductModel();
+            foreach ($_SESSION['checkout_items'] as $item) {
+                $product = $productModel->getProductById($item['product_id']);
+                if ($product) {
+                    $prod_info = [
+                        'name'         => $product['product_name'],
+                        'image'        => $product['product_image'],
+                        'price'        => $product['price'],
                         'quantity'     => $item['quantity'],
-                        'total_price'  => $item['unit_price'] * $item['quantity'],
-                        'unit'         => 'Bó/Túi',
-                        'product_id'   => $item['product_id'],
-                        'cart_item_id' => $item['cart_item_id'],
+                        'total_price'  => $product['price'] * $item['quantity'],
+                        'unit'         => $product['unit'] ?? 'Bó/Túi',
+                        'product_id'   => $product['product_id'],
+                        'cart_item_id' => null,
                     ];
-                    $subtotal += $product['total_price'];
-                    $checkout_products[] = $product;
+                    $subtotal += $prod_info['total_price'];
+                    $checkout_products[] = $prod_info;
+                }
+            }
+        } else {
+            $all_cart_items = $cartModel->getCartItems($customer_id);
+            $selected_ids   = array_column($_SESSION['checkout_items'], 'product_id');
+
+            // Lấy map quantity từ session để đảm bảo đúng số lượng lúc submit checkout
+            $selected_qty_map = [];
+            foreach ($_SESSION['checkout_items'] as $it) {
+                $selected_qty_map[$it['product_id']] = $it['quantity'] ?? 1;
+            }
+
+            if ($all_cart_items) {
+                foreach ($all_cart_items as $item) {
+                    if (in_array($item['product_id'], $selected_ids)) {
+                        $qty = isset($selected_qty_map[$item['product_id']]) ? $selected_qty_map[$item['product_id']] : $item['quantity'];
+                        $product = [
+                            'name'         => $item['product_name'],
+                            'image'        => $item['product_image'],
+                            'price'        => $item['unit_price'],
+                            'quantity'     => $qty,
+                            'total_price'  => $item['unit_price'] * $qty,
+                            'unit'         => 'Bó/Túi',
+                            'product_id'   => $item['product_id'],
+                            'cart_item_id' => $item['cart_item_id'],
+                        ];
+                        $subtotal += $product['total_price'];
+                        $checkout_products[] = $product;
+                    }
                 }
             }
         }
