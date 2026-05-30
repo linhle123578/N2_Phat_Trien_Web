@@ -86,13 +86,25 @@ if ($rr) $pendingReturns = mysqli_fetch_assoc($rr)['cnt'];
 // PHÂN TRANG + LẤY ĐƠN HÀNG
 // ======================
 
-$search  = isset($_GET['search']) ? mysqli_real_escape_string($conn, trim($_GET['search'])) : '';
-$filter  = isset($_GET['filter']) ? mysqli_real_escape_string($conn, $_GET['filter']) : '';
-$perPage = 15;
-$page    = max(1, intval($_GET['page'] ?? 1));
+$searchRaw = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search    = mysqli_real_escape_string($conn, $searchRaw);
+$filter    = isset($_GET['filter']) ? mysqli_real_escape_string($conn, $_GET['filter']) : '';
+$perPage   = 15;
+$page      = max(1, intval($_GET['page'] ?? 1));
 
 $where = "WHERE 1=1";
-if ($search) $where .= " AND (c.full_name LIKE '%$search%' OR o.order_id LIKE '%$search%')";
+if ($search) {
+    // Tìm kiếm không phân biệt dấu: dùng COLLATE hoặc so sánh trực tiếp
+    // TiDB hỗ trợ utf8mb4_general_ci nên LIKE đã không phân biệt dấu thông thường,
+    // nhưng để an toàn ta tìm thêm phiên bản không dấu
+    $searchNoAccent = mysqli_real_escape_string($conn, removeAccents($searchRaw));
+    $where .= " AND (
+        c.full_name LIKE '%$search%'
+        OR o.order_id LIKE '%$search%'
+        OR c.full_name COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
+        OR o.order_id COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
+    )";
+}
 if ($filter === 'return') {
     $where .= " AND EXISTS (SELECT 1 FROM returnrequest rr WHERE rr.order_id = o.order_id)";
 } elseif ($filter) {
@@ -150,12 +162,44 @@ while ($row = mysqli_fetch_assoc($result)) {
     ];
 }
 
-// Map trạng thái đơn (giá trị thực trong DB)
-$statusMap = [
+// Map chuẩn hoá từ tiếng Anh → tiếng Việt để dùng trong select
+$statusNormalize = [
+    'pending'   => 'Chờ xác nhận',
+    'Pending'   => 'Chờ xác nhận',
+    'shipping'  => 'Đang giao',
+    'Shipping'  => 'Đang giao',
+    'completed' => 'Hoàn thành',
+    'Completed' => 'Hoàn thành',
+    'delivered' => 'Hoàn thành',
+    'cancelled' => 'Đã hủy',
+    'Cancelled' => 'Đã hủy',
+    'canceled'  => 'Đã hủy',
+];
+
+// Các trạng thái chuẩn tiếng Việt dùng trong select
+$statusMapVi = [
     'Chờ xác nhận' => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
     'Đang giao'    => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
     'Hoàn thành'   => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
     'Đã hủy'       => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+];
+$statusMap = [
+    // Tiếng Việt (chuẩn)
+    'Chờ xác nhận' => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+    'Đang giao'    => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
+    'Hoàn thành'   => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
+    'Đã hủy'       => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+    // Tiếng Anh (dữ liệu cũ nạp sẵn trong DB)
+    'pending'      => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+    'Pending'      => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+    'shipping'     => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
+    'Shipping'     => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
+    'completed'    => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
+    'Completed'    => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
+    'cancelled'    => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+    'Cancelled'    => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+    'canceled'     => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+    'delivered'    => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
 ];
 
 // Map trạng thái yêu cầu trả hàng
@@ -170,6 +214,24 @@ $returnStatusMap = [
 function pageUrl($p, $search, $filter) {
     return '?' . http_build_query(['search'=>$search,'filter'=>$filter,'page'=>$p]);
 }
+
+// Xoá dấu tiếng Việt để tìm kiếm không phân biệt dấu/hoa thường
+function removeAccents($str) {
+    $str = mb_strtolower($str, 'UTF-8');
+    $from = ['à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
+             'è','é','ẹ','ẻ','ẽ','ê','ề','ế','ệ','ể','ễ',
+             'ì','í','ị','ỉ','ĩ',
+             'ò','ó','ọ','ỏ','õ','ô','ồ','ố','ộ','ổ','ỗ','ơ','ờ','ớ','ợ','ở','ỡ',
+             'ù','ú','ụ','ủ','ũ','ư','ừ','ứ','ự','ử','ữ',
+             'ỳ','ý','ỵ','ỷ','ỹ','đ'];
+    $to   = ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
+             'e','e','e','e','e','e','e','e','e','e','e',
+             'i','i','i','i','i',
+             'o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o',
+             'u','u','u','u','u','u','u','u','u','u','u',
+             'y','y','y','y','y','d'];
+    return str_replace($from, $to, $str);
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -182,6 +244,10 @@ function pageUrl($p, $search, $filter) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="../../../public/assets/css/AdminSidebar.css">
 <link rel="stylesheet" href="../../../public/assets/css/ControlOrder.css">
+<style>
+    :root { --cream: #fefbe9; --cream-2: #f0ead0; }
+    body  { background: #fefbe9 !important; }
+</style>
 </head>
 <body>
 
@@ -192,24 +258,14 @@ function pageUrl($p, $search, $filter) {
 
 <!-- MAIN -->
 <div class="main-wrap">
-    <div class="topbar">
+    <div class="topbar" style="background:#fefbe9;border-bottom:1px solid #e8e0c8;padding:16px 28px">
         <div class="d-flex align-items-center" style="gap:10px">
             <button class="hamburger" onclick="openSidebar()"><span class="material-symbols-outlined">menu</span></button>
             <div>
                 <div class="topbar-title">Quản Lý Đơn Hàng</div>
-                <div class="topbar-sub">Trang chủ / Đơn hàng</div>
+                <div class="topbar-sub">
+                </div>
             </div>
-        </div>
-        <div class="d-flex align-items-center" style="gap:10px">
-            <!-- Nút chuông có badge yêu cầu trả hàng -->
-            <button class="icon-btn" onclick="applyFilterDirect('return')" title="Yêu cầu trả hàng chờ xử lý">
-                <span class="material-symbols-outlined">notifications</span>
-                <?php if($pendingReturns > 0): ?>
-                <span class="notif-count"><?= $pendingReturns ?></span>
-                <?php endif; ?>
-            </button>
-            <button class="icon-btn"><span class="material-symbols-outlined">help</span></button>
-            <button class="avatar-btn">AD</button>
         </div>
     </div>
 
@@ -236,7 +292,7 @@ function pageUrl($p, $search, $filter) {
                 <div class="d-flex align-items-start justify-content-between flex-wrap" style="gap:12px">
                     <div>
                         <div class="card-title">Danh sách đơn hàng</div>
-                        <div class="card-sub">Cập nhật lúc <?= date('H:i A, d \t\h\á\n\g n, Y') ?></div>
+                        <div class="card-sub">Cập nhật lúc <span id="live-clock"></span></div>
                     </div>
                     <form method="GET" class="filter-bar" id="filterForm" style="flex:1;min-width:240px;max-width:480px">
                         <div class="search-wrap">
@@ -250,7 +306,7 @@ function pageUrl($p, $search, $filter) {
                                 <span class="material-symbols-outlined">filter_list</span>
                                 Lọc<?php if($filter): ?>&nbsp;<span style="color:var(--green)">●</span><?php endif; ?>
                             </button>
-                            <div class="filter-dropdown" id="filterDropdown">
+                            <div class="filter-dropdown" id="filterDropdown" style="position:fixed;z-index:9999;display:none">
                                 <?php
                                 $opts = [
                                     ''             => ['Tất cả',              '#aaa'],
@@ -299,6 +355,8 @@ function pageUrl($p, $search, $filter) {
                         $st  = $statusMap[$o['status']] ?? ['label'=>$o['status'],'class'=>'badge-pending'];
                         $hasReturn = !empty($o['returnInfo']);
                         $ri  = $o['returnInfo'];
+                        // Chuẩn hoá trạng thái tiếng Anh → tiếng Việt để select đúng option
+                        $statusNormalized = $statusNormalize[$o['status']] ?? $o['status'];
                     ?>
                         <tr class="<?= $hasReturn?'has-return':'' ?>">
                             <td>
@@ -311,7 +369,10 @@ function pageUrl($p, $search, $filter) {
                                 <?php endif; ?>
                             </td>
                             <td style="font-weight:600"><?= htmlspecialchars($o['name']) ?></td>
-                            <td style="color:var(--text-soft);font-size:13px"><?= $o['time'] ?></td>
+                            <td style="color:var(--text-soft);font-size:13px"
+                                data-time="<?= htmlspecialchars($o['createdAt'] ?? $o['time']) ?>">
+                                <?= $o['time'] ?>
+                            </td>
                             <td>
                                 <span class="status-badge <?= $st['class'] ?>"><?= $st['label'] ?></span>
                                 <?php if($hasReturn):
@@ -328,12 +389,12 @@ function pageUrl($p, $search, $filter) {
                                     <form method="POST" style="margin:0">
                                         <input type="hidden" name="order_id" value="<?= $o['id'] ?>">
                                         <input type="hidden" name="update_status" value="1">
-                                        <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
+                                        <input type="hidden" name="search" value="<?= htmlspecialchars($searchRaw) ?>">
                                         <input type="hidden" name="filter_val" value="<?= htmlspecialchars($filter) ?>">
                                         <input type="hidden" name="page_val" value="<?= $page ?>">
                                         <select name="status" class="status-select" onchange="this.form.submit()">
-                                            <?php foreach($statusMap as $val=>$s): ?>
-                                            <option value="<?= $val ?>" <?= $o['status']===$val?'selected':'' ?>><?= $s['label'] ?></option>
+                                            <?php foreach($statusMapVi as $val=>$s): ?>
+                                            <option value="<?= $val ?>" <?= $statusNormalized===$val?'selected':'' ?>><?= $s['label'] ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </form>
@@ -358,6 +419,7 @@ function pageUrl($p, $search, $filter) {
             <?php else: foreach($orders as $o):
                 $st = $statusMap[$o['status']] ?? ['label'=>$o['status'],'class'=>'badge-pending'];
                 $hasReturn = !empty($o['returnInfo']);
+                $statusNormalized = $statusNormalize[$o['status']] ?? $o['status'];
             ?>
                 <div class="order-card-mobile <?= $hasReturn?'has-return':'' ?>">
                     <div class="d-flex justify-content-between align-items-start mb-1">
@@ -370,7 +432,10 @@ function pageUrl($p, $search, $filter) {
                         </div>
                         <span class="status-badge <?= $st['class'] ?>"><?= $st['label'] ?></span>
                     </div>
-                    <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px"><?= $o['time'] ?></div>
+                    <div style="font-size:12px;color:var(--text-soft);margin-bottom:10px"
+                         data-time="<?= htmlspecialchars($o['createdAt'] ?? $o['time']) ?>">
+                        <?= $o['time'] ?>
+                    </div>
                     <div class="d-flex align-items-center" style="gap:6px;flex-wrap:wrap">
                         <button class="btn-view" onclick='openModal(<?= json_encode($o, JSON_UNESCAPED_UNICODE) ?>)'>
                             <span class="material-symbols-outlined">visibility</span>Xem
@@ -378,12 +443,12 @@ function pageUrl($p, $search, $filter) {
                         <form method="POST" style="margin:0">
                             <input type="hidden" name="order_id" value="<?= $o['id'] ?>">
                             <input type="hidden" name="update_status" value="1">
-                            <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
+                            <input type="hidden" name="search" value="<?= htmlspecialchars($searchRaw) ?>">
                             <input type="hidden" name="filter_val" value="<?= htmlspecialchars($filter) ?>">
                             <input type="hidden" name="page_val" value="<?= $page ?>">
                             <select name="status" class="status-select" onchange="this.form.submit()">
-                                <?php foreach($statusMap as $val=>$s): ?>
-                                <option value="<?= $val ?>" <?= $o['status']===$val?'selected':'' ?>><?= $s['label'] ?></option>
+                                <?php foreach($statusMapVi as $val=>$s): ?>
+                                <option value="<?= $val ?>" <?= $statusNormalized===$val?'selected':'' ?>><?= $s['label'] ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </form>
@@ -496,13 +561,25 @@ const statusLabels = {
     'Chờ xác nhận':'Chờ xác nhận',
     'Đang giao':'Đang giao',
     'Hoàn thành':'Hoàn thành',
-    'Đã hủy':'Đã hủy'
+    'Đã hủy':'Đã hủy',
+    // Tiếng Anh (dữ liệu cũ)
+    'pending':'Chờ xác nhận','Pending':'Chờ xác nhận',
+    'shipping':'Đang giao','Shipping':'Đang giao',
+    'completed':'Hoàn thành','Completed':'Hoàn thành',
+    'delivered':'Hoàn thành',
+    'cancelled':'Đã hủy','Cancelled':'Đã hủy','canceled':'Đã hủy'
 };
 const statusClass = {
     'Chờ xác nhận':'badge-pending',
     'Đang giao':'badge-shipping',
     'Hoàn thành':'badge-completed',
-    'Đã hủy':'badge-cancel'
+    'Đã hủy':'badge-cancel',
+    // Tiếng Anh (dữ liệu cũ)
+    'pending':'badge-pending','Pending':'badge-pending',
+    'shipping':'badge-shipping','Shipping':'badge-shipping',
+    'completed':'badge-completed','Completed':'badge-completed',
+    'delivered':'badge-completed',
+    'cancelled':'badge-cancel','Cancelled':'badge-cancel','canceled':'badge-cancel'
 };
 const rsLabel = {
     'Đang xử lý':'Đang xử lý','Đã hoàn tiền':'Đã hoàn tiền',
@@ -517,12 +594,27 @@ const rsClass = {
 function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
 function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
 
-// Filter
+// Filter — dropdown dùng position:fixed để thoát khỏi overflow:hidden của card
 document.getElementById('filterToggle').addEventListener('click', function(e) {
     e.stopPropagation();
-    document.getElementById('filterDropdown').classList.toggle('show');
+    const dd = document.getElementById('filterDropdown');
+    const rect = this.getBoundingClientRect();
+    // Hiện tạm để đo chiều rộng
+    dd.style.display = 'block';
+    const ddW = dd.offsetWidth;
+    // Căn phải theo nút, không tràn màn hình
+    let left = rect.right - ddW;
+    if (left < 8) left = 8;
+    dd.style.top  = (rect.bottom + 6) + 'px';
+    dd.style.left = left + 'px';
+    dd.classList.toggle('show');
+    if (!dd.classList.contains('show')) dd.style.display = 'none';
 });
-document.addEventListener('click', () => document.getElementById('filterDropdown').classList.remove('show'));
+document.addEventListener('click', () => {
+    const dd = document.getElementById('filterDropdown');
+    dd.classList.remove('show');
+    dd.style.display = 'none';
+});
 function applyFilter(val) {
     document.getElementById('filterInput').value = val;
     document.getElementById('filterForm').submit();
@@ -643,9 +735,73 @@ function openModal(o) {
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 document.getElementById('modalOverlay').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
 
-// ── MODAL XOÁ ──
+// ── ĐỒNG HỒ REALTIME (GMT+7) ──
+function updateClock() {
+    const now = new Date();
+    // Chuyển về GMT+7
+    const vn = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    const hh   = String(vn.getHours()).padStart(2, '0');
+    const mm   = String(vn.getMinutes()).padStart(2, '0');
+    const ss   = String(vn.getSeconds()).padStart(2, '0');
+    const ampm = vn.getHours() >= 12 ? 'PM' : 'AM';
+    const dd   = String(vn.getDate()).padStart(2, '0');
+    const mo   = vn.getMonth() + 1;
+    const yy   = vn.getFullYear();
+    document.getElementById('live-clock').textContent =
+        `${hh}:${mm}:${ss} ${ampm}, ${dd} tháng ${mo}, ${yy}`;
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── THỜI GIAN TƯƠNG ĐỐI REALTIME ──
+function timeAgo(dateStr) {
+    if (!dateStr) return '';
+
+    let date;
+
+    // Format ISO từ DB: "2025-05-25 14:30:00" (UTC)
+    if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+        // Thêm 'Z' để JS hiểu là UTC, tránh bị parse thành local time
+        date = new Date(dateStr.replace(' ', 'T') + 'Z');
+
+    // Format fallback từ PHP: "14:30:00 25-05-2025"
+    } else if (/^\d{2}:\d{2}:\d{2} \d{2}-\d{2}-\d{4}/.test(dateStr)) {
+        const [time, dmy] = dateStr.split(' ');
+        const [dd, mo, yy] = dmy.split('-');
+        date = new Date(`${yy}-${mo}-${dd}T${time}Z`); // cũng coi là UTC
+
+    } else {
+        return dateStr; // Không nhận ra format thì hiện nguyên
+    }
+
+    if (isNaN(date)) return dateStr;
+
+    const now  = new Date();
+    const diff = Math.floor((now - date) / 1000);
+
+    if (diff < 60)    return 'Vừa xong';
+    if (diff < 3600)  return Math.floor(diff / 60) + ' phút trước';
+    if (diff < 86400) return Math.floor(diff / 3600) + ' giờ trước';
+
+    // Qua 24h → hiện ngày giờ theo GMT+7
+    const vn = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    const hh = String(vn.getHours()).padStart(2,'0');
+    const mm = String(vn.getMinutes()).padStart(2,'0');
+    const dd = String(vn.getDate()).padStart(2,'0');
+    const mo = String(vn.getMonth()+1).padStart(2,'0');
+    const yy = vn.getFullYear();
+    return `${dd}/${mo}/${yy}`;
+}
+
+function updateAllTimes() {
+    document.querySelectorAll('[data-time]').forEach(el => {
+        el.textContent = timeAgo(el.dataset.time);
+    });
+}
+updateAllTimes();
+setInterval(updateAllTimes, 30000); // cập nhật mỗi 30 giây
+
 function confirmDelete(o) {
-    document.getElementById('del-order-id').value = o.id;
     document.getElementById('del-desc').textContent =
         `Bạn có chắc muốn xoá đơn hàng của "${o.name}"? Hành động này không thể hoàn tác.`;
     document.getElementById('deleteOverlay').classList.add('show');

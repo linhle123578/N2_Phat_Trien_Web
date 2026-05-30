@@ -1,5 +1,23 @@
 <?php
 
+// Xoá dấu tiếng Việt để tìm kiếm không phân biệt dấu/hoa thường
+function removeAccents($str) {
+    $str  = mb_strtolower($str, 'UTF-8');
+    $from = ['à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
+             'è','é','ẹ','ẻ','ẽ','ê','ề','ế','ệ','ể','ễ',
+             'ì','í','ị','ỉ','ĩ',
+             'ò','ó','ọ','ỏ','õ','ô','ồ','ố','ộ','ổ','ỗ','ơ','ờ','ớ','ợ','ở','ỡ',
+             'ù','ú','ụ','ủ','ũ','ư','ừ','ứ','ự','ử','ữ',
+             'ỳ','ý','ỵ','ỷ','ỹ','đ'];
+    $to   = ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a',
+             'e','e','e','e','e','e','e','e','e','e','e',
+             'i','i','i','i','i',
+             'o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o','o',
+             'u','u','u','u','u','u','u','u','u','u','u',
+             'y','y','y','y','y','d'];
+    return str_replace($from, $to, $str);
+}
+
 class OrderModel {
 
     private $conn;
@@ -179,6 +197,8 @@ class OrderModel {
         $filter
     ) {
 
+        $searchRaw = $search;
+
         $search =
             mysqli_real_escape_string(
                 $this->conn,
@@ -195,10 +215,18 @@ class OrderModel {
 
         if ($search) {
 
+            $searchNoAccent =
+                mysqli_real_escape_string(
+                    $this->conn,
+                    removeAccents($searchRaw)
+                );
+
             $where .= "
             AND (
                 c.full_name LIKE '%$search%'
                 OR o.order_id LIKE '%$search%'
+                OR c.full_name COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
+                OR o.order_id COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
             )";
         }
 
@@ -250,6 +278,8 @@ class OrderModel {
         $offset
     ) {
 
+        $searchRaw = $search;
+
         $search =
             mysqli_real_escape_string(
                 $this->conn,
@@ -266,10 +296,18 @@ class OrderModel {
 
         if ($search) {
 
+            $searchNoAccent =
+                mysqli_real_escape_string(
+                    $this->conn,
+                    removeAccents($searchRaw)
+                );
+
             $where .= "
             AND (
                 c.full_name LIKE '%$search%'
                 OR o.order_id LIKE '%$search%'
+                OR c.full_name COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
+                OR o.order_id COLLATE utf8mb4_general_ci LIKE '%$searchNoAccent%'
             )";
         }
 
@@ -407,6 +445,9 @@ class OrderModel {
                             $row['created_at']
                         )
                     ),
+
+                "createdAt" =>
+                    $row['created_at'],
 
                 "amount" =>
                     $amount,

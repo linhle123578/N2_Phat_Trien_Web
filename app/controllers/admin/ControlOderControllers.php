@@ -135,6 +135,7 @@ class OrderController {
 
         $statusMap = [
 
+            // Tiếng Việt (chuẩn)
             'Chờ xác nhận' => [
                 'label' => 'Chờ xác nhận',
                 'class' => 'badge-pending'
@@ -154,6 +155,40 @@ class OrderController {
                 'label' => 'Đã hủy',
                 'class' => 'badge-cancel'
             ],
+
+            // Tiếng Anh (dữ liệu cũ nạp sẵn trong DB)
+            'pending'   => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+            'Pending'   => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+            'shipping'  => ['label' => 'Đang giao',    'class' => 'badge-shipping'],
+            'Shipping'  => ['label' => 'Đang giao',    'class' => 'badge-shipping'],
+            'completed' => ['label' => 'Hoàn thành',   'class' => 'badge-completed'],
+            'Completed' => ['label' => 'Hoàn thành',   'class' => 'badge-completed'],
+            'delivered' => ['label' => 'Hoàn thành',   'class' => 'badge-completed'],
+            'cancelled' => ['label' => 'Đã hủy',       'class' => 'badge-cancel'],
+            'Cancelled' => ['label' => 'Đã hủy',       'class' => 'badge-cancel'],
+            'canceled'  => ['label' => 'Đã hủy',       'class' => 'badge-cancel'],
+        ];
+
+        // Chỉ dùng trong <select> — 4 giá trị tiếng Việt chuẩn
+        $statusMapVi = [
+            'Chờ xác nhận' => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
+            'Đang giao'    => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
+            'Hoàn thành'   => ['label' => 'Hoàn thành',    'class' => 'badge-completed'],
+            'Đã hủy'       => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
+        ];
+
+        // Chuẩn hoá tiếng Anh → tiếng Việt để select đúng option
+        $statusNormalize = [
+            'pending'   => 'Chờ xác nhận',
+            'Pending'   => 'Chờ xác nhận',
+            'shipping'  => 'Đang giao',
+            'Shipping'  => 'Đang giao',
+            'completed' => 'Hoàn thành',
+            'Completed' => 'Hoàn thành',
+            'delivered' => 'Hoàn thành',
+            'cancelled' => 'Đã hủy',
+            'Cancelled' => 'Đã hủy',
+            'canceled'  => 'Đã hủy',
         ];
 
         $returnStatusMap = [

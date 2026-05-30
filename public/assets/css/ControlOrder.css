@@ -1,5 +1,5 @@
 :root {
-    --cream:    #f5f0e8;
+    --cream:    #fefbe9;
     --cream-2:  #e8e0ce;
     --sidebar:  #1e3a2f;
     --accent:   #c8b84a;
@@ -69,7 +69,7 @@ body { font-family:'Be Vietnam Pro',sans-serif; background:var(--cream); color:v
 .btn-filter { display:flex; align-items:center; gap:5px; padding:8px 14px; border-radius:10px; border:1.5px solid var(--cream-2); background:var(--cream); font-size:13px; font-weight:600; color:var(--text-mid); cursor:pointer; white-space:nowrap; }
 .btn-filter:hover { border-color:var(--green); }
 .btn-filter .material-symbols-outlined { font-size:16px; }
-.filter-dropdown { position:absolute; right:0; top:calc(100% + 6px); background:#fff; border-radius:13px; box-shadow:0 8px 28px rgba(0,0,0,.13); padding:7px; min-width:185px; z-index:300; display:none; }
+.filter-dropdown { background:#fff; border-radius:13px; box-shadow:0 8px 28px rgba(0,0,0,.13); padding:7px; min-width:185px; z-index:9999; display:none; }
 .filter-dropdown.show { display:block; }
 .filter-opt { padding:8px 12px; border-radius:9px; font-size:13px; cursor:pointer; font-weight:500; display:flex; align-items:center; gap:8px; transition:background .13s; }
 .filter-opt:hover { background:var(--cream); }
