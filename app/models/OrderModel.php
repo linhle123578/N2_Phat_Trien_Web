@@ -30,17 +30,11 @@ class OrderModel {
      *   total_quantity_order, created_at
      * Trả về order_id hoặc false nếu lỗi
      */
-    public function createOrder($customer_id, $name, $phone, $address, $shipping_fee, $total_amount, $payment_method) {
+    public function createOrder($customer_id, $address_id, $shipping_fee, $total_amount, $payment_method) {
         $order_id = 'ORD-' . strtoupper(substr(uniqid(), -8));
         $cid      = $this->conn->real_escape_string($customer_id);
         $oid_esc  = $this->conn->real_escape_string($order_id);
-
-        // Lấy address_id mặc định của customer (nếu có)
-        $r_addr = $this->conn->query(
-            "SELECT address_id FROM address WHERE customer_id = '$cid' AND is_default = 1 LIMIT 1"
-        );
-        $addr_row   = $r_addr ? $r_addr->fetch_assoc() : null;
-        $address_id = $addr_row ? "'{$addr_row['address_id']}'" : "NULL";
+        $addr_id  = $address_id ? "'" . $this->conn->real_escape_string($address_id) . "'" : "NULL";
 
         // Đếm tổng số lượng sản phẩm từ session (nếu có, không thì để 0)
         $checkout_items = $_SESSION['checkout_items'] ?? [];
@@ -53,13 +47,29 @@ class OrderModel {
             "INSERT INTO `order`
                 (order_id, customer_id, address_id, order_status, total_quantity_order, created_at)
              VALUES
-                ('$oid_esc', '$cid', $address_id, 'Chờ xác nhận', $total_qty, NOW())"
+                ('$oid_esc', '$cid', $addr_id, 'Chờ xác nhận', $total_qty, NOW())"
         );
 
         if (!$ok) {
             error_log("OrderModel::createOrder failed: " . $this->conn->error);
             return false;
         }
+
+        // Tạo dữ liệu thanh toán
+        $pay_id = 'PAY-' . strtoupper(substr(uniqid(), -8));
+        $pay_method = $this->conn->real_escape_string($payment_method);
+        $total = (float)$total_amount;
+        $this->conn->query(
+            "INSERT INTO payment (payment_id, order_id, total_amount, payment_method, payment_status, payment_date)
+             VALUES ('$pay_id', '$oid_esc', $total, '$pay_method', 'pending', NOW())"
+        );
+
+        // Tạo dữ liệu vận chuyển
+        $shp_id = 'SHP-' . strtoupper(substr(uniqid(), -8));
+        $this->conn->query(
+            "INSERT INTO shipment (shipment_id, order_id, shipment_method, shipment_status, estimated_date)
+             VALUES ('$shp_id', '$oid_esc', 'Giao hàng tiêu chuẩn', 'Đang chuẩn bị', DATE_ADD(NOW(), INTERVAL 3 DAY))"
+        );
 
         return $order_id;
     }

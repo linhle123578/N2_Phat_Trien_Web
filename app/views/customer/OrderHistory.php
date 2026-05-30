@@ -58,7 +58,7 @@ $BASE_URL = '/n2_phat_trien_web';
 <div class="container" style="padding-top:80px;">
 
    <nav class="profile-breadcrumb">
-       <a href="index.php">Trang chủ</a>
+       <a href="TrangChu.php">Trang chủ</a>
        <span class="sep">›</span>
        <span class="current">Lịch sử đơn hàng</span>
    </nav>

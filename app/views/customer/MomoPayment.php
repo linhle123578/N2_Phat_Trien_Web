@@ -162,7 +162,7 @@ echo $extra_head;
             <p class="success-modal-sub">Cảm ơn bạn đã tin tưởng Farm2Home</p>
             <p class="success-modal-sub">Mã đơn hàng của bạn:</p>
             <div class="success-order-id" id="modal-order-id">—</div>
-            <a href="../../../app/views/customer/TrangChu.php" class="btn-success-home">Về trang chủ</a>
+            <a href="#" class="btn-success-home" id="btn-success-detail">Xem chi tiết đơn hàng</a>
         </div>
     </div>
 

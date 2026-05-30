@@ -43,12 +43,33 @@ class UserModel {
         return $result->fetch_assoc();
     }
 
-    // Nếu cần lấy tất cả địa chỉ
+    // Lấy tất cả địa chỉ của khách hàng
     public function getAddresses($customer_id) {
-        $stmt = $this->conn->prepare("SELECT * FROM address WHERE customer_id = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM address WHERE customer_id = ? ORDER BY is_default DESC, address_id ASC");
         $stmt->bind_param("s", $customer_id);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Thêm địa chỉ mới
+    public function addAddress($customer_id, $receiver_name, $address_type, $province, $district, $ward, $street_address, $is_default = 0) {
+        if ($is_default == 1) {
+            // Set all existing to 0
+            $su = $this->conn->prepare("UPDATE address SET is_default = 0 WHERE customer_id = ?");
+            $su->bind_param("s", $customer_id);
+            $su->execute();
+        }
+
+        $address_id = 'ADDR_' . uniqid();
+        $stmt = $this->conn->prepare(
+            "INSERT INTO address (address_id, customer_id, receiver_name, address_type, province, district, ward, street_address, is_default)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        );
+        $stmt->bind_param("ssssssssi", $address_id, $customer_id, $receiver_name, $address_type, $province, $district, $ward, $street_address, $is_default);
+        if ($stmt->execute()) {
+            return $address_id;
+        }
+        return false;
     }
 }
 ?>

@@ -35,7 +35,7 @@ if (isset($_SESSION['customer_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <!-- CSS Chuẩn cho Header -->
-    <link rel="stylesheet" href="../../../public/assets/css/loginheader.css">
+    <link rel="stylesheet" href="../../../public/assets/css/loginheader.css?v=<?= time() ?>">
 </head>
 <body>
 

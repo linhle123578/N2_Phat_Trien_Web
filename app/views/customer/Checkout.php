@@ -179,37 +179,102 @@ include_once __DIR__ . '/../layouts/header.php';
     </main>
 
     <div class="modal-overlay" id="address-modal">
-        <div class="modal-content-custom">
+        <div class="modal-content-custom" style="max-height: 90vh; overflow-y: auto; max-width: 600px;">
             <h3 class="mb-4 fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">Thay đổi địa chỉ</h3>
-            
-            <div class="mb-3">
-                <label class="form-label fw-bold">Họ và tên</label>
-                <input type="text" class="form-control" id="input-name" value="<?= $display_name ?>">
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label fw-bold">Số điện thoại</label>
-                <input type="text" class="form-control" id="input-phone" value="<?= htmlspecialchars($customer_info['phone'] ?? '') ?>">
+
+            <!-- Danh sách địa chỉ đã lưu -->
+            <div id="address-list-view">
+                <?php if (!empty($all_addresses)): ?>
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <?php foreach ($all_addresses as $addr): 
+                            $full_str = implode(', ', array_filter([$addr['street_address']??'', $addr['ward']??'', $addr['district']??'', $addr['province']??'']));
+                            $is_selected = ($addr['address_id'] === ($customer_info['address_id'] ?? ''));
+                        ?>
+                        <label class="inner-card radio-card p-3 d-flex align-items-start gap-3 m-0 <?= $is_selected ? 'active' : '' ?>">
+                            <input type="radio" name="selected_address_id" value="<?= htmlspecialchars($addr['address_id']) ?>" <?= $is_selected ? 'checked' : '' ?>
+                                   data-name="<?= htmlspecialchars($addr['receiver_name']) ?>"
+                                   data-phone=""
+                                   data-full="<?= htmlspecialchars($full_str) ?>">
+                            <div class="w-100">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <h4 class="fs-6 fw-bold m-0" style="color: #022409;"><?= htmlspecialchars($addr['receiver_name']) ?></h4>
+                                    <?php if ($addr['is_default']): ?>
+                                        <span class="badge bg-danger" style="font-size: 10px;">Mặc định</span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($addr['address_type'])): ?>
+                                        <span class="badge bg-secondary" style="font-size: 10px;"><?= htmlspecialchars($addr['address_type']) ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <small class="text-gray d-block"><?= htmlspecialchars($full_str) ?></small>
+                            </div>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <div class="alert alert-info">Bạn chưa có địa chỉ giao hàng nào.</div>
+                <?php endif; ?>
+                
+                <button type="button" class="btn btn-outline-success w-100 fw-bold mb-4" id="btn-show-add-form">
+                    + Thêm địa chỉ mới
+                </button>
+                
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary px-4" id="btn-cancel-address">Hủy</button>
+                    <button class="btn text-white px-4 fw-bold" id="btn-save-address" style="background-color: #022409;">Lưu</button>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-bold">Loại địa chỉ</label>
-                <select class="form-control form-select" id="input-address-type">
-                    <option value="Nhà riêng" <?= (($customer_info['address_type'] ?? '') === 'Nhà riêng') ? 'selected' : '' ?>>Nhà riêng</option>
-                    <option value="Văn phòng" <?= (($customer_info['address_type'] ?? '') === 'Văn phòng') ? 'selected' : '' ?>>Văn phòng</option>
-                    <option value="Cơ quan"   <?= (($customer_info['address_type'] ?? '') === 'Cơ quan')   ? 'selected' : '' ?>>Cơ quan</option>
-                </select>
+            <!-- Form thêm địa chỉ mới -->
+            <div id="address-form-view" style="display: none;">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Người nhận <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="new-addr-name" placeholder="Tên người nhận">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Số điện thoại <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="new-addr-phone" placeholder="Số điện thoại người nhận">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Loại địa chỉ</label>
+                    <select class="form-control form-select" id="new-addr-type">
+                        <option value="Nhà riêng">Nhà riêng</option>
+                        <option value="Văn phòng">Văn phòng</option>
+                        <option value="Cơ quan">Cơ quan</option>
+                    </select>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label fw-bold">Tỉnh / Thành phố <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="new-addr-province" placeholder="VD: TP. Hồ Chí Minh">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label fw-bold">Quận / Huyện</label>
+                        <input type="text" class="form-control" id="new-addr-district" placeholder="VD: Quận 1">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label fw-bold">Phường / Xã</label>
+                        <input type="text" class="form-control" id="new-addr-ward" placeholder="VD: Phường Bến Nghé">
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label fw-bold">Số nhà, tên đường <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="new-addr-street" placeholder="VD: 123 Nguyễn Huệ">
+                    </div>
+                </div>
+
+                <div class="mb-4 form-check">
+                    <input type="checkbox" class="form-check-input" id="new-addr-default" value="1">
+                    <label class="form-check-label" for="new-addr-default">Đặt làm địa chỉ mặc định</label>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary px-4" id="btn-cancel-add-form">Trở lại</button>
+                    <button class="btn text-white px-4 fw-bold" id="btn-confirm-add-address" style="background-color: #022409;">Xác nhận</button>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label fw-bold">Địa chỉ chi tiết</label>
-                <textarea class="form-control" id="input-address" rows="3"><?= $display_address ?></textarea>
-            </div>
-            
-            <div class="d-flex justify-content-end gap-2">
-                <button class="btn btn-secondary px-4" id="btn-cancel-address">Hủy</button>
-                <button class="btn text-white px-4 fw-bold" id="btn-save-address" style="background-color: #022409;">Lưu</button>
-            </div>
         </div>
     </div>
 

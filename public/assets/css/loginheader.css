@@ -95,8 +95,8 @@
 }
 
 .btn-register {
-    background-color: #183a1d !important;
-    color: #fefbe9 !important;
+    background-color: #eba15c !important;
+    color: #ffffff !important;
     font-weight: 600 !important;
     font-size: 0.95rem !important;
     padding: 8px 25px !important;
@@ -106,7 +106,7 @@
 }
 
 .btn-register:hover {
-    background-color: #2c5c2d !important;
+    background-color: #d98e4a !important;
     color: #ffffff !important;
 }
 /* FOOTER */

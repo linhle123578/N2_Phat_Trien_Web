@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let customerData = {
         name:    nameEl?.dataset?.name    || nameEl?.innerText?.split('(+84)')[0]?.trim() || '',
         phone:   nameEl?.dataset?.phone   || '',
-        address: addrEl?.dataset?.address || addrEl?.innerText?.trim() || ''
+        address: addrEl?.dataset?.address || addrEl?.innerText?.trim() || '',
+        address_id: document.querySelector('input[name="selected_address_id"]:checked')?.value || null,
+        new_address: null
     };
 
     // ----------------------------------------------------------------
@@ -41,23 +43,93 @@ document.addEventListener('DOMContentLoaded', () => {
     // ----------------------------------------------------------------
     // Modal đổi địa chỉ
     // ----------------------------------------------------------------
-    btnChangeAddress?.addEventListener('click', () => addressModal?.classList.add('active'));
+    const addressListView = document.getElementById('address-list-view');
+    const addressFormView = document.getElementById('address-form-view');
+    const btnShowAddForm  = document.getElementById('btn-show-add-form');
+    const btnCancelAddForm = document.getElementById('btn-cancel-add-form');
+    const btnConfirmAddAddress = document.getElementById('btn-confirm-add-address');
+
+    // Mở modal (reset về view danh sách nếu có)
+    btnChangeAddress?.addEventListener('click', () => {
+        if (addressListView && addressFormView) {
+            addressListView.style.display = 'block';
+            addressFormView.style.display = 'none';
+        }
+        addressModal?.classList.add('active');
+    });
+
     btnCancelAddress?.addEventListener('click', () => addressModal?.classList.remove('active'));
 
-    btnSaveAddress?.addEventListener('click', () => {
-        const newName    = document.getElementById('input-name')?.value?.trim();
-        const newPhone   = document.getElementById('input-phone')?.value?.trim();
-        const newAddress = document.getElementById('input-address')?.value?.trim();
+    // Chuyển view
+    btnShowAddForm?.addEventListener('click', () => {
+        if (addressListView) addressListView.style.display = 'none';
+        if (addressFormView) addressFormView.style.display = 'block';
+    });
+    
+    btnCancelAddForm?.addEventListener('click', () => {
+        if (addressListView) addressListView.style.display = 'block';
+        if (addressFormView) addressFormView.style.display = 'none';
+    });
 
-        if (!newName || !newPhone || !newAddress) {
-            showCheckoutError('Vui lòng điền đầy đủ thông tin!');
+    // Khi chọn 1 địa chỉ có sẵn
+    btnSaveAddress?.addEventListener('click', () => {
+        const selectedRadio = document.querySelector('input[name="selected_address_id"]:checked');
+        if (!selectedRadio) {
+            showCheckoutError('Vui lòng chọn một địa chỉ!');
+            return;
+        }
+        
+        customerData = {
+            address_id: selectedRadio.value,
+            name: selectedRadio.dataset.name,
+            phone: selectedRadio.dataset.phone || customerData.phone, // Dùng phone cũ nếu địa chỉ ko lưu phone
+            address: selectedRadio.dataset.full,
+            new_address: null
+        };
+        
+        if (displayName) displayName.innerText = `${customerData.name}`; 
+        if (displayAddress) displayAddress.innerText = customerData.address;
+        
+        addressModal?.classList.remove('active');
+    });
+
+    // Khi thêm địa chỉ mới
+    btnConfirmAddAddress?.addEventListener('click', () => {
+        const name     = document.getElementById('new-addr-name')?.value?.trim();
+        const phone    = document.getElementById('new-addr-phone')?.value?.trim();
+        const type     = document.getElementById('new-addr-type')?.value;
+        const province = document.getElementById('new-addr-province')?.value?.trim();
+        const district = document.getElementById('new-addr-district')?.value?.trim();
+        const ward     = document.getElementById('new-addr-ward')?.value?.trim();
+        const street   = document.getElementById('new-addr-street')?.value?.trim();
+        const is_def   = document.getElementById('new-addr-default')?.checked;
+
+        if (!name || !phone || !province || !street) {
+            showCheckoutError('Vui lòng điền các thông tin bắt buộc (*)!');
             return;
         }
 
-        customerData = { name: newName, phone: newPhone, address: newAddress };
+        const full_address = [street, ward, district, province].filter(Boolean).join(', ');
 
-        if (displayName)   displayName.innerText   = `${newName} (+84) ${newPhone.replace(/^0+/, '')}`;
-        if (displayAddress) displayAddress.innerText = newAddress;
+        customerData = {
+            address_id: null,
+            name: name,
+            phone: phone,
+            address: full_address,
+            new_address: {
+                name: name,
+                phone: phone,
+                type: type,
+                province: province,
+                district: district,
+                ward: ward,
+                street_address: street,
+                is_default: is_def
+            }
+        };
+
+        if (displayName) displayName.innerText = `${name} (+84) ${phone.replace(/^0+/, '')}`;
+        if (displayAddress) displayAddress.innerText = full_address;
 
         addressModal?.classList.remove('active');
     });
@@ -104,7 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const orderPayload = {
             name:           customerData.name,
             phone:          customerData.phone,
-            address:        customerData.address,
+            address_id:     customerData.address_id,
+            new_address:    customerData.new_address,
             shipping_fee:   currentShippingFee,
             total_amount:   totalAmount,
             payment_method: selectedPayment
@@ -193,13 +266,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                 padding:6px 16px;border-radius:8px;display:inline-block;
                                 margin-bottom:28px;letter-spacing:1px">—</div>
                     <br>
-                    <a href="../../../app/views/customer/TrangChu.php"
+                    <a href="../../../app/views/customer/OrderDetail.php?id=${order_id}"
                        style="background:linear-gradient(102deg,#022409 0%,#183A1D 100%);
                               color:#C5EDC3;border:none;border-radius:9999px;
                               padding:14px 40px;font-weight:700;font-size:15px;
                               letter-spacing:1.5px;text-transform:uppercase;
                               text-decoration:none;display:inline-block;margin-top:8px">
-                        Về trang chủ
+                        Xem chi tiết đơn hàng
                     </a>
                 </div>
             `;

@@ -25,29 +25,54 @@ class CheckoutController
         }
         $customer_id = $_SESSION['customer_id'];
 
-        // [FIX 1] Lấy cả thông tin customer lẫn địa chỉ mặc định
-        $customer_raw     = $userModel->getCustomerById($customer_id);
-        $default_address  = $userModel->getDefaultAddress($customer_id);
+        $all_addresses = $userModel->getAddresses($customer_id);
 
-        // Gộp thành 1 array dùng trong view, chuẩn hoá key
-        // [FIX] fullname luon lay tu customer.full_name, KHONG dung address.receiver_name
+        $selected_address = null;
+        if (!empty($_SESSION['checkout_info']['address_id'])) {
+            $sess_addr_id = $_SESSION['checkout_info']['address_id'];
+            foreach ($all_addresses as $addr) {
+                if ($addr['address_id'] === $sess_addr_id) {
+                    $selected_address = $addr;
+                    break;
+                }
+            }
+        }
+        if (!$selected_address) {
+            foreach ($all_addresses as $addr) {
+                if ($addr['is_default']) {
+                    $selected_address = $addr;
+                    break;
+                }
+            }
+        }
+        if (!$selected_address && !empty($all_addresses)) {
+            $selected_address = $all_addresses[0];
+        }
+
+        $customer_raw = $userModel->getCustomerById($customer_id);
         $customer_info = [
             'fullname'     => $customer_raw['full_name'] ?? '',
             'phone'        => $customer_raw['phone']     ?? '',
-            'address'      => $default_address
-                ? implode(', ', array_filter([
-                    $default_address['street_address'] ?? '',
-                    $default_address['ward']           ?? '',
-                    $default_address['district']       ?? '',
-                    $default_address['province']       ?? '',
-                ]))
-                : '',
-            'address_type' => $default_address['address_type'] ?? 'Nha rieng',
+            'address'      => '',
+            'address_type' => 'Nhà riêng',
+            'address_id'   => ''
         ];
+
+        if ($selected_address) {
+            $customer_info['fullname'] = $selected_address['receiver_name'] ?: $customer_info['fullname'];
+            $customer_info['address'] = implode(', ', array_filter([
+                $selected_address['street_address'] ?? '',
+                $selected_address['ward']           ?? '',
+                $selected_address['district']       ?? '',
+                $selected_address['province']       ?? '',
+            ]));
+            $customer_info['address_type'] = $selected_address['address_type'] ?? 'Nhà riêng';
+            $customer_info['address_id']   = $selected_address['address_id'];
+        }
+
         if (!empty($_SESSION['checkout_info'])) {
-            $customer_info['fullname'] = $_SESSION['checkout_info']['name']    ?: $customer_info['fullname'];
-            $customer_info['phone']    = $_SESSION['checkout_info']['phone']   ?: $customer_info['phone'];
-            $customer_info['address']  = $_SESSION['checkout_info']['address'] ?: $customer_info['address'];
+            $customer_info['fullname'] = $_SESSION['checkout_info']['name']  ?? $customer_info['fullname'];
+            $customer_info['phone']    = $_SESSION['checkout_info']['phone'] ?? $customer_info['phone'];
         }
 
         $checkout_products = [];
@@ -145,21 +170,41 @@ class CheckoutController
         $customer_id    = $_SESSION['customer_id'];
         $name           = trim($data['name']           ?? '');
         $phone          = trim($data['phone']          ?? '');
-        $address        = trim($data['address']        ?? '');
         $shipping_fee   = (int)($data['shipping_fee']  ?? 0);
         $total_amount   = (int)($data['total_amount']  ?? 0);
         $payment_method = trim($data['payment_method'] ?? 'cod');
 
-        if (!$name || !$phone || !$address) {
-            echo json_encode(["status" => "error", "message" => "Vui lòng điền đầy đủ thông tin giao hàng"]);
+        $address_id     = trim($data['address_id']     ?? '');
+        $new_address    = $data['new_address']         ?? null;
+
+        if (!$address_id && !$new_address) {
+            echo json_encode(["status" => "error", "message" => "Vui lòng chọn hoặc thêm địa chỉ giao hàng"]);
             return;
+        }
+
+        if ($new_address) {
+            $userModel = new UserModel();
+            $address_id = $userModel->addAddress(
+                $customer_id,
+                $new_address['name'],
+                $new_address['type'] ?? 'Nhà',
+                $new_address['province'],
+                $new_address['district'],
+                $new_address['ward'],
+                $new_address['street_address'],
+                $new_address['is_default'] ? 1 : 0
+            );
+            if (!$address_id) {
+                echo json_encode(["status" => "error", "message" => "Không thể lưu địa chỉ mới, vui lòng thử lại"]);
+                return;
+            }
         }
 
         // Luôn lưu checkout_info để back về checkout vẫn có dữ liệu
         $_SESSION['checkout_info'] = [
-            'name'    => $name,
-            'phone'   => $phone,
-            'address' => $address,
+            'name'       => $name,
+            'phone'      => $phone,
+            'address_id' => $address_id,
         ];
         $_SESSION['last_order_shipping'] = $shipping_fee;
 
@@ -187,7 +232,7 @@ class CheckoutController
         $orderDetailModel = new OrderDetailModel();
 
         $order_id = $orderModel->createOrder(
-            $customer_id, $name, $phone, $address,
+            $customer_id, $address_id,
             $shipping_fee, $total_amount, $payment_method
         );
 

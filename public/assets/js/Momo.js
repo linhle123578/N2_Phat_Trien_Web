@@ -201,6 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             if (modalOrderId) modalOrderId.textContent = ORDER_ID || '—';
+            const btnDetail = document.getElementById('btn-success-detail');
+            if (btnDetail && ORDER_ID) {
+                btnDetail.href = `../../../app/views/customer/OrderDetail.php?id=${ORDER_ID}`;
+            }
             if (successModal) successModal.classList.add('show');
         }, 800);
     }

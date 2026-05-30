@@ -67,6 +67,15 @@ mysqli_stmt_execute($stmt);
 $address = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 mysqli_stmt_close($stmt);
 
+// Lấy thông tin khách hàng (để lấy SĐT và tên giao hàng fallback)
+$stmt = mysqli_prepare($conn, "SELECT phone, full_name FROM customer WHERE customer_id = ? LIMIT 1");
+mysqli_stmt_bind_param($stmt, 's', $customer_id);
+mysqli_stmt_execute($stmt);
+$c_info = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+$customer_phone = $c_info['phone'] ?? '';
+$customer_name = $c_info['full_name'] ?? 'Khách hàng';
+mysqli_stmt_close($stmt);
+
 // Tính số lượng đơn hàng (badge)
 $counts = $model->getOrderCounts($customer_id);
 $order_count = $counts['all'];
@@ -164,7 +173,7 @@ echo $extra_head;
 <div class="container" style="padding-top:80px;">
 
     <nav class="profile-breadcrumb">
-        <a href="index.php">Trang chủ</a>
+        <a href="../../../app/views/customer/TrangChu.php">Trang chủ</a>
         <span class="sep">›</span>
         <a href="../../../app/views/customer/OrderHistory.php">Lịch sử đơn hàng</a>
         <span class="sep">›</span>
@@ -179,7 +188,7 @@ echo $extra_head;
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
                 <ul class="sidebar-menu">
                     <li>
-                        <a href="index.php?page=profile">
+                        <a href="../../../app/views/customer/ProfileCustomer.php">
                             <i class="bi bi-person-circle"></i>
                             Thông tin cá nhân
                         </a>
@@ -240,29 +249,43 @@ echo $extra_head;
                             Giao đến
                         </span>
                         <span class="od-info-val">
-                            <strong><?= e($address['receiver_name'] ?? '') ?></strong><br>
+                            <strong><?= e($address['receiver_name'] ?? '') ?></strong> - <?= e($customer_phone) ?><br>
                             <?= e(build_address($address)) ?>
                         </span>
                     </div>
+                    <?php else: ?>
+                    <div class="od-info-row od-addr-row">
+                        <span class="od-info-label">
+                            <i class="bi bi-geo-alt-fill od-addr-icon"></i>
+                            Giao đến
+                        </span>
+                        <span class="od-info-val">
+                            <strong><?= e($customer_name) ?></strong> - <?= e($customer_phone) ?><br>
+                            <em>(Chưa có thông tin địa chỉ chi tiết)</em>
+                        </span>
+                    </div>
                     <?php endif; ?>
-                    <?php if ($payment && !empty($payment['payment_method'])): ?>
+                    <?php
+                    // Luôn hiển thị phương thức thanh toán
+                    $pay_method = $payment['payment_method'] ?? 'Thanh toán khi nhận hàng (COD)';
+                    ?>
                     <div class="od-info-row">
                         <span class="od-info-label">Thanh toán</span>
-                        <span class="od-info-val"><?= e($payment['payment_method']) ?></span>
+                        <span class="od-info-val"><?= e($pay_method) ?></span>
                     </div>
-                    <?php endif; ?>
-                    <?php if ($shipment && !empty($shipment['shipment_method'])): ?>
+                    <?php 
+                    // Luôn hiển thị thông tin vận chuyển (fallback cho các đơn cũ)
+                    $ship_method = $shipment['shipment_method'] ?? 'Giao hàng tiêu chuẩn';
+                    $est_date = $shipment['estimated_date'] ?? date('Y-m-d', strtotime($order['created_at'] . ' + 3 days'));
+                    ?>
                     <div class="od-info-row">
                         <span class="od-info-label">Vận chuyển</span>
-                        <span class="od-info-val"><?= e($shipment['shipment_method']) ?></span>
+                        <span class="od-info-val"><?= e($ship_method) ?></span>
                     </div>
-                    <?php endif; ?>
-                    <?php if ($shipment && !empty($shipment['estimated_date'])): ?>
                     <div class="od-info-row">
                         <span class="od-info-label">Dự kiến giao</span>
-                        <span class="od-info-val"><?= date('d/m/Y', strtotime($shipment['estimated_date'])) ?></span>
+                        <span class="od-info-val"><?= date('d/m/Y', strtotime($est_date)) ?></span>
                     </div>
-                    <?php endif; ?>
                 </div>
             </div>
 
@@ -357,6 +380,14 @@ echo $extra_head;
                         <span>- <?= format_price($discount) ?></span>
                     </div>
                     <?php endif; ?>
+                    <?php if ($total_amount > $subtotal - $discount): 
+                        $shipping_fee_val = $total_amount - ($subtotal - $discount);
+                    ?>
+                    <div class="od-pay-row">
+                        <span>Phí vận chuyển</span>
+                        <span><?= format_price($shipping_fee_val) ?></span>
+                    </div>
+                    <?php endif; ?>
                     <?php if ($payment && !empty($payment['payment_status'])): ?>
                     <div class="od-pay-row">
                         <span>Trạng thái thanh toán</span>
@@ -431,7 +462,7 @@ echo $extra_head;
                     <i class="bi bi-arrow-repeat me-1"></i>Mua lại
                 </button>
 
-                <a href="index.php" class="btn-od btn-od-secondary">Tiếp tục mua sắm</a>
+                <a href="../../../app/views/customer/Products.php" class="btn-od btn-od-secondary">Tiếp tục mua sắm</a>
             </div>
 
         </div> <!-- /.od-main -->
