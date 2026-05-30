@@ -91,3 +91,17 @@ Tiếp đến, cần liên kết ngân hàng & và thêm số dư ví theo các 
 Sau khi đã hoàn tất cài đặt, có thể sử dụng ứng dụng trên để thanh toán khi sản phẩm từ Farrm2Home.
 
 <img width="2507" height="1342" alt="Screenshot 2026-05-30 205842" src="https://github.com/user-attachments/assets/1a5af7b3-7245-4e6f-bf62-fea944a72fae" />
+
+**5. Quên mật khẩu**
+
+Truy cập vào đường link https://resend.com/api-keys và Đăng nhập bằng Email bạn muốn dùng để Khôi phục mật khẩu.
+
+Bấm vào nút “Create API Key”.
+
+Đặt tên cho key (Ví dụ: Farm2Home) và chọn quyền là Full Access → Bấm Add.
+
+Copy lại chuỗi mã API Key vừa hiển thị (nó sẽ có dạng re_123456789...). Lưu ý: Bạn chỉ nhìn thấy mã một lần duy nhất nên hãy lưu lại nhé.
+
+Tại file Explore, chọn app/controllers/customer/LogInController.php, ở dòng số **61**, thay chuỗi ‘re_123456789…’ bằng API Key thật của bạn đã lấy trên Resend. 
+
+Sau khi đã hoàn tất các bước trên, bạn có thể sử dụng tính năng Khôi phục mật khẩu từ Farrm2Home.
