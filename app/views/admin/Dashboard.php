@@ -39,9 +39,9 @@ $analytics = $analytics ?? [
             </div>
             <div class="header-right d-flex align-items-center">
                 <div class="dropdown">
-                    <div class="admin-profile dropdown-toggle" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <div class="admin-profile dropdown-toggle d-flex align-items-center" id="profileMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="cursor: pointer;">
                         <span class="mr-2 font-weight-bold text-muted small">Xin chào, Admin</span>
-                        <img src="https://placehold.co/100x100?text=Avatar" class="admin-avatar" alt="Admin Avatar">
+                        <i class="fas fa-user-circle fa-2x text-primary"></i>
                     </div>
                     <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2" aria-labelledby="profileMenu">
                         <a class="dropdown-item py-2" href="#"><i class="fas fa-user-cog mr-2 text-muted"></i> Hồ sơ cá nhân</a>

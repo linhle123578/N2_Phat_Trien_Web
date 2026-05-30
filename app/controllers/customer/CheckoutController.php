@@ -67,7 +67,7 @@ class CheckoutController
                         'price'        => $item['unit_price'],
                         'quantity'     => $item['quantity'],
                         'total_price'  => $item['unit_price'] * $item['quantity'],
-                        'unit'         => $item['unit'] ?? $item['product_unit'] ?? '',
+                        'unit'         => 'Bó/Túi',
                         'product_id'   => $item['product_id'],
                         'cart_item_id' => $item['cart_item_id'],
                     ];
@@ -171,29 +171,52 @@ class CheckoutController
             $cart_item_id_map[$ci['product_id']] = $ci['cart_item_id'];
         }
 
+        require_once __DIR__ . "/../../models/ProductModel.php";
+        $productModel = new ProductModel();
+
         foreach ($cart as $item) {
-            $pid   = $item['product_id'];
-            $qty   = (int)($item['quantity'] ?? 1);
-            $price = $price_map[$pid] ?? 0;
+            $pid = $item['product_id'];
+            $qty = (int)($item['quantity'] ?? 1);
+
+            // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
+            $price = $price_map[$item['cart_item_id'] ?? '']
+                ?? $price_map[$pid]
+                ?? 0;
+
             $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
 
-            // Trừ tồn kho
-            $orderModel->decreaseStock($pid, $qty);
-
-            // Xóa khỏi cart DB
-            $cid = $cart_item_id_map[$pid] ?? null;
-            if ($cid) $cartModel->deleteItem($cid);
+            // Lấy cart_item_id để xoá: từ session hoặc từ map
+            $cid = $item['cart_item_id'] ?? $cart_item_id_map[$pid] ?? null;
+            if ($cid) {
+                $cart_item_ids_to_delete[] = $cid;
+            }
         }
 
-        unset($_SESSION['checkout_items']);
-        unset($_SESSION['checkout_info']);
+        if ($payment_method !== 'momo') {
+            if (!empty($cart_item_ids_to_delete)) {
+                foreach ($cart_item_ids_to_delete as $cid) {
+                    $cartModel->deleteItem($cid);
+                }
+            }
+            unset($_SESSION['checkout_items']);
+        }
+        $_SESSION['last_order_id']       = $order_id;
+        $_SESSION['last_order_shipping'] = $shipping_fee; // dùng bởi MomoPaymentController
 
-        echo json_encode([
-            "status"   => "success",
-            "payment"  => "cod",
-            "order_id" => $order_id,
-            "message"  => "Đặt hàng thành công! Mã đơn: " . $order_id
-        ]);
+        if ($payment_method === 'momo') {
+            echo json_encode([
+                "status"       => "success",
+                "payment"      => "momo",
+                "redirect_url" => "MomoPaymentController.php?order_id=" . urlencode($order_id)
+            ]);
+        } else {
+            echo json_encode([
+                "status"   => "success",
+                "payment"  => "cod",
+                "order_id" => $order_id,
+                "message"  => "Đặt hàng thành công! Mã đơn: " . $order_id
+            ]);
+        }
     }
 }
 

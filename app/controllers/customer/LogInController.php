@@ -16,12 +16,14 @@ class LogInController {
         }
 
         $model = new LogInModel();
-        $user = $model->checkCredentials($identity, $password, $role);
+        // Không dùng $role từ form nữa, lấy role thực tế từ DB để xử lý
+        $user = $model->checkCredentials($identity, $password);
 
         if ($user) {
-            // Phân biệt admin (admin_id bắt đầu bằng ADM) vs customer
-            $uid = $user['customer_id'] ?? '';
-            if (str_starts_with((string)$uid, 'ADM')) {
+            $uid = $user['uid'] ?? '';
+            $actual_role = $user['system_role'] ?? 'customer';
+            
+            if ($actual_role === 'admin') {
                 // Là admin
                 $_SESSION['admin_id']   = $uid;
                 $_SESSION['admin_name'] = $user['full_name'];

@@ -123,6 +123,18 @@ class CartController
         $product_id = $_POST['product_id'] ?? '';
         $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
+        if (isset($_POST['buy_now'])) {
+            $_SESSION['checkout_items'] = [
+                [
+                    'product_id' => $product_id,
+                    'quantity' => $quantity,
+                    'is_buy_now' => true
+                ]
+            ];
+            header("Location: ../../../app/controllers/customer/CheckoutController.php");
+            exit();
+        }
+
         if (!empty($product_id)) {
             $productModel->addToCart($customer_id, $product_id, $quantity);
         }
@@ -134,18 +146,8 @@ class CartController
             exit();
         }
 
-        if (isset($_POST['buy_now'])) {
-            $_SESSION['checkout_items'] = [
-                [
-                    'product_id' => $product_id,
-                    'quantity' => $quantity
-                ]
-            ];
-            header("Location: ../../../app/controllers/customer/CheckoutController.php");
-        } else {
-            $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/cart.php';
-            header("Location: " . $referer);
-        }
+        $referer = $_SERVER['HTTP_REFERER'] ?? '../../../app/views/customer/cart.php';
+        header("Location: " . $referer);
         exit();
     }
 }

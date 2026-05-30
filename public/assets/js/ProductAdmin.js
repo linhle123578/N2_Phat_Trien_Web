@@ -176,14 +176,25 @@ function updateAlertCounters() {
 }
 
 // ── Filters ──────────────────────────────────────────────────
+function removeAccents(str) {
+    if (!str) return '';
+    return String(str)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase();
+}
+
 function applyFilters() {
-    const search    = document.getElementById('searchInput').value.toLowerCase().trim();
-    const catFilter = document.getElementById('filterCategory').value.trim();
+    const searchRaw   = document.getElementById('searchInput').value.trim();
+    const search      = removeAccents(searchRaw);
+    const catFilter   = document.getElementById('filterCategory').value.trim();
 
     filteredProducts = products.filter(p => {
         const matchSearch = !search ||
-            p.product_name.toLowerCase().includes(search) ||
-            String(p.product_id).toLowerCase().includes(search);
+            removeAccents(p.product_name).includes(search) ||
+            removeAccents(String(p.product_id)).includes(search);
         const matchCat = !catFilter || String(p.category_id) === catFilter;
         return matchSearch && matchCat;
     });

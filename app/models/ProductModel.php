@@ -117,6 +117,16 @@ class ProductModel {
         }
     }
 
+    public function getProductById($product_id) {
+        $prod_escaped = mysqli_real_escape_string($this->conn, $product_id);
+        $query = "SELECT * FROM product WHERE product_id = '$prod_escaped' LIMIT 1";
+        $result = mysqli_query($this->conn, $query);
+        if ($result && mysqli_num_rows($result) > 0) {
+            return mysqli_fetch_assoc($result);
+        }
+        return false;
+    }
+
     public function __destruct() {
         if ($this->conn) {
             mysqli_close($this->conn);

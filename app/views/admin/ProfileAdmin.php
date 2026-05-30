@@ -17,9 +17,14 @@ mysqli_real_connect(
 );
 mysqli_set_charset($conn, "utf8mb4");
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$current_admin_id = $_SESSION['admin_id'] ?? 'ADM001';
+
 // ── Fallback admin data ───────────────────────────────────────────────────────
 $admin = [
-    'admin_id'   => 'ADM001',
+    'admin_id'   => $current_admin_id,
     'full_name'  => 'Admin Farm2Home',
     'birthday'   => '',
     'phone'      => '0933 111 222',
@@ -48,13 +53,17 @@ try {
             a.department,
             a.account_id,
             acc.email,
-            acc.avatar,
-            acc.role
+            acc.account_role as role
         FROM admin a
         LEFT JOIN account acc ON a.account_id = acc.account_id
+        WHERE a.admin_id = ?
         LIMIT 1
     ";
-    $result = mysqli_query($conn, $sql);
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $current_admin_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
     if ($result) {
         $row = mysqli_fetch_assoc($result);
         if ($row) {
@@ -71,6 +80,7 @@ try {
             $admin['role']       = $row['role']       ?? $admin['role'];
         }
     }
+    mysqli_stmt_close($stmt);
 } catch (Exception $e) {
     // Giữ nguyên fallback nếu query lỗi
 }
@@ -148,18 +158,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 $c = pa_db_connect();
-                $stmt_v = mysqli_prepare($c, "SELECT password FROM account WHERE account_id=? LIMIT 1");
+                $stmt_v = mysqli_prepare($c, "SELECT account_password FROM account WHERE account_id=? LIMIT 1");
                 mysqli_stmt_bind_param($stmt_v, 's', $acct);
                 mysqli_stmt_execute($stmt_v);
                 mysqli_stmt_bind_result($stmt_v, $stored_pw);
                 mysqli_stmt_fetch($stmt_v);
                 mysqli_stmt_close($stmt_v);
 
-                if (!$stored_pw || !password_verify($old_pw, $stored_pw)) {
+                if (!$stored_pw || md5($old_pw) !== $stored_pw) {
                     $msg_password = 'wrong_old';
                 } else {
-                    $hashed = password_hash($new_pw, PASSWORD_DEFAULT);
-                    $stmt_u = mysqli_prepare($c, "UPDATE account SET password=? WHERE account_id=?");
+                    $hashed = md5($new_pw);
+                    $stmt_u = mysqli_prepare($c, "UPDATE account SET account_password=? WHERE account_id=?");
                     mysqli_stmt_bind_param($stmt_u, 'ss', $hashed, $acct);
                     mysqli_stmt_execute($stmt_u);
                     mysqli_stmt_close($stmt_u);
@@ -190,8 +200,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <div class="pa-shell d-flex">
     <?php require_once __DIR__ . '/../layouts/adminsidebar.php'; ?>
-    <div class="pa-main flex-grow-1">
-        <section class="pa-content p-4">
+    <div class="pa-main flex-grow-1 d-flex flex-column">
+
+        <!-- HEADER -->
+        <header class="admin-header d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-sm btn-outline-secondary d-lg-none" id="toggleSidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h5 class="mb-0 fw-bold">Hồ sơ cá nhân</h5>
+                </div>
+            </div>
+        </header>
+
+        <section class="pa-content p-4 flex-grow-1">
             <div class="pa-card mb-4">
                 <div class="pa-card-header">
                     <i class="bi bi-person-fill"></i>
@@ -216,28 +239,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form method="POST" action="">
                     <div class="row g-4">
 
-                        <!-- Avatar column -->
-                        <div class="col-md-3 text-center">
-                            <div class="pa-avatar-wrap">
-                                <img id="avatarPreview"
-                                     src="../../../Media/<?= htmlspecialchars($admin['avatar'] ?? 'user_1.jpg') ?>"
-                                     alt="Avatar"
-                                     class="pa-avatar"
-                                     onerror="this.src='../../../Media/user_1.jpg'">
-                                <label class="pa-avatar-btn" for="avatarInput" title="Đổi ảnh">
-                                    <i class="bi bi-camera-fill"></i>
-                                </label>
-                                <input type="file" id="avatarInput" accept="image/*" class="d-none">
-                            </div>
-                            <div class="pa-avatar-name mt-3"><?= htmlspecialchars($admin['full_name']) ?></div>
-                            <div class="pa-avatar-role">
-                                <span class="badge pa-role-badge"><?= htmlspecialchars($admin['role'] ?? 'Quản trị viên') ?></span>
-                            </div>
-                        </div>
-
                         <!-- Form fields column -->
-                        <div class="col-md-9">
-                            <div class="row g-3">
+                        <div class="col-lg-12">
+                            <div class="mb-4 pb-3 border-bottom d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="mb-1" style="font-weight: 700; color: #2c3e50;"><?= htmlspecialchars($admin['full_name']) ?></h4>
+                                    <span class="badge bg-primary rounded-pill px-3 py-2" style="font-weight: 500;"><i class="bi bi-shield-lock me-1"></i><?= htmlspecialchars($admin['role'] ?? 'Quản trị viên') ?></span>
+                                </div>
+                            </div>
+                            <div class="row g-4">
                                 <div class="col-md-6">
                                     <label class="pa-label" for="full_name">Họ và tên</label>
                                     <div class="input-group pa-input-group">
@@ -290,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                value="<?= htmlspecialchars($admin['department'] ?? '') ?>">
                                     </div>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-md-6">
                                     <label class="pa-label" for="address">Địa chỉ</label>
                                     <div class="input-group pa-input-group">
                                         <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
@@ -298,8 +308,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                value="<?= htmlspecialchars($admin['address'] ?? '') ?>">
                                     </div>
                                 </div>
-                                <div class="col-12 d-flex justify-content-end">
-                                    <button type="submit" name="save_profile" class="btn pa-btn-primary rounded-pill px-5">
+                                <div class="col-12 mt-5 text-end">
+                                    <button type="submit" name="save_profile" class="btn pa-btn-primary rounded-pill px-5 py-2 shadow-sm" style="font-weight: 600; font-size: 1.05rem;">
                                         <i class="bi bi-floppy me-2"></i>Lưu thay đổi
                                     </button>
                                 </div>

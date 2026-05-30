@@ -41,35 +41,53 @@ class LogInModel {
     /**
      * 2. XỬ LÝ KIỂM TRA ĐĂNG NHẬP
      */
-    public function checkCredentials($identity, $password, $role = 'customer') {
+    public function checkCredentials($identity, $password) {
         $identity = $this->conn->real_escape_string($identity);
         $md5_password = md5($password);
         
-        if ($role === 'customer') {
-            // Luồng 1: Khách hàng
-            $sql = "SELECT c.customer_id, c.full_name, c.phone, a.email, a.account_password 
-                    FROM account a
-                    INNER JOIN customer c ON a.account_id = c.account_id
-                    WHERE (a.email = '$identity' OR c.phone = '$identity') 
-                      AND a.account_password = '$md5_password'
-                    LIMIT 1";
-                    
-            $result = $this->conn->query($sql);
-            if ($result && $result->num_rows > 0) {
-                return $result->fetch_assoc();
-            }
-        } else if ($role === 'admin') {
-            // Luồng 2: Quản lý
-            $sql_admin = "SELECT adm.admin_id AS customer_id, adm.full_name, adm.phone, a.email, a.account_password 
-                          FROM account a
-                          INNER JOIN admin adm ON a.account_id = adm.account_id
-                          WHERE (a.email = '$identity' OR adm.phone = '$identity') AND a.account_password = '$md5_password'
-                          LIMIT 1";
+        // Truy vấn chung cho cả admin và customer, lấy role từ bảng account
+        $sql = "
+            SELECT 
+                a.account_id, 
+                a.email, 
+                a.account_role,
+                adm.admin_id,
+                adm.full_name AS admin_name,
+                c.customer_id,
+                c.full_name AS customer_name
+            FROM account a
+            LEFT JOIN admin adm ON a.account_id = adm.account_id
+            LEFT JOIN customer c ON a.account_id = c.account_id
+            WHERE (a.email = '$identity' OR adm.phone = '$identity' OR c.phone = '$identity')
+              AND a.account_password = '$md5_password'
+            LIMIT 1
+        ";
+        
+        $result = $this->conn->query($sql);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            
+            // Xác định hệ thống vai trò nội bộ dựa vào cột role của account
+            $db_role = mb_strtolower(trim((string)($row['account_role'] ?? '')), 'UTF-8');
+            
+            // Các role thuộc khối quản trị
+            $isAdminRole = (strpos($db_role, 'quản trị') !== false || 
+                            strpos($db_role, 'quản lý') !== false || 
+                            strpos($db_role, 'giám đốc') !== false || 
+                            strpos($db_role, 'admin') !== false ||
+                            $db_role === 'director' || 
+                            $db_role === 'manager');
 
-            $result_admin = $this->conn->query($sql_admin);
-            if ($result_admin && $result_admin->num_rows > 0) {
-                return $result_admin->fetch_assoc();
+            if ($isAdminRole || !empty($row['admin_id'])) {
+                $row['uid'] = $row['admin_id'];
+                $row['full_name'] = $row['admin_name'];
+                $row['system_role'] = 'admin';
+            } else {
+                $row['uid'] = $row['customer_id'];
+                $row['full_name'] = $row['customer_name'];
+                $row['system_role'] = 'customer';
             }
+            return $row;
         }
         
         return false;
