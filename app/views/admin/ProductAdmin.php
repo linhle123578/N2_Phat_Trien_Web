@@ -75,12 +75,6 @@ mysqli_close($conn);
                 </button>
                 <div>
                     <h5 class="mb-0 fw-bold">Quản lý sản phẩm</h5>
-                    <nav aria-label="breadcrumb" class="mt-1">
-                        <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
-                        </ol>
-                    </nav>
                 </div>
             </div>
 

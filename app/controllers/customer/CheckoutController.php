@@ -46,28 +46,54 @@ class CheckoutController
         ];
 
         $all_cart_items = $cartModel->getCartItems($customer_id);
-        $selected_ids   = array_column($_SESSION['checkout_items'], 'product_id');
 
         $checkout_products = [];
         $subtotal = 0;
 
-        if ($all_cart_items) {
-            foreach ($all_cart_items as $item) {
-                if (
-                    in_array($item['product_id'],   $selected_ids)
-                ) {
-                    $product = [
-                        'name'         => $item['product_name'],
-                        'image'        => $item['product_image'],
-                        'price'        => $item['unit_price'],
-                        'quantity'     => $item['quantity'],
-                        'total_price'  => $item['unit_price'] * $item['quantity'],
-                        'unit'         => 'Bó/Túi',
-                        'product_id'   => $item['product_id'],
-                        'cart_item_id' => $item['cart_item_id'],
-                    ];
-                    $subtotal += $product['total_price'];
-                    $checkout_products[] = $product;
+        require_once __DIR__ . "/../../models/ProductModel.php";
+        $productModel = new ProductModel();
+
+        if (!empty($_SESSION['checkout_items'])) {
+            foreach ($_SESSION['checkout_items'] as $cItem) {
+                $pid = $cItem['product_id'];
+                $is_buy_now = !empty($cItem['is_buy_now']);
+
+                if ($is_buy_now) {
+                    $pInfo = $productModel->getProductById($pid);
+                    if ($pInfo) {
+                        $product = [
+                            'name'         => $pInfo['product_name'],
+                            'image'        => $pInfo['product_image'],
+                            'price'        => $pInfo['price'],
+                            'quantity'     => $cItem['quantity'],
+                            'total_price'  => $pInfo['price'] * $cItem['quantity'],
+                            'unit'         => $pInfo['unit'],
+                            'product_id'   => $pid,
+                            'cart_item_id' => null,
+                        ];
+                        $subtotal += $product['total_price'];
+                        $checkout_products[] = $product;
+                    }
+                } else {
+                    if ($all_cart_items) {
+                        foreach ($all_cart_items as $item) {
+                            if ($item['product_id'] == $pid) {
+                                $product = [
+                                    'name'         => $item['product_name'],
+                                    'image'        => $item['product_image'],
+                                    'price'        => $item['unit_price'],
+                                    'quantity'     => $cItem['quantity'] ?? $item['quantity'],
+                                    'total_price'  => $item['unit_price'] * ($cItem['quantity'] ?? $item['quantity']),
+                                    'unit'         => 'Bó/Túi',
+                                    'product_id'   => $pid,
+                                    'cart_item_id' => $item['cart_item_id'],
+                                ];
+                                $subtotal += $product['total_price'];
+                                $checkout_products[] = $product;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -149,23 +175,32 @@ class CheckoutController
             }
         }
 
+        require_once __DIR__ . "/../../models/ProductModel.php";
+        $productModel = new ProductModel();
+
         $cart_item_ids_to_delete = [];
         foreach ($cart as $item) {
             $pid = $item['product_id'];
             $qty = (int)($item['quantity'] ?? 1);
+            $is_buy_now = !empty($item['is_buy_now']);
 
-            // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
-            $price = $price_map[$item['cart_item_id'] ?? '']
-                ?? $price_map[$pid]
-                ?? 0;
+            if ($is_buy_now) {
+                $pInfo = $productModel->getProductById($pid);
+                $price = $pInfo ? $pInfo['price'] : 0;
+            } else {
+                // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
+                $price = $price_map[$item['cart_item_id'] ?? '']
+                    ?? $price_map[$pid]
+                    ?? 0;
+
+                // Lấy cart_item_id để xoá: từ session hoặc từ map
+                $cid = $item['cart_item_id'] ?? $cart_item_id_map[$pid] ?? null;
+                if ($cid) {
+                    $cart_item_ids_to_delete[] = $cid;
+                }
+            }
 
             $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
-
-            // Lấy cart_item_id để xoá: từ session hoặc từ map
-            $cid = $item['cart_item_id'] ?? $cart_item_id_map[$pid] ?? null;
-            if ($cid) {
-                $cart_item_ids_to_delete[] = $cid;
-            }
         }
 
         if ($payment_method !== 'momo') {
