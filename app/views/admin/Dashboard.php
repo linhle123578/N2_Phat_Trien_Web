@@ -212,6 +212,6 @@ $analytics = $analytics ?? [
         const pieLabels = <?= json_encode($analytics['categories']['names']) ?>;
         const pieData = <?= json_encode($analytics['categories']['percentages']) ?>;
     </script>
-    <script src="../../../public/assets/js/Dashboard.js"></script>
+    <script src="../../../public/assets/js/Dashboard.js?v=<?= time() ?>"></script>
 </body>
 </html>

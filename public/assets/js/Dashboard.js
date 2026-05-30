@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
     new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: pieLabels, // Mảng tên danh mục truyền từ view
+            labels: pieLabels.map((label, index) => `${label}: ${pieData[index]}%`), // Mảng tên danh mục + %
             datasets: [{
                 data: pieData, // Mảng phần trăm tương ứng
                 backgroundColor: [
@@ -87,13 +87,14 @@ document.addEventListener("DOMContentLoaded", function () {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    position: 'right',
                     labels: { font: { family: "'Plus Jakarta Sans', sans-serif", weight: '600' }, padding: 15 }
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return ` ${context.label}: ${context.raw}%`;
+                            let originalLabel = pieLabels[context.dataIndex];
+                            return ` ${originalLabel}: ${context.raw}%`;
                         }
                     }
                 }

@@ -7,6 +7,41 @@ ob_start();
 =========================================================
 */
 
+if (!function_exists('contactAdminButton')) {
+    function contactAdminButton()
+    {
+        return "
+        <div style='margin-top:12px; text-align:center;'>
+            <button onclick='showContactAdmin()'
+            class='btn-contact-admin'>
+                <i class='fas fa-headset'></i> Liên hệ tổng đài
+            </button>
+
+            <div id='contactAdminBox' style='display:none;margin-top:12px; font-size: 13.5px; background: #f8f9fa; padding: 10px; border-radius: 10px; border: 1px solid #e9ecef;'>
+                <b>Hotline:</b> 1900 6868 <br>
+                <b>Email:</b> cskh@farm2home.vn <br>
+                <i>08:00 - 22:00 mỗi ngày</i>
+            </div>
+        </div>
+        ";
+    }
+}
+
+if (!function_exists('getFaqButtons')) {
+    function getFaqButtons()
+    {
+        return "
+        <div class='faq-buttons'>
+            <button onclick=\"askFAQ('sản phẩm bán chạy')\">🔥 Bán chạy</button>
+            <button onclick=\"askFAQ('gợi ý sản phẩm')\">💡 Gợi ý cho tôi</button>
+            <button onclick=\"askFAQ('đơn hàng của tôi')\">📦 Đơn hàng của tôi</button>
+            <button onclick=\"askFAQ('vận chuyển')\">🚚 Vận chuyển</button>
+            <button onclick=\"askFAQ('giá sản phẩm')\">💰 Hỏi giá sản phẩm</button>
+        </div>
+        ";
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot'])) {
 
     // Xóa toàn bộ output cũ để tránh lỗi JSON
@@ -70,35 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         exit;
     }
 
-    function contactAdminButton()
-    {
-        return "
-        <br><br>
-
-        <button onclick='showContactAdmin()'
-        style='
-            background:#1e3a2f;
-            color:white;
-            border:none;
-            padding:10px 16px;
-            border-radius:10px;
-            cursor:pointer;
-            font-weight:bold;
-        '>
-            Liên hệ quản lý website
-        </button>
-
-        <div id='contactAdminBox'
-        style='display:none;margin-top:12px;'>
-
-            Hotline: 1900 6868 <br>
-            Email: cskh@farm2home.vn <br>
-            08:00 - 22:00 mỗi ngày
-
-        </div>
-        ";
-    }
-
     /* =========================================================
        HELLO
     ========================================================= */
@@ -110,18 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     ) {
 
         reply("
-            Xin chào, mình là AI Farm2Home.<br><br>
-
-            Mình có thể hỗ trợ:<br>
-
-            • Sản phẩm bán chạy<br>
-            • Giá sản phẩm<br>
-            • Kiểm tra tồn kho<br>
-            • Đơn hàng của tôi<br>
-            • Theo dõi vận chuyển<br>
-            • Đổi trả hàng<br>
-            • Thanh toán<br>
-            • Gợi ý sản phẩm
+            Xin chào, mình là trợ lý ảo Farm2Home. 🌱<br>
+            Mình có thể giúp gì cho bạn hôm nay?<br>
+            " . getFaqButtons() . "
         ");
     }
 
@@ -189,11 +186,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         $sql = "
             SELECT
                 o.order_id,
-                s.shipment_status,
-                s.estimated_date
+                o.order_status as shipment_status,
+                DATE_ADD(o.created_at, INTERVAL 3 DAY) as estimated_date
             FROM `order` o
-            JOIN shipment s
-            ON o.order_id = s.order_id
             WHERE o.customer_id='$customer_id_safe'
             ORDER BY o.created_at DESC
             LIMIT 1
@@ -212,13 +207,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         }
 
         $s = mysqli_fetch_assoc($rs);
+        $est_date = date('Y-m-d', strtotime($s['estimated_date']));
 
         reply("
             Thông tin vận chuyển:<br><br>
 
-            Mã đơn: {$s['order_id']}<br>
+            Mã đơn: <b>{$s['order_id']}</b><br>
             Trạng thái: <b>{$s['shipment_status']}</b><br>
-            Dự kiến giao: {$s['estimated_date']}
+            Dự kiến giao: {$est_date}
         ");
     }
 
@@ -410,17 +406,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     ========================================================= */
 
     reply("
-        Xin lỗi, AI chưa hiểu yêu cầu này.<br><br>
-
-        Bạn có thể hỏi:<br>
-
-        • sản phẩm bán chạy<br>
-        • đơn hàng của tôi<br>
-        • vận chuyển<br>
-        • giá sản phẩm<br>
-        • gợi ý sản phẩm<br><br>
-
-        " . contactAdminButton()
+        Xin lỗi, AI chưa hiểu rõ yêu cầu này của bạn. 😔<br><br>
+        Bạn có thể tham khảo một số chức năng bên dưới:<br>
+        " . getFaqButtons() . contactAdminButton()
     );
 
     mysqli_close($conn);
@@ -430,57 +418,86 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 ?>
 
 <style>
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 
 #farm2home-chat-btn{
     position:fixed;
-    right:25px;
-    bottom:25px;
-    width:68px;
-    height:68px;
+    right:30px;
+    bottom:30px;
+    width:64px;
+    height:64px;
     border:none;
     border-radius:50%;
-    background:#1e3a2f;
+    background: linear-gradient(135deg, #183a1d 0%, #2a5a31 100%);
     color:#fff;
-    font-size:28px;
+    font-size:26px;
     cursor:pointer;
     z-index:999999;
-    box-shadow:0 12px 30px rgba(0,0,0,.2);
+    box-shadow: 0 8px 24px rgba(24, 58, 29, 0.4);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#farm2home-chat-btn:hover {
+    transform: scale(1.1);
 }
 
 #farm2home-chatbox{
     position:fixed;
-    right:25px;
-    bottom:105px;
+    right:30px;
+    bottom:110px;
     width:380px;
     height:600px;
-    background:#fff;
-    border-radius:24px;
+    background:#ffffff;
+    border-radius:20px;
     overflow:hidden;
     display:none;
     flex-direction:column;
     z-index:999999;
-    box-shadow:0 18px 45px rgba(0,0,0,.18);
-    font-family:Arial;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    border: 1px solid #f1eedd;
 }
 
 .chat-header{
-    background:#1e3a2f;
+    background: linear-gradient(135deg, #183a1d 0%, #2a5a31 100%);
     color:#fff;
-    padding:18px;
-    font-size:18px;
-    font-weight:bold;
+    padding:18px 20px;
+    font-size:16px;
+    font-weight:700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.chat-header i {
+    font-size: 20px;
+    color: #eba15c;
 }
 
 .chat-messages{
     flex:1;
     overflow-y:auto;
-    background:#f5f5f5;
-    padding:16px;
+    background:#fafafa;
+    padding:20px;
+    scrollbar-width: thin;
+}
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+    background-color: #ddd;
+    border-radius: 10px;
 }
 
 .msg{
     display:flex;
-    margin-bottom:14px;
+    margin-bottom:18px;
+    animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .msg.user{
@@ -488,60 +505,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 }
 
 .bubble{
-    max-width:75%;
-    padding:12px 14px;
-    border-radius:16px;
-    font-size:14px;
-    line-height:1.6;
+    max-width:80%;
+    padding:12px 16px;
+    border-radius:18px;
+    font-size:14.5px;
+    line-height:1.5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
 }
 
 .user .bubble{
-    background:#1e3a2f;
+    background: #183a1d;
     color:#fff;
+    border-bottom-right-radius: 4px;
 }
 
 .ai .bubble{
     background:#fff;
+    border-bottom-left-radius: 4px;
+    border: 1px solid #eee;
+    color: #333;
 }
 
 .ai-avatar{
-    width:42px;
-    height:42px;
+    width:36px;
+    height:36px;
     border-radius:50%;
-    background:#1e3a2f;
+    background:#eba15c;
     color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
-    margin-right:8px;
+    margin-right:12px;
     font-weight:bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 3px 8px rgba(235, 161, 92, 0.4);
 }
 
 .chat-bottom{
-    padding:14px;
+    padding:16px;
     display:flex;
     gap:10px;
     border-top:1px solid #eee;
+    background: #fff;
 }
 
 .chat-bottom input{
     flex:1;
     height:46px;
-    border-radius:12px;
+    border-radius:24px;
     border:1px solid #ddd;
-    padding:0 14px;
+    padding:0 18px;
     outline:none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+.chat-bottom input:focus {
+    border-color: #eba15c;
 }
 
 .chat-bottom button{
-    width:55px;
+    width:46px;
+    height:46px;
     border:none;
-    border-radius:12px;
-    background:#1e3a2f;
+    border-radius:50%;
+    background:#eba15c;
     color:#fff;
     cursor:pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+}
+.chat-bottom button:hover {
+    background:#d98e4a;
+    transform: scale(1.05);
 }
 
+/* FAQ Buttons */
+.faq-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+.faq-buttons button {
+    background: #f1eedd;
+    color: #183a1d;
+    border: 1px solid #e2ddc4;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.faq-buttons button:hover {
+    background: #eba15c;
+    color: #fff;
+    border-color: #eba15c;
+    transform: translateY(-2px);
+}
+.btn-contact-admin {
+    background:#183a1d;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:20px;
+    cursor:pointer;
+    font-weight:600;
+    font-size: 13px;
+    transition: background 0.3s;
+}
+.btn-contact-admin:hover {
+    background: #2a5a31;
+}
 </style>
 <?php
 $uri = $_SERVER['REQUEST_URI'];
@@ -554,14 +635,14 @@ if (!$allowChat) return;
 ?>
 
 <button id="farm2home-chat-btn">
-💬
+<i class="fas fa-comment-dots"></i>
 </button>
 
 
 <div id="farm2home-chatbox">
 
     <div class="chat-header">
-        Farm2Home Chatbot
+        <i class="fas fa-robot"></i> Farm2Home AI
     </div>
 
     <div class="chat-messages" id="chatMessages">
@@ -569,20 +650,15 @@ if (!$allowChat) return;
         <div class="msg ai">
 
             <div class="ai-avatar">
-                AI
+                <i class="fas fa-leaf"></i>
             </div>
 
             <div class="bubble">
 
-                Xin chào <br><br>
+                Xin chào, mình là trợ lý ảo Farm2Home. 🌱<br>
+                Mình có thể giúp gì cho bạn hôm nay?<br>
 
-                Bạn có thể hỏi:<br><br>
-
-                • sản phẩm bán chạy<br>
-                • đơn hàng của tôi<br>
-                • vận chuyển<br>
-                • giá sản phẩm<br>
-                • gợi ý sản phẩm
+                <?php echo getFaqButtons(); ?>
 
             </div>
 
@@ -599,7 +675,7 @@ if (!$allowChat) return;
         >
 
         <button onclick="sendChat()">
-            ➤
+            <i class="fas fa-paper-plane"></i>
         </button>
 
     </div>
@@ -632,7 +708,7 @@ function appendMessage(type, text){
     if(type === 'ai'){
 
         div.innerHTML = `
-            <div class="ai-avatar">AI</div>
+            <div class="ai-avatar"><i class="fas fa-leaf"></i></div>
             <div class="bubble">${text}</div>
         `;
 
@@ -646,6 +722,11 @@ function appendMessage(type, text){
     messages.appendChild(div);
 
     messages.scrollTop = messages.scrollHeight;
+}
+
+function askFAQ(question) {
+    document.getElementById('chatInput').value = question;
+    sendChat();
 }
 
 function sendChat(){

@@ -2,6 +2,11 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
+:root {
+    --primary-green: #183a1d;
+    --accent-orange: #eba15c;
+}
+
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: #fefbe9;

@@ -82,7 +82,8 @@ class DashboardModel {
     public function getFilteredAnalytics($startMonth, $endMonth) {
         // Chuẩn hóa chuỗi ngày tháng để so sánh trong MySQL
         $startDate = $this->conn->real_escape_string($startMonth . "-01 00:00:00");
-        $endDate = $this->conn->real_escape_string($endMonth . "-31 23:59:59");
+        $lastDay = date('t', strtotime($endMonth . '-01'));
+        $endDate = $this->conn->real_escape_string($endMonth . "-" . $lastDay . " 23:59:59");
 
         $analytics = [
             'trends' => ['months' => [], 'revenues' => [], 'order_counts' => []],
