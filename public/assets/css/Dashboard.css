@@ -1,133 +1,65 @@
-/* ── THIẾT LẬP BIẾN MÀU THƯƠNG HIỆU ĐỒNG BỘ ── */
-:root {
-    --primary-green: #183a1d; 
-    --accent-orange: #f0a04b;  
-    --bg-cream: #fefbe9;       
-    --sidebar-width: 260px;
-}
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: var(--bg-cream);
-    color: #1c1c12;
+    background-color: #fefbe9;
+    margin: 0;
     overflow-x: hidden;
 }
 
-/* ── THÀNH PHẦN 1: SIDEBAR CỐ ĐỊNH (LEFT MENU) ── */
-.admin-sidebar {
-    width: var(--sidebar-width);
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: var(--primary-green);
-    color: #ffffff;
-    z-index: 1000;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.05);
-}
+.admin-wrapper { min-height: 100vh; }
 
-.sidebar-brand {
-    padding: 20px;
-    font-size: 1.3rem;
-    font-weight: 800;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    color: var(--accent-orange);
-    display: flex;
-    align-items: center;
-}
+/* ── MAIN CONTENT ── */
+.main-content { background-color: #fefbe9; min-width: 0; margin-left: 220px; }
 
-.sidebar-menu {
-    list-style: none;
-    padding: 20px 0;
-    margin: 0;
-}
-
-.sidebar-item a {
-    display: flex;
-    align-items: center;
-    padding: 14px 25px;
-    color: rgba(255,255,255,0.75);
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s;
-}
-
-.sidebar-item.active a, .sidebar-item a:hover {
-    color: #ffffff;
-    background-color: rgba(255,255,255,0.1);
-    border-left: 4px solid var(--accent-orange);
-}
-
-.sidebar-item i {
-    width: 24px;
-    font-size: 1.1rem;
-    margin-right: 10px;
-}
-
-/* ── THÀNH PHẦN 2: NỘI DUNG CHÍNH & HEADER ── */
-.admin-main-content {
-    margin-left: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width));
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
+/* ── HEADER ── */
 .admin-header {
-    height: 70px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e8e8e8;
-    padding: 0 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background: #fefbe9;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    box-shadow: 0 1px 0 #E5E7EB;
 }
-
-.admin-profile {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+.admin-header h5 { 
+    color: #111827 !important; 
+    font-weight: 700 !important; 
+}
+.admin-header .text-muted { color: #6B7280 !important; }
+.admin-header i  { color: #6B7280 !important; }
+.admin-header .btn-outline-secondary {
+    border-color: #D1D5DB;
+    color: #6B7280;
+}
+.admin-header .btn-outline-secondary:hover {
+    background: #F3F4F6;
+    border-color: #9CA3AF;
+    color: #374151;
 }
 
 .admin-avatar {
-    width: 40px;
-    height: 40px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid var(--accent-orange);
+    border: 2px solid #E5E7EB;
 }
 
-.admin-dashboard-body {
-    padding: 30px;
-    flex: 1;
-}
-
-/* ── THÀNH PHẦN 3: NỘI DUNG DASHBOARD ── */
-.page-title {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: var(--primary-green);
-    letter-spacing: -0.5px;
-}
-
-.realtime-badge {
-    background-color: rgba(24, 58, 29, 0.1);
-    color: var(--primary-green);
-    padding: 6px 14px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    border-radius: 30px;
-    display: inline-flex;
-    align-items: center;
-}
-
-.realtime-badge .dot {
-    width: 8px;
-    height: 8px;
-    background-color: #28a745;
+.notification-dot {
+    width: 8px; height: 8px;
+    background: #EF4444;
     border-radius: 50%;
-    margin-right: 8px;
+    position: absolute;
+    top: -2px; right: -2px;
+    border: 2px solid #fff;
 }
+
+/* ── BREADCRUMB ── */
+.breadcrumb-item a          { color: #6B7280; font-size: .78rem; text-decoration: none; }
+.breadcrumb { margin-bottom: 0; line-height: 1.4; }
+.breadcrumb-item a:hover    { color: #374151; }
+.breadcrumb-item.active     { font-size: .82rem; color: #183a1d; font-weight: 600; }
+.breadcrumb-item + .breadcrumb-item::before { color: #9CA3AF; }
 
 /* CARDS THỐNG KÊ TỔNG QUAN */
 .overview-card {
