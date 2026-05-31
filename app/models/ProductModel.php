@@ -3,7 +3,6 @@ class ProductModel {
     private $conn;
 
     public function __construct() {
-        // Kết nối an toàn bảo mật lên hệ thống Cloud TiDB bằng cờ SSL bắt buộc
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
@@ -85,7 +84,7 @@ class ProductModel {
         $cus_escaped = mysqli_real_escape_string($this->conn, $customer_id);
         $prod_escaped = mysqli_real_escape_string($this->conn, $product_id);
 
-        // 1. Tìm hoặc tạo mới Giỏ hàng của Khách hàng
+        // 1. Tìm / tạo mới Giỏ hàng của Khách hàng
         $cart_query = "SELECT cart_id FROM cart WHERE customer_id = '$cus_escaped' LIMIT 1";
         $cart_res = mysqli_query($this->conn, $cart_query);
         
@@ -93,7 +92,7 @@ class ProductModel {
             $cart_row = mysqli_fetch_assoc($cart_res);
             $cart_id = $cart_row['cart_id'];
         } else {
-            // Tạo mã giỏ hàng ngẫu nhiên duy nhất nếu chưa có
+            // Tạo mã giỏ hàng ngẫu nhiên duy nhất
             $cart_id = 'CRT' . rand(1000, 9999) . time();
             $insert_cart = "INSERT INTO cart (cart_id, customer_id) VALUES ('$cart_id', '$cus_escaped')";
             mysqli_query($this->conn, $insert_cart);
