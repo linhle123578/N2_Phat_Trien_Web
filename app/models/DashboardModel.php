@@ -3,7 +3,7 @@ class DashboardModel {
     private $conn;
 
     public function __construct() {
-        // Khởi tạo kết nối đồng bộ theo cấu trúc TiDB Cloud của CartModel
+        // Khởi tạo kết nối TiDB Cloud
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
@@ -25,7 +25,7 @@ class DashboardModel {
         mysqli_set_charset($this->conn, "utf8mb4");
     }
 
-    // 1. LẤY SỐ LIỆU TỔNG QUAN (3 THẺ HIGHLIGHT)
+    // 1. LẤY SỐ LIỆU TỔNG QUAN
     public function getOverviewStats() {
         $stats = [
             'revenue_current' => 0, 'revenue_growth' => 0,
@@ -64,7 +64,7 @@ class DashboardModel {
             $stats['orders_completed'] = (int)$row['completed'];
         }
 
-        // Lấy dữ liệu Khách hàng (bảng customer không có ngày đăng ký, ta lấy tài khoản liên kết từ bảng account)
+        // Lấy dữ liệu Khách hàng
         $custQuery = "
             SELECT 
                 (SELECT COUNT(*) FROM customer) as total,
@@ -78,7 +78,7 @@ class DashboardModel {
         return $stats;
     }
 
-    // 2. LẤY DỮ LIỆU ĐƯỢC LỌC THEO THỜI GIAN (XU HƯỚNG, DANH MỤC, TOP SẢN PHẨM)
+    // 2. LẤY DỮ LIỆU ĐƯỢC LỌC THEO THỜI GIAN 
     public function getFilteredAnalytics($startMonth, $endMonth) {
         // Chuẩn hóa chuỗi ngày tháng để so sánh trong MySQL
         $startDate = $this->conn->real_escape_string($startMonth . "-01 00:00:00");
@@ -91,7 +91,7 @@ class DashboardModel {
             'top_products' => []
         ];
 
-        // 2.1 Xu hướng kinh doanh (Đường đôi)
+        // 2.1 Xu hướng kinh doanh 
         $trendSql = "
             SELECT DATE_FORMAT(o.created_at, '%m/%Y') as month_label, 
                    IFNULL(SUM((SELECT SUM(oi.quantity * oi.price) FROM orderitem oi WHERE oi.order_id = o.order_id)), 0) as total_rev, 
