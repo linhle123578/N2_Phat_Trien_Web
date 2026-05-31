@@ -54,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
 
     $message = trim($_POST['message'] ?? '');
     $msg = mb_strtolower($message, 'UTF-8');
+    $context = trim($_POST['context'] ?? '');
 
     /* =========================================================
        CONNECT DATABASE
@@ -96,12 +97,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
        FUNCTION REPLY
     ========================================================= */
 
-    function reply($text)
+    function reply($text, $set_context = null, $clear_context = false)
     {
-        echo json_encode([
-            "reply" => $text
-        ], JSON_UNESCAPED_UNICODE);
-
+        $response = ["reply" => $text];
+        if ($set_context) {
+            $response['set_context'] = $set_context;
+        }
+        if ($clear_context) {
+            $response['clear_context'] = true;
+        }
+        echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -333,33 +338,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     /* =========================================================
        TÌM GIÁ
     ========================================================= */
+    if ($context === 'asking_price') {
+        $search = mysqli_real_escape_string($conn, $msg);
+        $sql = "SELECT * FROM product WHERE LOWER(product_name) LIKE '%$search%'";
+        $rs = mysqli_query($conn, $sql);
+        
+        if ($rs && mysqli_num_rows($rs) > 0) {
+            $html = "Đây là kết quả mình tìm được:<br><br>";
+            while ($p = mysqli_fetch_assoc($rs)) {
+                $html .= "<b>{$p['product_name']}</b><br>";
+                $html .= "Giá: <b>" . number_format($p['price']) . "đ</b> / {$p['unit']}<br><br>";
+            }
+            reply($html, null, true);
+        } else {
+            reply("Mình không tìm thấy sản phẩm nào giống \"{$message}\". Bạn thử tên khác nhé!", 'asking_price');
+        }
+    }
 
     if (
         str_contains($msg, 'giá') ||
         str_contains($msg, 'bao nhiêu')
     ) {
-
-        $sql = "SELECT * FROM product";
-
-        $rs = mysqli_query($conn, $sql);
-
-        while ($p = mysqli_fetch_assoc($rs)) {
-
-            $name = mb_strtolower($p['product_name'], 'UTF-8');
-
-            if (str_contains($msg, $name)) {
-
-                reply("
-                    {$p['product_name']}<br><br>
-
-                    Giá:
-                    <b>" . number_format($p['price']) . "đ</b><br>
-
-                    Đơn vị:
-                    {$p['unit']}
-                ");
-            }
-        }
+        reply("Bạn muốn hỏi giá sản phẩm nào? (Vui lòng nhập tên sản phẩm, ví dụ: 'rau', 'cà chua'...)", 'asking_price');
     }
 
     /* =========================================================
@@ -745,6 +745,11 @@ function sendChat(){
 
     formData.append('farm2home_chatbot', 1);
     formData.append('message', message);
+    
+    const currentContext = sessionStorage.getItem('chatContext');
+    if (currentContext) {
+        formData.append('context', currentContext);
+    }
 
     fetch(window.location.href, {
         method:'POST',
@@ -771,6 +776,13 @@ function sendChat(){
             const data = JSON.parse(jsonText);
 
             appendMessage('ai', data.reply);
+            
+            if (data.set_context) {
+                sessionStorage.setItem('chatContext', data.set_context);
+            }
+            if (data.clear_context) {
+                sessionStorage.removeItem('chatContext');
+            }
 
         }catch(err){
 
