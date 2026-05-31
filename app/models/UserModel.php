@@ -2,7 +2,6 @@
 class UserModel {
     private $conn;
 
-    // Khởi tạo kết nối DB y hệt file Cart.php của má
     public function __construct() {
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
@@ -24,7 +23,6 @@ class UserModel {
         }
     }
 
-    // Hàm lấy thông tin Khách hàng + Địa chỉ mặc định
     // Lấy thông tin khách hàng theo customer_id
     public function getCustomerById($customer_id) {
         $stmt = $this->conn->prepare("SELECT customer_id, full_name, phone, gender FROM customer WHERE customer_id = ?");
@@ -34,7 +32,7 @@ class UserModel {
         return $result->fetch_assoc();
     }
 
-    // Lấy địa chỉ mặc định của khách hàng (kèm receiver_name)
+    // Lấy địa chỉ mặc định của khách hàng
     public function getDefaultAddress($customer_id) {
         $stmt = $this->conn->prepare("SELECT address_id, receiver_name, province, district, ward, street_address FROM address WHERE customer_id = ? AND is_default = 1 LIMIT 1");
         $stmt->bind_param("s", $customer_id);
