@@ -15,7 +15,6 @@ function changeQty(delta) {
         cartQty.value = val;
     }
 }
-
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('qtyInput');
     const cartQty = document.getElementById('cartQuantity');
