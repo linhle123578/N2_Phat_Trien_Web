@@ -7,7 +7,6 @@ class ProductDetailModel
     {
         $this->conn = $conn;
     }
-
     public function getFirstProduct(): ?array
     {
         $query = "SELECT * FROM product LIMIT 1";
@@ -15,7 +14,6 @@ class ProductDetailModel
         $row = mysqli_fetch_assoc($result);
         return $row ?: null;
     }
-
     public function getProductById(string $id): ?array
     {
         $query = "SELECT * FROM product WHERE product_id = ?";
@@ -28,7 +26,6 @@ class ProductDetailModel
         mysqli_stmt_close($stmt);
         return $row ?: null;
     }
-
     public function getRelatedProducts(string $category_id, string $exclude_id, int $limit = 4): array
     {
         $query = "SELECT * FROM product WHERE category_id = ? AND product_id != ? LIMIT ?";
