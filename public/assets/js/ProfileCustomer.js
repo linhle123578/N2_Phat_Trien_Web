@@ -1,13 +1,11 @@
 "use strict";
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Avatar đã bị xóa — không gọi initAvatarPreview nữa
     initPasswordToggles();
     initAddressToggle();
     initPasswordValidation();
 });
 
-/* ── Password Toggles ────────────────────────────────────── */
 function initPasswordToggles() {
     document.querySelectorAll(".btn-eye[data-target]").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -21,7 +19,6 @@ function initPasswordToggles() {
     });
 }
 
-/* ── Add Address Form Toggle ─────────────────────────────── */
 function initAddressToggle() {
     const btnShow   = document.getElementById("btnShowAddAddr");
     const btnCancel = document.getElementById("btnCancelAddAddr");
@@ -42,7 +39,6 @@ function initAddressToggle() {
     }
 }
 
-/* ── Password Match Validation ───────────────────────────── */
 function initPasswordValidation() {
     const newPw  = document.getElementById("fieldPwNew");
     const confPw = document.getElementById("fieldPwConfirm");
