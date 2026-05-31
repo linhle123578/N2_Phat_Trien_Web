@@ -1,8 +1,4 @@
 <?php
-/**
- * Model: ReturnRequestModel
- * Xử lý dữ liệu liên quan đến yêu cầu đổi/trả hàng
- */
 class ReturnRequestModel
 {
     private $conn;
@@ -70,7 +66,6 @@ class ReturnRequestModel
 
     /**
      * Tạo yêu cầu trả hàng mới
-     * Trả về return_id nếu thành công, null nếu thất bại
      */
     public function createReturnRequest(array $data): ?string
     {
@@ -136,8 +131,7 @@ class ReturnRequestModel
     }
 
     /**
-     * Kiểm tra đơn hàng có đủ điều kiện trả không
-     * (status = delivered, trong vòng 2 ngày, chưa có return pending)
+     * Kiểm tra điều kiện đơn hàng
      */
     public function checkEligibility(string $order_id, string $customer_id): array
     {
@@ -146,7 +140,7 @@ class ReturnRequestModel
         if (!$info) {
             return ['eligible' => false, 'reason' => 'Không tìm thấy đơn hàng.'];
         }
-        // Kiểm tra đã có return chưa TRƯỚC!
+        // Kiểm tra đã có return chưa
         $stmt = mysqli_prepare($this->conn,
             "SELECT return_id FROM returnrequest
              WHERE order_id = ? LIMIT 1");
