@@ -248,22 +248,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-// ── 6. CHỌN PHÂN HỆ KHÁCH HÀNG / QUẢN LÝ
 $(document).ready(function () {
-    // Xử lý sự kiện click chuyển đổi tab giữa Người dùng và Quản lý
     $('.role-tab').on('click', function () {
 
-        // Loại bỏ trạng thái active của tab cũ và thêm vào tab vừa click
         $('.role-tab').removeClass('active');
         $(this).addClass('active');
 
-        // Lấy giá trị vai trò (customer hoặc admin)
         const selectedRole = $(this).data('role');
 
-        // Cập nhật giá trị vào input ẩn trong form để gửi lên PHP xử lý
         $('#login_role').val(selectedRole);
 
-        // Nếu chọn Quản lý thì ẩn dòng "Đăng ký ngay" đi, chọn Người dùng thì hiện lại
         if (selectedRole === 'admin') {
             $('#signup-redirect-text').addClass('d-none');
         } else {
