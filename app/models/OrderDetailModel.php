@@ -23,9 +23,6 @@ class OrderDetailModel {
         mysqli_set_charset($this->conn, "utf8");
     }
 
-    /**
-     * Thêm 1 sản phẩm vào orderitem (dùng bảng orderitem theo chuẩn CartModel)
-     */
     public function addDetail($order_id, $product_id, $price, $quantity) {
         $oid   = $this->conn->real_escape_string($order_id);
         $pid   = $this->conn->real_escape_string($product_id);
