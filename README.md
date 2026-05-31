@@ -1,3 +1,13 @@
+**GIỚI THIỆU WEBSITE THƯƠNG MẠI ĐIỆN TỬ FARM2HOME**
+
+Farm2Home là một ứng dụng Web thương mại điện tử được thiết kế chuyên biệt cho lĩnh vực nông sản sạch, cho phép người dùng dễ dàng tìm kiếm, đặt mua và theo dõi nguồn gốc sản phẩm trực tiếp từ các nông trại uy tín.
+
+Trong đó, “Farm” đại diện cho nguồn nông sản tươi, an toàn và có xuất xứ rõ ràng; “Home” tượng trưng cho các hộ gia đình – nhóm khách hàng mục tiêu; còn “2” thể hiện sự kết nối trực tiếp, nhanh chóng và minh bạch từ nông trại đến bàn ăn. 
+
+Qua đó, Farm2Home không chỉ là một trang thương mại điện tử về nông sản sạch mà còn là cam kết về chất lượng, uy tín và phát triển bền vững, hướng tới mục tiêu trở thành một trong những nền tảng thương mại điện tử chuyên biệt hàng đầu tại Việt Nam trong lĩnh vực phân phối nông sản địa phương.
+
+**CÁC BƯỚC THIẾT LẬP VÀ KHỞI CHẠY TRANG WEB**
+
 **1. Clone dự án từ Github về máy tính cá nhân**
 
 Mở Visual Code, tại thanh chức năng bên trái, chọn Source Control, màn hình sẽ hiển thị ra 2 lựa chọn như dưới đây, bấm Clone Repository.
