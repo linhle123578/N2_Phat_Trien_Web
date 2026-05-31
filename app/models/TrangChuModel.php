@@ -4,7 +4,7 @@ require_once "core/model.php";
 
 class ProductModel extends model {
 
-    // Lấy sản phẩm nổi bật
+    // Lấy sản phẩm
     public function getFeaturedProducts() {
 
         $sql = "
