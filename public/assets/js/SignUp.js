@@ -3,10 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const phoneInput = document.getElementById("phone");
     const submitBtn = document.getElementById("btnSubmitForm");
     
-    // Biến trạng thái lưu trữ việc SĐT hợp lệ và không trùng lặp
     let isPhoneValidAndAvailable = false;
 
- // 1. KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI REAL-TIME (ĐÃ SỬA LỖI ĐƯỜNG TRUYỀN)
+ // 1. KIỂM TRA TRÙNG SỐ ĐIỆN THOẠI REAL-TIME
     phoneInput.addEventListener("change", function () {
         const phoneValue = phoneInput.value.trim();
         const msgEl = document.getElementById("msg-phone");
@@ -23,15 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Đẩy tham số action lên URL parameter để Controller bóc tách chính xác bằng $_GET['action']
         fetch("../../controllers/customer/SignUpController.php?action=checkPhone", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: "phone=" + encodeURIComponent(phoneValue) // Truyền thuần số điện thoại dưới body
+            body: "phone=" + encodeURIComponent(phoneValue) 
         })
         .then(response => {
             if (!response.ok) throw new Error("Mất kết nối mạng hoặc Server phản hồi lỗi: " + response.status);
-            return response.json(); // Ép kiểu dữ liệu sang JSON
+            return response.json(); 
         })
         .then(data => {
             if (data.exists) {
@@ -52,11 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
     
-    // 2. XỬ LÝ SUBMIT HOÀN TẤT ĐĂNG KÝ
     form.addEventListener("submit", function (e) {
-        e.preventDefault(); // Ngăn trang reload
-
-        // Reset các tin nhắn báo lỗi cũ
+        e.preventDefault(); 
         document.querySelectorAll(".invalid-msg").forEach(el => el.textContent = "");
         const serverAlert = document.getElementById("server-alert");
         serverAlert.className = "alert d-none";
@@ -65,17 +60,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const confirmPassword = document.getElementById("confirm_password").value;
-        const agreeTerms = document.getElementById("agreeTerms").checked; // Lấy đúng giá trị True/False
-
+        const agreeTerms = document.getElementById("agreeTerms").checked;
         let hasError = false;
 
-        // Bắt lỗi Họ tên
         if (fullname === "") {
             document.getElementById("msg-fullname").textContent = "Vui lòng nhập họ tên.";
             hasError = true;
         }
 
-        // Bắt lỗi Số điện thoại bằng Regex thay vì chờ trạng thái AJAX (để tránh race condition)
+        // Bắt lỗi Số điện thoại
         const phoneValue = document.getElementById("phone").value.trim();
         const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
         if (!phoneRegex.test(phoneValue)) {
@@ -101,16 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
             hasError = true;
         }
 
-        // KHẮC PHỤC LỖI: KIỂM TRA BẮT BUỘC ĐỒNG Ý ĐIỀU KHOẢN
         if (!agreeTerms) {
             document.getElementById("msg-agree").textContent = "Bạn phải đồng ý với điều khoản điều kiện để đăng ký.";
             hasError = true;
         }
 
-        // Nếu có bất kỳ lỗi nào thì dừng luồng submit ngay lập tức
         if (hasError) return;
 
-        // Khóa nút submit tránh spam click
         submitBtn.disabled = true;
         submitBtn.textContent = "Đang xử lý...";
 
@@ -144,7 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // 3. KHẮC PHỤC LỖI: ICON ẨN/HIỆN MẬT KHẨU KHÔNG HOẠT ĐỘNG
     const toggleEye1 = document.getElementById('toggle-pwd-1');
     const toggleEye2 = document.getElementById('toggle-pwd-2');
 
@@ -166,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
         
         if (field.type === 'password') {
             field.type = 'text';
-            icon.className = 'far fa-eye'; // Hiện mật khẩu (mắt mở)
+            icon.className = 'far fa-eye';
         } else {
             field.type = 'password';
-            icon.className = 'far fa-eye-slash'; // Ẩn mật khẩu (mắt gạch chéo)
+            icon.className = 'far fa-eye-slash'; 
         }
     }
 });
