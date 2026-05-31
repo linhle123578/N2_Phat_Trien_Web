@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initLogoutModal();
 });
 
-/* ── Logout modal ────────────────────────────────────────── */
 function initLogoutModal() {
     const btnLogout       = document.getElementById("btnLogout");
     const logoutOverlay   = document.getElementById("logoutOverlay");
