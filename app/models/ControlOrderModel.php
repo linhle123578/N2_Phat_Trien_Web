@@ -1,6 +1,6 @@
 <?php
 
-// Xoá dấu tiếng Việt để tìm kiếm không phân biệt dấu/hoa thường
+// Xoá dấu tiếng Việt
 function removeAccents($str) {
     $str  = mb_strtolower($str, 'UTF-8');
     $from = ['à','á','ạ','ả','ã','â','ầ','ấ','ậ','ẩ','ẫ','ă','ằ','ắ','ặ','ẳ','ẵ',
@@ -35,7 +35,6 @@ class OrderModel {
             NULL
         );
 
-        // Bỏ qua xác thực chứng chỉ SSL
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
         mysqli_real_connect(
@@ -63,10 +62,7 @@ class OrderModel {
         );
     }
 
-    // ======================
     // ĐẾM YÊU CẦU TRẢ HÀNG
-    // ======================
-
     public function getPendingReturns() {
 
         $pendingReturns = 0;
@@ -87,9 +83,7 @@ class OrderModel {
         return $pendingReturns;
     }
 
-    // ======================
     // UPDATE STATUS
-    // ======================
 
     public function updateStatus(
         $order_id,
@@ -116,9 +110,7 @@ class OrderModel {
         );
     }
 
-    // ======================
     // HANDLE RETURN
-    // ======================
 
     public function handleReturn(
         $return_id,
@@ -144,10 +136,7 @@ class OrderModel {
              WHERE return_id='$return_id'"
         );
     }
-
-    // ======================
     // DELETE ORDER
-    // ======================
 
     public function deleteOrder($order_id) {
 
@@ -184,9 +173,7 @@ class OrderModel {
         );
     }
 
-    // ======================
     // COUNT ORDERS
-    // ======================
 
     public function countOrders(
         $search,
@@ -263,9 +250,7 @@ class OrderModel {
         )['total'];
     }
 
-    // ======================
     // GET ORDERS
-    // ======================
 
     public function getOrders(
         $search,
