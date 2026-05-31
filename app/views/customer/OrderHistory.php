@@ -263,10 +263,10 @@ $BASE_URL = '/n2_phat_trien_web';
                                </form>
                                <?php endif; ?>
 
-                               <a href="OrderDetail.php?id=<?= $e($oid) ?>"
-                                  class="btn-oh btn-oh-primary">
-                                   Chi tiết
-                               </a>
+                               <a href="../../../app/controllers/customer/OrderDetailController.php?id=<?= $e($oid) ?>"
+                                   class="btn-oh btn-oh-primary">
+                                    Chi tiết
+                                </a>
 
                            </div>
                        </div>

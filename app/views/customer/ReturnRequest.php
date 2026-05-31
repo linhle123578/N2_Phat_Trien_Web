@@ -185,7 +185,7 @@ if (!empty($controller->view_name)) {
                             </div>
 
                             <div class="rr-submit-row">
-                                <a href="../../../app/views/customer/OrderDetail.php?id=<?= $e($order_id) ?>" class="btn-rr btn-rr-outline">
+                                <a href="../../../app/controllers/customer/OrderDetailController.php?id=<?= $e($order_id) ?>" class="btn-rr btn-rr-outline">
                                     <i class="bi bi-arrow-left me-1"></i>Quay lại
                                 </a>
                                 <button type="submit" class="btn-rr btn-rr-primary" id="btnSubmit">
@@ -350,7 +350,7 @@ if (!empty($controller->view_name)) {
                     </div>
 
                     <div class="rr-success-actions">
-                        <a href="../../../app/views/customer/OrderDetail.php?id=<?= $e($order_id) ?>" class="btn-rr btn-rr-outline">
+                        <a href="../../../app/controllers/customer/OrderDetailController.php?id=<?= $e($order_id) ?>" class="btn-rr btn-rr-outline">
                             <i class="bi bi-bag-check me-1"></i>Xem đơn hàng
                         </a>
                         <a href="../../../app/views/customer/TrangChu.php" class="btn-rr btn-rr-primary">

@@ -124,7 +124,7 @@ switch ($page) {
 
     case 'orderdetail':
 
-        include __DIR__ . '/../app/views/customer/OrderDetail.php';
+        include __DIR__ . '/../app/controllers/customer/OrderDetailController.php';
 
     break;
 
