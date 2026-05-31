@@ -1,8 +1,4 @@
-/* =========================================================
-   ProductAdmin.js  –  Farm2Home Admin Panel
-   ========================================================= */
 
-// ── Data setup ──────────────────────────────────────────────
 const products = PRODUCTS_FROM_DB.map(p => ({
     ...p,
     stock:       parseInt(p.stock)  || 0,
@@ -22,7 +18,6 @@ let filteredProducts = [...products];
 let productModal = null;
 let deleteModal  = null;
 
-// ── Helpers ─────────────────────────────────────────────────
 function formatPrice(price) {
     return new Intl.NumberFormat('vi-VN').format(price);
 }
@@ -37,7 +32,6 @@ function getStockStatus(stock) {
     return                    { label: 'Còn hàng',  cls: 'badge-in-stock'    };
 }
 
-// ── Render table ─────────────────────────────────────────────
 function renderTable() {
     const tbody = document.getElementById('productTableBody');
     const total = filteredProducts.length;
@@ -112,7 +106,6 @@ function updateInfoBar(from, to, total) {
     el.textContent = `Hiển thị ${from}–${to} trong tổng ${total} sản phẩm`;
 }
 
-// ── Pagination ───────────────────────────────────────────────
 function renderPagination() {
     const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
     const ul = document.getElementById('pagination');
@@ -164,7 +157,6 @@ function changePage(page) {
     document.querySelector('.card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── Alert counters ───────────────────────────────────────────
 function updateAlertCounters() {
     let low = 0, out = 0;
     products.forEach(p => {
@@ -175,7 +167,6 @@ function updateAlertCounters() {
     document.getElementById('countOutOfStock').textContent = out;
 }
 
-// ── Filters ──────────────────────────────────────────────────
 function removeAccents(str) {
     if (!str) return '';
     return String(str)
@@ -203,7 +194,6 @@ function applyFilters() {
     renderTable();
 }
 
-// ── Image upload handler ──────────────────────────────────────
 function setupImageUpload(areaId, inputId, previewId) {
     const area    = document.getElementById(areaId);
     const input   = document.getElementById(inputId);
@@ -239,7 +229,6 @@ function resetImageUpload(areaId, inputId, previewId) {
     if (text) text.textContent = 'Kéo thả hoặc nhấp để chọn ảnh';
 }
 
-// ── Edit modal ───────────────────────────────────────────────
 function openEditModal(id) {
     const p = products.find(x => String(x.product_id) === String(id));
     if (!p) return;
@@ -267,7 +256,6 @@ function openEditModal(id) {
     productModal.show();
 }
 
-// ── Delete modal ─────────────────────────────────────────────
 function openDeleteModal(id) {
     const p = products.find(x => String(x.product_id) === String(id));
     if (!p) return;
@@ -276,7 +264,6 @@ function openDeleteModal(id) {
     deleteModal.show();
 }
 
-// ── Utility ──────────────────────────────────────────────────
 function escHtml(str) {
     return String(str)
         .replace(/&/g,'&amp;')
@@ -304,8 +291,6 @@ function showToast(message, type = 'success') {
         setTimeout(() => wrap.remove(), 320);
     }, 3000);
 }
-
-// ── DOMContentLoaded ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
     productModal = new bootstrap.Modal(document.getElementById('productModal'));
     deleteModal  = new bootstrap.Modal(document.getElementById('deleteModal'));
@@ -342,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const stock  = parseInt(document.getElementById('editStock').value) || 0;
         const unit   = document.getElementById('editUnit').value;
 
-        // Image: prefer newly uploaded file name, fall back to text field
+        // Image
         const fileInput = document.getElementById('editImageFile');
         const fallbackImageName = document.getElementById('editImageName').value.trim();
 
