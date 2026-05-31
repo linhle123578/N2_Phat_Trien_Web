@@ -1,33 +1,19 @@
-/**
- * public/assets/js/MomoPayment.js
- * Xử lý toàn bộ UI trang thanh toán MoMo:
- *   - Gọi API tạo QR ngay khi trang load
- *   - Countdown 15 phút
- *   - Polling trạng thái mỗi 5 giây
- *   - Hiện modal thành công
- *   - Nút "Làm mới QR" khi hết hạn
- *   - Nút "Giả lập thanh toán" (chỉ demo mode)
- */
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ---- Lấy config từ PHP ----
     const ORDER_DATA   = (typeof MOMO_ORDER_DATA !== 'undefined') ? MOMO_ORDER_DATA : {};
     const LIVE_MODE    = ORDER_DATA.live_mode     || false;
     const CONTROLLER   = 'MomoPaymentController.php';
 
-    // order_id có thể null nếu đây là pending flow (chưa tạo đơn)
     let   ORDER_ID     = ORDER_DATA.order_id     || null;
 
-    // ---- Thời gian QR còn hiệu lực (10 phút) ----
-    const QR_DURATION  = 10*60; // giây
+    // ---- Thời gian QR còn hiệu lực
+    const QR_DURATION  = 10*60;
     let   timerSeconds = QR_DURATION;
     let   timerInterval  = null;
     let   pollInterval   = null;
     let   qrExpired      = false;
     let   paymentDone    = false;
 
-    // ---- DOM refs ----
     const qrImg             = document.getElementById('qr-img');
     const qrPlaceholder     = document.getElementById('qr-placeholder');
     const qrLoading         = document.getElementById('qr-loading');
@@ -39,9 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const successModal      = document.getElementById('momo-success-modal');
     const modalOrderId      = document.getElementById('modal-order-id');
 
-    // ================================================================
-    // 1. KHỞI ĐỘNG: Tạo QR ngay khi load trang
-    // ================================================================
+    // Tạo QR ngay khi load trang
     initPayment();
 
     function initPayment() {
@@ -49,9 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchCreateQR();
     }
 
-    // ================================================================
-    // 2. GỌI API TẠO QR
-    // ================================================================
+    // GỌI API TẠO QR
     function fetchCreateQR() {
         qrExpired   = false;
         paymentDone = false;
@@ -83,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 startTimer();
                 startPolling();
 
-                // Thêm nút demo nếu là mock mode
                 if (data.demo_mode) {
                     injectDemoButton();
                 }
@@ -98,9 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ================================================================
-    // 3. HIỆN ẢNH QR
-    // ================================================================
+    // HIỆN ẢNH QR
     function displayQR(url) {
         qrPlaceholder.style.display = 'none';
         qrImg.src = url;
@@ -109,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         qrImg.onerror = () => showQRError('Ảnh QR không tải được. Thử làm mới.');
     }
 
-    // ================================================================
-    // 4. COUNTDOWN TIMER
-    // ================================================================
+    // COUNTDOWN TIMER
     function startTimer() {
         clearInterval(timerInterval);
         timerSeconds = QR_DURATION;
@@ -147,9 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRefresh.classList.add('show');
     }
 
-    // ================================================================
-    // 5. POLLING TRẠNG THÁI (mỗi 5 giây)
-    // ================================================================
+    // POLLING TRẠNG THÁI
     function startPolling() {
         stopPolling();
         pollInterval = setInterval(checkPaymentStatus, 5000);
@@ -186,9 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(err => console.warn('Polling error (sẽ thử lại):', err));
     }
 
-    // ================================================================
-    // 6. THANH TOÁN THÀNH CÔNG
-    // ================================================================
+    // THANH TOÁN THÀNH CÔNG
     function onPaymentSuccess() {
         if (paymentDone) return;
         paymentDone = true;
@@ -209,9 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 800);
     }
 
-    // ================================================================
-    // 7. LÀM MỚI QR
-    // ================================================================
+    // LÀM MỚI QR
     window.refreshQR = function () {
         clearInterval(timerInterval);
         stopPolling();
@@ -224,9 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchCreateQR();
     };
 
-    // ================================================================
-    // 8. DEMO MODE: Nút giả lập thanh toán thành công
-    // ================================================================
+    // Nút giả lập thanh toán thành công
     function injectDemoButton() {
         // Tránh thêm 2 lần
         if (document.getElementById('btn-mock-confirm')) return;
@@ -293,9 +262,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ================================================================
-    // HELPERS
-    // ================================================================
     function showQRLoading(show) {
         if (!qrLoading) return;
         if (show) {
@@ -319,7 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnRefresh.classList.add('show');
     }
 
-    // Đóng modal khi click ngoài
     if (successModal) {
         successModal.addEventListener('click', (e) => {
             if (e.target === successModal) {
