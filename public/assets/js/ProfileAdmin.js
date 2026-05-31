@@ -1,12 +1,8 @@
-/**
- * ProfileAdmin.js
- * Farm2Home Admin – Tài khoản của tôi
- */
+
 
 (function () {
     "use strict";
 
-    /* ── Sidebar toggle (mobile) ──────────────────── */
     function initSidebar() {
         const sidebar  = document.getElementById("paSidebar");
         const btnToggle = document.getElementById("btnToggle");
@@ -31,36 +27,6 @@
         overlay && overlay.addEventListener("click", closeSidebar);
     }
 
-    /* ── Avatar preview ───────────────────────────── */
-    function initAvatarPreview() {
-        const input   = document.getElementById("avatarInput");
-        const preview = document.getElementById("avatarPreview");
-
-        if (!input || !preview) return;
-
-        input.addEventListener("change", function () {
-            const file = this.files[0];
-            if (!file) return;
-
-            const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-            if (!validTypes.includes(file.type)) {
-                showToast("Chỉ hỗ trợ ảnh JPG, PNG, GIF, WEBP.", "danger");
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                showToast("Ảnh quá lớn (tối đa 5MB).", "danger");
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                preview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    /* ── Password eye toggle ──────────────────────── */
     function initPasswordToggles() {
         document.querySelectorAll(".pa-eye-btn[data-target]").forEach((btn) => {
             btn.addEventListener("click", function () {
@@ -81,7 +47,6 @@
         });
     }
 
-    /* ── Password match validation ────────────────── */
     function initPasswordValidation() {
         const newPw  = document.getElementById("new_password");
         const confPw = document.getElementById("confirm_password");
@@ -106,7 +71,6 @@
         confPw.addEventListener("input", check);
     }
 
-    /* ── Inline toast helper ──────────────────────── */
     function showToast(message, type) {
         type = type || "info";
 
@@ -131,7 +95,6 @@
         }, 4000);
     }
 
-    /* ── Active nav link highlight ────────────────── */
     function initActiveNav() {
         const current = window.location.pathname;
         document.querySelectorAll(".pa-link").forEach((link) => {
@@ -142,7 +105,6 @@
         });
     }
 
-    /* ── Bootstrap form validation ────────────────── */
     function initFormValidation() {
         document.querySelectorAll("form").forEach((form) => {
             form.addEventListener("submit", function (event) {
@@ -155,7 +117,6 @@
         });
     }
 
-    /* ── Init ─────────────────────────────────────── */
     document.addEventListener("DOMContentLoaded", function () {
         initSidebar();
         initAvatarPreview();
