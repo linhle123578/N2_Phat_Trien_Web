@@ -23,13 +23,6 @@ class OrderModel {
         mysqli_set_charset($this->conn, "utf8");
     }
 
-    /**
-     * Tạo đơn hàng mới
-     * [FIX 2] Chỉ INSERT các cột thực sự có trong bảng `order`:
-     *   order_id, customer_id, address_id, order_status,
-     *   total_quantity_order, created_at
-     * Trả về order_id hoặc false nếu lỗi
-     */
     public function createOrder($customer_id, $address_id, $shipment_id, $total_amount, $payment_method) {
         $order_id = 'ORD-' . strtoupper(substr(uniqid(), -8));
         $cid      = $this->conn->real_escape_string($customer_id);
@@ -37,7 +30,7 @@ class OrderModel {
         $addr_id  = $address_id ? "'" . $this->conn->real_escape_string($address_id) . "'" : "NULL";
         $ship_id  = $shipment_id ? "'" . $this->conn->real_escape_string($shipment_id) . "'" : "NULL";
 
-        // Đếm tổng số lượng sản phẩm từ session (nếu có, không thì để 0)
+        // Đếm tổng số lượng sản phẩm từ session
         $checkout_items = $_SESSION['checkout_items'] ?? [];
         $total_qty = 0;
         foreach ($checkout_items as $item) {
@@ -56,7 +49,6 @@ class OrderModel {
             return false;
         }
 
-        // Tạo dữ liệu thanh toán
         $pay_id = 'PAY-' . strtoupper(substr(uniqid(), -8));
         $pay_method = $this->conn->real_escape_string($payment_method);
         $total = (float)$total_amount;
@@ -83,7 +75,7 @@ class OrderModel {
     }
 
     /**
-     * Lấy danh sách sản phẩm của 1 đơn hàng (JOIN orderitem + product)
+     * Lấy danh sách sản phẩm của 1 đơn hàng
      */
     public function getOrderItems($order_id) {
         $oid  = $this->conn->real_escape_string($order_id);
