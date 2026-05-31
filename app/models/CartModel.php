@@ -3,7 +3,7 @@ class CartModel {
     private $conn;
 
     public function __construct() {
-        // Khởi tạo kết nối cho database đám mây (yêu cầu SSL)
+        // Khởi tạo kết nối cho database
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
@@ -75,7 +75,7 @@ class CartModel {
         $r_addr = $this->conn->query("SELECT address_id FROM address WHERE customer_id = '$customer_id' AND is_default = 1 LIMIT 1")->fetch_assoc();
         $address_id = $r_addr ? "'" . $r_addr['address_id'] . "'" : "NULL";
 
-        // Insert Order
+       
         $order_id = 'ORD-' . strtoupper(substr(uniqid(), -8));
         $ok = $this->conn->query("INSERT INTO `order` (order_id, customer_id, address_id, order_status, total_amount, created_at)
                                   VALUES ('$order_id', '$customer_id', $address_id, 'pending', $total_amount, NOW())");
