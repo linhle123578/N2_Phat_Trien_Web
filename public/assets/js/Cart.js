@@ -19,7 +19,6 @@ function setItemQty(item, qty) {
     saveQtyToDB(item, safeQty);
 }
 
-// Lưu số lượng lên DB qua AJAX
 function saveQtyToDB(item, qty) {
     const deleteBtn  = item.querySelector('.delete-btn');
     const cartItemId = deleteBtn ? deleteBtn.dataset.id : null;
@@ -48,7 +47,6 @@ function updateItemTotal(item) {
     if (totalEl) totalEl.textContent = formatVND(price * qty);
 }
 
-// ── Quantity button state
 
 function updateQtyButtons(item) {
     const minusBtn = item.querySelector('.qty-minus');
@@ -70,12 +68,10 @@ function updateQtyButtons(item) {
     }
 }
 
-// ── Summary calculation
 
 function updateSummary() {
     const items = document.querySelectorAll('.cart-item');
     let subtotal = 0;
-    // Đếm tổng số loại sản phẩm hiện có trong DOM để update lên badge header
     const totalItemsCount = items.length; 
 
     items.forEach(item => {
@@ -94,7 +90,6 @@ function updateSummary() {
     const summaryTotal = document.getElementById('summary-total');
     const cartCountEl = document.getElementById('cart-count');
 
-    // Chỗ này cũng cập nhật lại chữ "Tạm tính (x món)" dựa vào số lượng sản phẩm được tick
     const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
     if (summaryLabel) summaryLabel.textContent = 'Tạm tính (' + checkedCount + ' món)';
     
@@ -108,13 +103,11 @@ function updateSummary() {
         summaryTotal.classList.add('summary-updated');
     }
 
-    // Cập nhật số lượng trên icon Header
     if (cartCountEl) {
         cartCountEl.textContent = totalItemsCount;
     }
 }
 
-// ── Item appearance (dim unchecked)
 
 function updateItemAppearance(item) {
     const checkbox = item.querySelector('.item-checkbox');
@@ -122,18 +115,15 @@ function updateItemAppearance(item) {
     item.classList.toggle('unchecked', !checked);
 }
 
-// ── Delete item 
 
 function deleteItem(item) {
     if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?')) return;
 
-    // Lấy ID sản phẩm cần xóa
     const btn = item.querySelector('.delete-btn');
     const cartItemId = btn ? btn.dataset.id : null;
     
     if (!cartItemId) return;
 
-    // SỬA ĐƯỜNG DẪN THÀNH 'CartController.php'
     fetch('../../../app/controllers/customer/CartController.php', { 
         method : 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -161,7 +151,6 @@ function deleteItem(item) {
     });
 }
 
-//  Event delegation 
 
 const cartItems = document.getElementById('cart-items');
 
@@ -212,7 +201,6 @@ if (cartItems) {
     });
 }
 
-// Init
 
 document.querySelectorAll('.cart-item').forEach(function(item) {
     updateItemTotal(item);
@@ -222,7 +210,6 @@ document.querySelectorAll('.cart-item').forEach(function(item) {
 
 updateSummary();
 
-// ── Xử lý Submit Form Thanh Toán
 const checkoutForm = document.getElementById('checkout-form');
 
 if (checkoutForm) {
@@ -230,35 +217,22 @@ if (checkoutForm) {
         const selectedInputsDiv = document.getElementById('selected-inputs');
         if (!selectedInputsDiv) return;
 
-        // Xóa dữ liệu cũ nếu có
         selectedInputsDiv.innerHTML = ''; 
 
-        // Tìm tất cả các checkbox sản phẩm ĐANG ĐƯỢC TICK
         const checkedItems = document.querySelectorAll('.item-checkbox:checked');
-        
-        // Chặn submit nếu chưa chọn món nào
-        /*if (checkedItems.length === 0) {
-            e.preventDefault();
-            alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!');
-            return;
-        }*/
 
-        // Lặp qua từng món được chọn, tạo thẻ input ẩn nhét vào form
         checkedItems.forEach(checkbox => {
             const cartItem = checkbox.closest('.cart-item');
             
-            // Lấy ID sản phẩm (Giả định ID nằm ở value của checkbox, vd: <input type="checkbox" value="10">)
             const productId = checkbox.value; 
             const qty = getItemQty(cartItem);
 
-            // 1. Tạo thẻ input chứa ID sản phẩm (name="selected[]")
             const idInput = document.createElement('input');
             idInput.type = 'hidden';
             idInput.name = 'selected[]';
             idInput.value = productId;
             selectedInputsDiv.appendChild(idInput);
 
-            // 2. Tạo thẻ input chứa Số lượng tương ứng (name="qty[id]")
             const qtyInput = document.createElement('input');
             qtyInput.type = 'hidden';
             qtyInput.name = `qty[${productId}]`;
@@ -266,7 +240,6 @@ if (checkoutForm) {
             selectedInputsDiv.appendChild(qtyInput);
         });
         
-        // Sau khi nhét đủ input ẩn vào DOM, form sẽ tự động submit đi tiếp
     });
 
 }
