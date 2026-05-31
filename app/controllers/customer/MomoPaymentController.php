@@ -66,7 +66,9 @@ class MomoPaymentController
 
         // Lấy tên/giá sản phẩm từ cart DB để hiện lên UI
         require_once __DIR__ . "/../../models/CartModel.php";
+        require_once __DIR__ . "/../../models/ProductModel.php";
         $cartModel = new CartModel();
+        $productModel = new ProductModel();
         $all_cart_items = $cartModel->getCartItems($_SESSION['customer_id']);
         $cart_map = [];
         foreach ($all_cart_items as $ci) {
@@ -80,6 +82,7 @@ class MomoPaymentController
             $qty = (int)($item['quantity'] ?? 1);
             $ci  = $cart_map[$pid] ?? null;
             if ($ci) {
+                // Sản phẩm có trong giỏ hàng DB
                 $order_products[] = [
                     'product_name'  => $ci['product_name'],
                     'product_image' => $ci['product_image'],
@@ -88,6 +91,19 @@ class MomoPaymentController
                     'unit'          => $ci['unit'] ?? '',
                 ];
                 $subtotal += $ci['unit_price'] * $qty;
+            } else {
+                // Fallback: mua ngay (buy_now) - sản phẩm không có trong cart DB
+                $prod = $productModel->getProductById($pid);
+                if ($prod) {
+                    $order_products[] = [
+                        'product_name'  => $prod['product_name'],
+                        'product_image' => $prod['product_image'],
+                        'price'         => $prod['price'],
+                        'quantity'      => $qty,
+                        'unit'          => $prod['unit'] ?? '',
+                    ];
+                    $subtotal += $prod['price'] * $qty;
+                }
             }
         }
 
@@ -135,10 +151,20 @@ class MomoPaymentController
             $cart_item_id_map[$ci['product_id']] = $ci['cart_item_id'];
         }
 
+        require_once __DIR__ . "/../../models/ProductModel.php";
+        $productModel = new ProductModel();
+
         foreach ($cart as $item) {
             $pid   = $item['product_id'];
             $qty   = (int)($item['quantity'] ?? 1);
-            $price = $price_map[$pid] ?? 0;
+
+            // Lấy giá: ưu tiên cart DB, fallback sang ProductModel (cho trường hợp buy_now)
+            if (isset($price_map[$pid])) {
+                $price = $price_map[$pid];
+            } else {
+                $prod  = $productModel->getProductById($pid);
+                $price = $prod ? $prod['price'] : 0;
+            }
 
             // Lưu order detail
             $orderDetailModel->addDetail($order_id, $pid, $price, $qty);
@@ -146,7 +172,7 @@ class MomoPaymentController
             // Trừ tồn kho
             $orderModel->decreaseStock($pid, $qty);
 
-            // Xóa khỏi cart DB
+            // Xóa khỏi cart DB (chỉ xóa nếu có trong cart, buy_now không có)
             $cid = $cart_item_id_map[$pid] ?? null;
             if ($cid) $cartModel->deleteItem($cid);
         }
