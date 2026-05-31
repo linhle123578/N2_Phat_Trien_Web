@@ -38,9 +38,7 @@ class LogInModel {
         $this->conn->query("SET NAMES 'utf8mb4'");
     }
 
-    /**
-     * 2. XỬ LÝ KIỂM TRA ĐĂNG NHẬP
-     */
+    //2. XỬ LÝ KIỂM TRA ĐĂNG NHẬP
     public function checkCredentials($identity, $password) {
         $identity = $this->conn->real_escape_string($identity);
         $md5_password = md5($password);
@@ -93,9 +91,7 @@ class LogInModel {
         return false;
     }
 
-    /**
-     * 3. KIỂM TRA EMAIL TỒN TẠI (Dùng cho luồng quên mật khẩu/gửi OTP)
-     */
+    //3. KIỂM TRA EMAIL TỒN TẠI 
     public function getUserByEmail($email) {
         $email = $this->conn->real_escape_string($email);
         
@@ -112,9 +108,7 @@ class LogInModel {
         return false;
     }
 
-    /**
-     * 4. TIẾN HÀNH ĐẶT LẠI MẬT KHẨU MỚI (Mã hóa MD5)
-     */
+    //4. ĐẶT LẠI MẬT KHẨU MỚI
     public function updatePassword($email, $new_password) {
         $email = $this->conn->real_escape_string($email);
         $md5_password = md5($new_password);
