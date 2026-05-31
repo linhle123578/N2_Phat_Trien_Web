@@ -5,31 +5,31 @@ document.addEventListener("DOMContentLoaded", function () {
     new Chart(trendCtx, {
         type: 'line',
         data: {
-            labels: trendLabels, // Mảng tháng/năm truyền từ view
+            labels: trendLabels,
             datasets: [
                 {
                     label: 'Doanh thu (VND)',
                     data: trendRevenues,
-                    borderColor: '#f0a04b',       // Màu cam đất thương hiệu
+                    borderColor: '#f0a04b',      
                     backgroundColor: 'rgba(240, 160, 75, 0.08)',
                     borderWidth: 3,
                     pointBackgroundColor: '#f0a04b',
                     pointRadius: 4,
                     yAxisID: 'yRevenue',
-                    tension: 0.35,                // Đường cong mượt mềm
+                    tension: 0.35,             
                     fill: true
                 },
                 {
                     label: 'Sản lượng (Đơn hàng)',
                     data: trendOrders,
-                    borderColor: '#183a1d',       // Màu xanh lá thẫm ruộng vườn
+                    borderColor: '#183a1d',      
                     backgroundColor: 'transparent',
                     borderWidth: 3,
                     pointBackgroundColor: '#183a1d',
                     pointRadius: 4,
                     yAxisID: 'yOrderVolume',
                     tension: 0.2,
-                    borderDash: [6, 4]            // Nét đứt phân tách
+                    borderDash: [6, 4]    
                 }
             ]
         },
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     type: 'linear',
                     position: 'right',
                     title: { display: true, text: 'Số lượng đơn hàng', font: { weight: 'bold' } },
-                    grid: { drawOnChartArea: false } // Giữ lưới sạch không chồng chéo
+                    grid: { drawOnChartArea: false }
                 }
             }
         }
@@ -72,11 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 data: pieData, // Mảng phần trăm tương ứng
                 backgroundColor: [
-                    '#183a1d', // Xanh lá đậm
-                    '#f0a04b', // Cam đất
-                    '#28a745', // Xanh lá sáng
-                    '#a3b899', // Xanh xám nhạt
-                    '#adb5bd'  // Xám trung tính
+                    '#183a1d', 
+                    '#f0a04b', 
+                    '#28a745', 
+                    '#a3b899', 
+                    '#adb5bd'
                 ],
                 borderWidth: 2,
                 borderColor: '#ffffff'
