@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ----------------------------------------------------------------
-    // Config & biến trạng thái
-    // ----------------------------------------------------------------
     const subtotal         = typeof DB_SUBTOTAL !== 'undefined' ? DB_SUBTOTAL : 0;
     
     let currentShippingFee = 0;
@@ -11,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentShippingFee = parseFloat(initialShippingRadio.dataset.price || 0);
     }
 
-    // Đọc thông tin khách hàng từ data-attributes (PHP render sẵn - chính xác hơn)
     const nameEl    = document.getElementById('display-name');
     const addrEl    = document.getElementById('display-address');
     let customerData = {
@@ -22,9 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         new_address: null
     };
 
-    // ----------------------------------------------------------------
-    // DOM refs
-    // ----------------------------------------------------------------
     const addressModal      = document.getElementById('address-modal');
     const btnChangeAddress  = document.getElementById('btn-change-address');
     const btnCancelAddress  = document.getElementById('btn-cancel-address');
@@ -45,16 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (finalTotalDisplay)  finalTotalDisplay.innerText  = formatCurrency(total);
     };
 
-    // ----------------------------------------------------------------
-    // Modal đổi địa chỉ
-    // ----------------------------------------------------------------
     const addressListView = document.getElementById('address-list-view');
     const addressFormView = document.getElementById('address-form-view');
     const btnShowAddForm  = document.getElementById('btn-show-add-form');
     const btnCancelAddForm = document.getElementById('btn-cancel-add-form');
     const btnConfirmAddAddress = document.getElementById('btn-confirm-add-address');
 
-    // Mở modal (reset về view danh sách nếu có)
     btnChangeAddress?.addEventListener('click', () => {
         if (addressListView && addressFormView) {
             addressListView.style.display = 'block';
@@ -138,10 +127,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addressModal?.classList.remove('active');
     });
-
-    // ----------------------------------------------------------------
+    
     // Chọn vận chuyển
-    // ----------------------------------------------------------------
     shippingRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             document.querySelectorAll('input[name="shipping"]').forEach(r => {
@@ -153,9 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----------------------------------------------------------------
     // Chọn thanh toán
-    // ----------------------------------------------------------------
     paymentRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             document.querySelectorAll('input[name="payment"]').forEach(r => {
@@ -165,14 +150,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----------------------------------------------------------------
     // ĐẶT HÀNG
-    // ----------------------------------------------------------------
     btnPlaceOrder?.addEventListener('click', () => {
         const selectedPayment = document.querySelector('input[name="payment"]:checked')?.value || 'cod';
         const totalAmount     = subtotal + currentShippingFee;
 
-        // Validate địa chỉ
         if (!customerData.name || !customerData.phone || !customerData.address) {
             showCheckoutError('Vui lòng kiểm tra lại thông tin giao hàng!');
             return;
@@ -236,9 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateTotal();
 
-    // ================================================================
-    // HELPERS (trong cùng scope DOMContentLoaded)
-    // ================================================================
 
     function showCODSuccessModal(order_id) {
         let modal = document.getElementById('cod-success-modal');
@@ -309,4 +288,4 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { if (errEl) errEl.textContent = ''; }, 5000);
     }
 
-}); // end DOMContentLoaded
+}); 
