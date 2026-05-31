@@ -1,8 +1,4 @@
 <?php
-/**
- * Model: OrderHistoryModel
- * Xử lý truy vấn dữ liệu đơn hàng và trả hàng
- */
 class OrderHistoryModel
 {
     private $conn;
@@ -73,7 +69,7 @@ class OrderHistoryModel
     }
 
     /**
-     * Lấy danh sách đơn hàng (lọc theo tab)
+     * Lấy danh sách đơn hàng
      */
     public function getOrders(string $customer_id, string $tab): array
     {
@@ -146,8 +142,7 @@ class OrderHistoryModel
     }
 
     /**
-     * Kiểm tra đơn hàng đã được giao trong vòng X ngày không
-     * Trả về true nếu còn trong thời hạn trả hàng
+     * Kiểm tra đơn hàng đã được giao trong vòng X ngày
      */
     public function isReturnEligible(string $order_id, int $days = 3): bool
     {
