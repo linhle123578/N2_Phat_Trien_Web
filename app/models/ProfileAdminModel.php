@@ -7,7 +7,6 @@ class ProfileAdminModel
     {
         $this->conn = $conn;
     }
-
     public function getAdminWithAccount(string $admin_id): ?array
     {
         $sql = "
