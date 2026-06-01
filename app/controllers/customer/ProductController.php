@@ -11,14 +11,13 @@ class ProductController {
         $this->model = new ProductModel();
     }
 
-    // Hành động chính: Hiển thị giao diện danh sách
     public function index() {
         // Lấy bộ lọc từ URL (Thanh tìm kiếm, bộ lọc danh mục và drop box)
         $category_filter = isset($_GET['category']) ? $_GET['category'] : '';
         $search_filter = isset($_GET['search']) ? trim($_GET['search']) : '';
         $sort_filter = isset($_GET['sort']) ? $_GET['sort'] : 'latest';
 
-        // Phân trang chuẩn hóa
+        // Phân trang
         $limit = 9;
         $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
         if ($page < 1) $page = 1;
@@ -33,7 +32,7 @@ class ProductController {
             $offset = ($page - 1) * $limit;
         }
 
-        // Lấy dữ liệu đẩy ra view công khai
+        // Lấy dữ liệu đẩy ra view 
         $cat_result = $this->model->getCategories();
         $prod_result = $this->model->getProducts($category_filter, $search_filter, $sort_filter, $limit, $offset);
 
@@ -44,7 +43,6 @@ class ProductController {
         $start_product = ($total_products == 0) ? 0 : $offset + 1;
         $end_product = min($offset + $limit, $total_products);
 
-        // Bao bọc view giao diện vào
         require_once __DIR__ . '/../../views/customer/Products.php';
     }
 
@@ -52,7 +50,7 @@ class ProductController {
     public function addToCartAjax() {
         header('Content-Type: application/json');
 
-        // BẮT BUỘC ĐĂNG NHẬP: Kiểm tra xem Session đã lưu mã khách hàng chưa
+        // Kiểm tra xem Session lưu mã khách hàng 
         if (!isset($_SESSION['customer_id']) || empty($_SESSION['customer_id'])) {
             echo json_encode([
                 'status' => 'not_logged_in',
@@ -85,7 +83,7 @@ class ProductController {
     }
 }
 
-// ROUTER mini xử lý các request hành động trực tiếp
+// ROUTER xử lý các request hành động trực tiếp
 $controller = new ProductController();
 if (isset($_GET['action']) && $_GET['action'] === 'add_to_cart') {
     $controller->addToCartAjax();
