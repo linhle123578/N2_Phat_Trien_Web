@@ -1,9 +1,5 @@
 <?php
-/**
- * Controller: OrderDetailController
- * Nhận request → gọi Model → truyền data xuống View (OrderDetail.php)
- * Pattern tương tự OrderHistoryController
- */
+
 require_once __DIR__ . '/../../models/OrderHistoryModel.php';
 
 class OrderDetailController
@@ -16,7 +12,6 @@ class OrderDetailController
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // Kết nối DB
         $this->conn = mysqli_init();
         mysqli_ssl_set($this->conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($this->conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
@@ -39,9 +34,7 @@ class OrderDetailController
         $this->customer_id = $_SESSION['customer_id'] ?? 'KH001';
     }
 
-    // ----------------------------------------------------------------
     // Action chính: hiển thị chi tiết đơn hàng
-    // ----------------------------------------------------------------
     public function index(): void
     {
         $order_id = trim($_GET['id'] ?? '');
@@ -49,7 +42,7 @@ class OrderDetailController
             die("Mã đơn hàng không hợp lệ.");
         }
 
-        // Bảo vệ: chỉ lấy đơn của đúng customer đang đăng nhập
+        // Chỉ lấy đơn của đúng customer đang đăng nhập
         $orders = $this->model->getOrders($this->customer_id, 'all');
         $order  = null;
         foreach ($orders as $o) {
@@ -114,9 +107,7 @@ class OrderDetailController
         $this->render('OrderDetail', $data);
     }
 
-    // ----------------------------------------------------------------
     // Action: Huỷ đơn hàng (POST cancel_order)
-    // ----------------------------------------------------------------
     public function cancelOrder(): void
     {
         $order_id = trim($_POST['order_id'] ?? $_GET['id'] ?? '');
@@ -144,9 +135,7 @@ class OrderDetailController
         exit;
     }
 
-    // ----------------------------------------------------------------
     // Action: Xác nhận đã nhận hàng (POST confirm_received)
-    // ----------------------------------------------------------------
     public function confirmReceived(): void
     {
         $order_id = trim($_POST['order_id'] ?? $_GET['id'] ?? '');
@@ -165,9 +154,7 @@ class OrderDetailController
         exit;
     }
 
-    // ================================================================
     // PRIVATE helpers
-    // ================================================================
 
     private function fetchPayment(string $order_id): ?array
     {
@@ -228,8 +215,7 @@ class OrderDetailController
         exit;
     }
 
-    // ── Static helpers dùng trong View ──────────────────────────────
-
+    //Static helpers dùng trong View 
     public static function statusLabel(string $s): string
     {
         $s = mb_strtolower($s, 'UTF-8');
@@ -282,7 +268,7 @@ class OrderDetailController
     }
 }
 
-// ── Router ──────────────────────────────────────────────────────────
+// Router
 $ctrl = new OrderDetailController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
