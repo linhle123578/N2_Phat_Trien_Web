@@ -3,7 +3,7 @@ require_once __DIR__ . "/../../models/SignUpModel.php";
 
 class SignUpController {
     
-    // 1. HÀM XỬ LÝ ĐĂNG KÝ THÀNH VIÊN
+    // 1. HÀM XỬ LÝ ĐĂNG KÝ
     public function register() {
         $fullname = trim($_POST['fullname'] ?? '');
         $gender   = trim($_POST['gender'] ?? '');
@@ -62,17 +62,16 @@ class SignUpController {
                 "message" => "Số điện thoại khả dụng."
             ]);
         }
-        exit(); // Ngắt luồng ngay sau khi trả dữ liệu về cho AJAX
+        exit();
     }
 }
 
-// ─── ĐIỀU HƯỚNG REQUEST (ROUTING) Ở CUỐI FILE ───
+// ĐIỀU HƯỚNG REQUEST (ROUTING)
 
 $controller = new SignUpController();
 
-// Kiểm tra xem Javascipt có truyền tham số action=checkPhone trên URL hay không
+// Kiểm tra Javascipt có truyền tham số action=checkPhone trên URL không
 if (isset($_GET['action']) && $_GET['action'] === 'checkPhone') {
-    // Làm sạch bộ đệm đầu ra để chuỗi JSON trả về không bị dính khoảng trắng lỗi
     if (ob_get_length()) ob_clean(); 
     header('Content-Type: application/json; charset=utf-8');
     
