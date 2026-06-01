@@ -32,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['order_id'])) {
     }
     mysqli_stmt_close($stmtItems);
 
-    // 2. Update order status to 'cancelled'
+    // 2. Update order status to cancel
     $stmt = mysqli_prepare($conn, "UPDATE `order` SET order_status = 'cancelled' WHERE order_id = ? AND (order_status = 'pending' OR order_status = 'Chờ xác nhận')");
     mysqli_stmt_bind_param($stmt, 's', $order_id);
     mysqli_stmt_execute($stmt);
 
-    // 3. If successfully updated, restore stock
+    // If success, restore stock
     if (mysqli_stmt_affected_rows($stmt) > 0) {
         $stmtUpdateStock = mysqli_prepare($conn, "UPDATE product SET stock = stock + ? WHERE product_id = ?");
         foreach ($items as $item) {
