@@ -16,7 +16,6 @@ class LogInController {
         }
 
         $model = new LogInModel();
-        // Không dùng $role từ form nữa, lấy role thực tế từ DB để xử lý
         $user = $model->checkCredentials($identity, $password);
 
         if ($user) {
@@ -24,13 +23,13 @@ class LogInController {
             $actual_role = $user['system_role'] ?? 'customer';
             
             if ($actual_role === 'admin') {
-                // Là admin
+                // admin
                 $_SESSION['admin_id']   = $uid;
                 $_SESSION['admin_name'] = $user['full_name'];
                 $_SESSION['role']       = 'admin';
                 echo json_encode(["status" => "admin", "message" => "Đăng nhập thành công!"]);
             } else {
-                // Là khách hàng
+                // khách hàng
                 $_SESSION['customer_id']   = $uid;
                 $_SESSION['customer_name'] = $user['full_name'];
                 $_SESSION['role']          = 'customer';
@@ -43,7 +42,7 @@ class LogInController {
         }
     }
 
-    // ĐIỀU CHỈNH: GỬI MÃ OTP QUA API RESEND (TRẢ VỀ ĐÚNG "otp_sent" ĐỂ KÍCH HOẠT JS)
+    // GỬI MÃ OTP QUA API RESEND (TRẢ VỀ ĐÚNG "otp_sent" ĐỂ KÍCH HOẠT JS)
     public function forgotPassword() {
         if (session_status() === PHP_SESSION_NONE) session_start();
         $email = trim($_POST['email'] ?? '');
@@ -99,7 +98,6 @@ class LogInController {
         curl_close($ch);
 
         if ($httpCode === 200 || $httpCode === 201) {
-            // ĐỔI LẠI THÀNH "otp_sent" ĐỂ KHỚP VỚI KHỐI XỬ LÝ HIỂN THỊ TRONG LogIn.js CỦA BẠN
             echo json_encode(["status" => "otp_sent", "message" => "Mã OTP đã được gửi tới Email của bạn!"]);
         } else {
             echo json_encode(["status" => "error", "message" => "Không thể gửi mail qua Resend API. Mã phản hồi: " . $httpCode . " - Chi tiết: " . $response]);
@@ -113,7 +111,7 @@ class LogInController {
         
         $otp_input = trim($_POST['otp'] ?? '');
         $new_pass = $_POST['new_password'] ?? '';
-        $confirm_pass = $_POST['confirm_new_password'] ?? ''; // Khớp hoàn toàn với name trong form html
+        $confirm_pass = $_POST['confirm_new_password'] ?? '';
 
         $session_data = $_SESSION['reset_password_session'] ?? null;
 
@@ -156,7 +154,7 @@ class LogInController {
     }
 }
 
-// ─── PHÂN LUỒNG ROUTING ĐẦU ĐẾN
+// PHÂN LUỒNG ROUTING ĐẦU ĐẾN
 $controller = new LogInController();
 $action = $_GET['action'] ?? '';
 
@@ -169,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (ob_get_length()) ob_clean(); 
         header('Content-Type: application/json; charset=utf-8');
         $controller->forgotPassword();
-    } elseif ($action === 'reset') { // JavaScript gọi action=reset khi submit formReset
+    } elseif ($action === 'reset') { 
         if (ob_get_length()) ob_clean(); 
         header('Content-Type: application/json; charset=utf-8');
         $controller->resetPassword();
