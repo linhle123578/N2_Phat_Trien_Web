@@ -5,39 +5,19 @@ session_start();
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-/*
-========================================
-TIME ZONE
-========================================
-*/
+/* TIME ZONE */
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 
-/*
-========================================
-BASE URL
-========================================
-*/
+/* BASE URL */
 define('BASE_URL', '/N2_Phat_Trien_Web/public/');
 
-/*
-========================================
-LẤY PAGE
-========================================
-*/
+/* LẤY PAGE */
 $page = $_GET['page'] ?? 'TrangChu';
 
-/*
-========================================
-DEBUG PAGE
-========================================
-*/
+/* DEBUG PAGE */
 // echo $page;
 
-/*
-========================================
-LOGOUT
-========================================
-*/
+/* LOGOUT */
 if ($page == 'logout') {
 
     session_destroy();
@@ -47,25 +27,13 @@ if ($page == 'logout') {
     exit;
 }
 
-/*
-========================================
-CHECK LOGIN
-========================================
-*/
+/* CHECK LOGIN */
 $isLoggedIn = isset($_SESSION['user']);
 
-/*
-========================================
-HEADER
-========================================
-*/
+/* HEADER */
 include __DIR__ . '/../app/views/layouts/header.php';
 
-/*
-========================================
-ROUTER
-========================================
-*/
+/* ROUTER */
 switch ($page) {
 
     case 'TrangChu':
@@ -147,11 +115,7 @@ switch ($page) {
     break;
 }
 
-/*
-========================================
-CHATBOT
-========================================
-*/
+/* CHATBOT */
 if ($page == 'TrangChu') {
 
     $chatbot = __DIR__ . '/../app/views/customer/Chatbot.php';
@@ -162,11 +126,7 @@ if ($page == 'TrangChu') {
     }
 }
 
-/*
-========================================
-FOOTER
-========================================
-*/
+/* FOOTER */
 include __DIR__ . '/../app/views/layouts/footer.php';
 
 ?>
