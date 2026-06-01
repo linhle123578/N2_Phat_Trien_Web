@@ -1,9 +1,3 @@
-/* ══════════════════════════════════════════════════════════════
-   ReturnRequest.css  —  Farm2Home • Đổi/Trả Hàng
-   Font: Plus Jakarta Sans
-   Palette: forest green + warm cream + terracotta accent
-   ══════════════════════════════════════════════════════════════ */
-
 :root {
   --rr-green:      #2d6a4f;
   --rr-green-mid:  #40916c;
@@ -12,7 +6,7 @@
   --rr-border:     #dde8da;
   --rr-text:       #1a2e1c;
   --rr-muted:      #6b7c6e;
-  --rr-terra:      #e07c52;       /* trả hàng accent */
+  --rr-terra:      #e07c52;     
   --rr-terra-lt:   #fdf0eb;
   --rr-error:      #c0392b;
   --rr-error-lt:   #fef2f2;
@@ -22,7 +16,7 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* ── Wrapper ──────────────────────────────────────────── */
+/* Wrapper */
 .rr-wrapper {
   background: var(--rr-cream);
   min-height: calc(100vh - 80px);
@@ -34,7 +28,7 @@
   padding: 0 20px;
 }
 
-/* ── Breadcrumb ───────────────────────────────────────── */
+/* Breadcrumb */
 .rr-breadcrumb {
   display: flex; align-items: center; gap: 8px;
   font-size: .82rem; color: var(--rr-muted); margin-bottom: 24px;
@@ -43,7 +37,7 @@
 .rr-breadcrumb a:hover { text-decoration: underline; }
 .rr-breadcrumb .current { color: var(--rr-text); font-weight: 700; }
 
-/* ── Page title ───────────────────────────────────────── */
+/* Page title */
 .rr-page-title {
   display: flex; align-items: center; gap: 16px;
   margin-bottom: 28px;
@@ -71,7 +65,7 @@
 .rr-alert-error { background: var(--rr-error-lt); color: var(--rr-error);
   border: 1px solid #fbc9c9; }
 
-/* ── Layout ───────────────────────────────────────────── */
+/* Layout */
 .rr-layout {
   display: grid;
   grid-template-columns: 1fr 360px;
@@ -82,7 +76,7 @@
   .rr-layout { grid-template-columns: 1fr; }
 }
 
-/* ── Section ──────────────────────────────────────────── */
+/* Section */
 .rr-section {
   background: #fff;
   border: 1px solid var(--rr-border);
@@ -108,7 +102,7 @@
 .rr-optional { font-size: .75rem; color: var(--rr-muted); font-weight: 500; margin-left: 4px; }
 .rr-required { color: var(--rr-error); }
 
-/* ── Reason chips ─────────────────────────────────────── */
+/* Reason chips */
 .rr-reason-grid {
   display: flex; flex-wrap: wrap; gap: 10px;
 }
@@ -133,7 +127,7 @@
   font-weight: 800;
 }
 
-/* ── Textarea ─────────────────────────────────────────── */
+/* Textarea */
 .rr-textarea {
   width: 100%; border: 1.5px solid var(--rr-border);
   border-radius: var(--rr-radius-sm);
@@ -148,7 +142,7 @@
   text-align: right; font-size: .75rem; color: var(--rr-muted); margin-top: 4px;
 }
 
-/* ── Return type cards ────────────────────────────────── */
+/* Return type cards */
 .rr-type-options {
   display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
 }
@@ -172,7 +166,7 @@
 }
 .rr-type-card.selected i { color: var(--rr-terra); }
 
-/* ── Bank section ─────────────────────────────────────── */
+/* Bank section */
 .rr-bank-section {
   animation: rr-slide-down .25s ease;
 }
@@ -194,14 +188,14 @@
 .rr-input:focus { outline: none; border-color: var(--rr-green-mid); background: #fff; }
 .rr-input.is-invalid { border-color: var(--rr-error); }
 
-/* ── Field errors ─────────────────────────────────────── */
+/* Field errors */
 .rr-field-error {
   font-size: .78rem; color: var(--rr-error); font-weight: 600; margin-top: 4px;
   display: flex; align-items: center; gap: 4px;
 }
 .rr-field-error::before { content: '⚠ '; }
 
-/* ── Submit row ───────────────────────────────────────── */
+/* Submit row  */
 .rr-submit-row {
   display: flex; gap: 12px; justify-content: flex-end;
   margin-top: 8px;
@@ -224,7 +218,7 @@
 }
 .btn-rr-outline:hover { border-color: var(--rr-green); color: var(--rr-green); }
 
-/* ── Summary card ─────────────────────────────────────── */
+/* Summary card */
 .rr-summary-card {
   background: #fff;
   border: 1px solid var(--rr-border);
@@ -278,7 +272,7 @@
 .rr-summary-total span { color: var(--rr-muted); }
 .rr-summary-total strong { font-size: 1.1rem; font-weight: 800; color: var(--rr-terra); }
 
-/* ── Policy box ───────────────────────────────────────── */
+/* Policy box */
 .rr-policy-box {
   margin: 0; padding: 14px 20px 16px;
   background: var(--rr-green-lt);
@@ -292,10 +286,7 @@
 }
 .rr-policy-box li { margin-bottom: 4px; line-height: 1.5; }
 
-/* ══════════════════════════════════════════════════════════
-   ORDER HISTORY additions: nút trả hàng + return banner
-   ══════════════════════════════════════════════════════════ */
-
+/* ORDER HISTORY additions: nút trả hàng + return banner */
 /* Nút trả hàng */
 .btn-oh-return {
   background: var(--rr-terra-lt, #fdf0eb) !important;
@@ -351,9 +342,7 @@
   box-shadow: 0 4px 20px rgba(224,124,82,.12) !important;
 }
 
-/* ══════════════════════════════════════════════════════════
-   SUCCESS PAGE
-   ══════════════════════════════════════════════════════════ */
+/* SUCCESS PAGE */
 .rr-success-container { max-width: 640px; }
 
 .rr-success-card {
