@@ -20,8 +20,7 @@ class MomoPaymentController
         if (session_status() === PHP_SESSION_NONE) session_start();
     }
 
-    // GET → hiển thị trang QR
-    // ----------------------------------------------------------------
+    // Hiển thị trang QR
     public function showPage($order_id)
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -64,7 +63,7 @@ class MomoPaymentController
         $shipping_fee = (int)($pending['shipping_fee'] ?? 25000);
         $total_amount = (int)($pending['total_amount'] ?? 0);
 
-        // Lấy tên/giá sản phẩm từ cart DB để hiện lên UI
+        // Lấy tên/giá sản phẩm từ cart DB 
         require_once __DIR__ . "/../../models/CartModel.php";
         require_once __DIR__ . "/../../models/ProductModel.php";
         $cartModel = new CartModel();
@@ -187,7 +186,6 @@ class MomoPaymentController
     }
 
     // POST action=create_qr
-    // ----------------------------------------------------------------
     public function createQR($order_id)
     {
         header('Content-Type: application/json');
@@ -243,13 +241,12 @@ class MomoPaymentController
     }
 
     // POST action=check_status
-    // ----------------------------------------------------------------
     public function checkStatus($order_id)
     {
         header('Content-Type: application/json');
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        // Nếu chưa có order_id → check trạng thái pending qua MoMo ref
+        // Nếu chưa có order_id, check trạng thái pending qua MoMo ref
         if (!$order_id) {
             if (!MOMO_LIVE_MODE) {
                 // Demo mode: chưa paid
@@ -270,7 +267,7 @@ class MomoPaymentController
             return;
         }
 
-        // Có order_id → đơn đã tồn tại
+        // Có order_id, đơn đã tồn tại
         $order = $this->orderModel->getOrderById($order_id);
         if (!$order) {
             echo json_encode(['status' => 'error', 'message' => 'Không tìm thấy đơn hàng']);
@@ -297,8 +294,7 @@ class MomoPaymentController
         ]);
     }
 
-    // POST action=mock_confirm (DEMO only)
-    // ----------------------------------------------------------------
+    // POST action=mock_confirm
     public function mockConfirm($order_id)
     {
         header('Content-Type: application/json');
@@ -321,7 +317,6 @@ class MomoPaymentController
     }
 
     // POST action=ipn
-    // ----------------------------------------------------------------
     public function handleIPN()
     {
         $raw  = file_get_contents('php://input');
@@ -341,7 +336,7 @@ class MomoPaymentController
 
         $raw_momo_order_id = $data['orderId'] ?? '';
         $parts = explode('_', $raw_momo_order_id);
-        $order_id = $parts[0]; // Chặt đuôi timestamp, lấy lại "ORD-D6B631F3"
+        $order_id = $parts[0]; 
 
         $result_code = (int)($data['resultCode'] ?? -1);
         $trans_id    = $data['transId']    ?? null;
@@ -357,9 +352,7 @@ class MomoPaymentController
         echo json_encode(['message' => 'Received']);
     }
 
-    // ================================================================
     // PRIVATE helpers
-    // ================================================================
     private function callMomoAPI($order_id, $amount)
     {
         $partnerCode = MOMO_PARTNER_CODE;
@@ -369,7 +362,7 @@ class MomoPaymentController
         // Dùng uniqid() để đảm bảo requestId không bao giờ bị trùng dù bạn có spam F5
         $requestId   = $partnerCode . '_' . uniqid();
 
-        // Tạo order_id gắn timestamp lách luật trùng mã
+        // Tạo order_id gắn timestamp 
         $momo_order_id = $order_id . '_' . time();
         $_SESSION['momo_order_id_' . $order_id] = $momo_order_id;
 
@@ -465,11 +458,9 @@ class MomoPaymentController
 
         $momo_order_id = $_SESSION['momo_order_id_' . $order_id] ?? $order_id;
 
-        // SỬA $order_id thành $momo_order_id ở rawHash
         $rawHash   = "accessKey=$accessKey&orderId=$momo_order_id&partnerCode=$partnerCode&requestId=$requestId";
         $signature = hash_hmac('sha256', $rawHash, $secretKey);
 
-        // SỬA $order_id thành $momo_order_id ở payload
         $payload = json_encode([
             'partnerCode' => $partnerCode,
             'accessKey'   => $accessKey,
@@ -563,7 +554,6 @@ class MomoPaymentController
 }
 
 // ROUTER
-// ================================================================
 $action   = $_GET['action']   ?? ($_POST['action']   ?? '');
 $order_id = $_GET['order_id'] ?? ($_POST['order_id'] ?? '');
 
