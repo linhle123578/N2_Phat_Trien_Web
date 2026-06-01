@@ -29,7 +29,7 @@ body {
     font-size: 0.92rem;
 }
 
-/* ── BREADCRUMB ─────────────────────────────────────────── */
+/* BREADCRUMB */
 .profile-breadcrumb {
     padding: 10px 0 4px;
     font-size: 0.82rem;
@@ -40,7 +40,7 @@ body {
 .profile-breadcrumb .sep { margin: 0 6px; }
 .profile-breadcrumb .current { color: var(--green-dark); font-weight: 700; }
 
-/* ── LAYOUT: sidebar + main ─────────────────────────────── */
+/* LAYOUT: sidebar + main */
 .profile-layout {
     display: flex;
     gap: 22px;
@@ -48,7 +48,7 @@ body {
     padding-bottom: 60px;
 }
 
-/* ── SIDEBAR ────────────────────────────────────────────── */
+/* SIDEBAR */
 .profile-sidebar {
     width: 220px;
     flex-shrink: 0;
@@ -143,14 +143,14 @@ body {
 
 .sidebar-logout a:hover { background: #fef2f2; }
 
-/* ── MAIN CONTENT ───────────────────────────────────────── */
+/* MAIN CONTENT */
 .profile-main-solo {
     flex: 1;
     min-width: 0;
     padding-bottom: 0;
 }
 
-/* ── SECTION CARD ───────────────────────────────────────── */
+/* SECTION CARD */
 .section-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -187,8 +187,6 @@ body {
     flex: 1;
 }
 
-/* ── PROFILE TOP ROW (đã xóa avatar — chỉ còn tên + ID) ── */
-/* Xóa .profile-avatar-wrap, .avatar-cam-overlay, #avatarFileInput */
 .profile-top-info {
     padding: 0 22px 18px;
     border-bottom: 1px solid var(--border);
@@ -209,7 +207,7 @@ body {
 
 .pu-id i { margin-right: 4px; }
 
-/* ── INPUT GROUP ─────────────────────────────────────────── */
+/── INPUT GROUP */
 .pc-input-group .input-group-text {
     background: #f8fafc;
     border-color: var(--border);
@@ -254,7 +252,7 @@ body {
 .form-control.is-valid   { border-color: #16a34a !important; }
 .form-control.is-invalid { border-color: #e74c3c !important; }
 
-/* ── SAVE BUTTON ────────────────────────────────────────── */
+/* SAVE BUTTON */
 .btn-save-main {
     background: var(--green-dark);
     color: #fff;
@@ -274,7 +272,7 @@ body {
 .btn-save-main:hover { background: #112d15; transform: translateY(-1px); }
 .btn-save-main:active { transform: translateY(0); }
 
-/* ── EYE BUTTON ─────────────────────────────────────────── */
+/* EYE BUTTON */
 .btn-eye {
     background: #f8fafc;
     border: 1px solid var(--border);
@@ -288,7 +286,7 @@ body {
 }
 .btn-eye:hover { color: var(--green-dark); background: var(--green-light); }
 
-/* ── ALERTS ─────────────────────────────────────────────── */
+/* ALERTS */
 .pc-alert {
     border-radius: 10px;
     padding: 10px 16px;
@@ -301,7 +299,7 @@ body {
 .pc-alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
 .pc-alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
 
-/* ── ADDRESS SECTION ────────────────────────────────────── */
+/* ADDRESS SECTION */
 .btn-add-addr {
     display: inline-flex;
     align-items: center;
@@ -457,7 +455,7 @@ body {
 }
 .btn-addr-del:hover { color: #e74c3c; }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
+/* RESPONSIVE */
 @media (max-width: 860px) {
     .profile-layout { flex-direction: column; gap: 14px; }
     .profile-sidebar { width: 100%; position: static; }
