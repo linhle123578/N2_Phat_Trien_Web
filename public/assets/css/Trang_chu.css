@@ -20,9 +20,7 @@
         .font-headline { font-family: var(--jakarta); }
         .py-section { padding: 80px 0; }
  
-        /* ===================== HEADER (từ file 2 + CSS mới) ===================== */
         
-        /* ===================== FOOTER (từ file 2 + CSS mới) ===================== */
         .footer-custom {
             background-color: #183a1d;
             color: #fefbe9;
@@ -115,7 +113,6 @@
             color: #fefbe9;
         }
  
-        /* ===================== Các phần còn lại giữ nguyên ===================== */
         /* 2. Hero Section - 870px, 3 Slide */
         .hero-section { height: 870px; position: relative; width: 100%; margin-top: 85px; overflow: hidden; }
         .carousel-item-custom { opacity: 0; transition: opacity 1s ease-in-out; position: absolute; inset: 0; z-index: 1; display: none; }
