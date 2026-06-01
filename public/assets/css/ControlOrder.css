@@ -15,8 +15,6 @@
 * { box-sizing:border-box; }
 body { font-family:'Be Vietnam Pro',sans-serif; background:var(--cream); color:var(--text-dark); min-height:100vh; }
 
-
-
 /* NOTIF BADGE on sidebar */
 .notif-dot { min-width:18px; height:18px; border-radius:9px; background:#e74c3c; color:#fff; font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; padding:0 4px; margin-left:auto; }
 
@@ -134,7 +132,7 @@ body { font-family:'Be Vietnam Pro',sans-serif; background:var(--cream); color:v
 .empty-state { text-align:center; padding:48px 24px; color:var(--text-soft); }
 .empty-state .material-symbols-outlined { font-size:44px; opacity:.35; display:block; margin-bottom:8px; }
 
-/* ── MODAL CHI TIẾT ── */
+/* MODAL CHI TIẾT */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:1050; align-items:center; justify-content:center; padding:12px; }
 .modal-overlay.show { display:flex; }
 .modal-box { background:#fff; border-radius:22px; width:100%; max-width:600px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; animation:popIn .2s ease; }
