@@ -22,14 +22,14 @@ body {
     font-size: 0.92rem;
 }
 
-/* ── BREADCRUMB ─────────────────────────────────────────── */
+/* BREADCRUMB */
 .profile-breadcrumb { padding: 10px 0 4px; font-size: 0.82rem; color: var(--text-muted); }
 .profile-breadcrumb a { color: var(--text-muted); text-decoration: none; }
 .profile-breadcrumb a:hover { color: var(--green-dark); }
 .profile-breadcrumb .sep { margin: 0 6px; }
 .profile-breadcrumb .current { color: var(--green-dark); font-weight: 700; }
 
-/* ── LAYOUT ─────────────────────────────────────────────── */
+/* LAYOUT */
 .profile-layout {
     display: flex;
     gap: 22px;
@@ -37,7 +37,7 @@ body {
     padding-bottom: 60px;
 }
 
-/* ── SIDEBAR ────────────────────────────────────────────── */
+/* SIDEBAR */
 .profile-sidebar { width: 220px; flex-shrink: 0; position: sticky; top: 90px; }
 .sidebar-card {
     background: var(--card-bg);
@@ -72,10 +72,10 @@ body {
 }
 .sidebar-logout a:hover { background: #fef2f2; }
 
-/* ── MAIN ───────────────────────────────────────────────── */
+/* MAIN */
 .od-main { flex: 1; min-width: 0; }
 
-/* ── TOP BAR ────────────────────────────────────────────── */
+/* TOP BAR */
 .od-topbar {
     display: flex;
     align-items: center;
@@ -98,7 +98,7 @@ body {
 }
 .btn-back:hover { border-color: var(--green-dark); color: var(--green-dark); background: var(--green-light); }
 
-/* ── STATUS BADGES ──────────────────────────────────────── */
+/* STATUS BADGES */
 .oh-status-badge {
     display: inline-flex; align-items: center;
     font-size: 0.78rem; font-weight: 700; border-radius: 999px; padding: 5px 14px;
@@ -109,7 +109,7 @@ body {
 .status-delivered { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 .status-cancelled { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-/* ── SECTION CARD ───────────────────────────────────────── */
+/* SECTION CARD */
 .section-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -132,7 +132,7 @@ body {
 
 .od-status-inline { font-size: 0.72rem; padding: 3px 10px; }
 
-/* ── INFO TABLE ─────────────────────────────────────────── */
+/* INFO TABLE */
 .od-info-table { padding: 4px 0 8px; }
 
 .od-info-row {
@@ -172,7 +172,7 @@ body {
     word-break: break-all;
 }
 
-/* ── TIMELINE ───────────────────────────────────────────── */
+/* TIMELINE */
 .od-timeline-card { padding-bottom: 20px; }
 
 .od-timeline {
@@ -246,7 +246,7 @@ body {
     align-items: center;
 }
 
-/* ── ITEMS ──────────────────────────────────────────────── */
+/* ITEMS */
 .od-item {
     display: flex;
     align-items: center;
@@ -322,7 +322,7 @@ body {
 }
 .btn-review:hover { background: #fef3c7; }
 
-/* ── PAYMENT TABLE ──────────────────────────────────────── */
+/* PAYMENT TABLE */
 .od-payment-table { padding: 4px 0 8px; }
 
 .od-pay-row {
@@ -361,7 +361,7 @@ body {
 .pill-red    { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 .pill-gray   { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
 
-/* ── ACTIONS BAR ────────────────────────────────────────── */
+/* ACTIONS BAR */
 .od-actions-bar {
     display: flex;
     align-items: center;
@@ -393,7 +393,7 @@ body {
 .btn-od-danger { background: #fef2f2; color: #c0392b; border: 1.5px solid #fecaca; }
 .btn-od-danger:hover { background: #fee2e2; border-color: #c0392b; }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
+/* RESPONSIVE */
 @media (max-width: 860px) {
     .profile-layout { flex-direction: column; gap: 14px; }
     .profile-sidebar { width: 100%; position: static; }
