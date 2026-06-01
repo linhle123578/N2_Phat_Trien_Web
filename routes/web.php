@@ -8,11 +8,7 @@ $page = $_GET['page'] ?? 'TrangChu';
 
 $isLoggedIn = isset($_SESSION['user']);
 
-/*
-========================================
-HEADER
-========================================
-*/
+/* HEADER */
 $headerUser = __DIR__ . '/../app/views/layouts/header.php';
 $headerGuest = __DIR__ . '/../app/views/layouts/loginheader.php';
 
@@ -22,11 +18,7 @@ if ($isLoggedIn && file_exists($headerUser)) {
     include $headerGuest;
 }
 
-/*
-========================================
-ROUTER
-========================================
-*/
+/* ROUTER */
 switch($page){
 
     case 'TrangChu':
@@ -87,11 +79,7 @@ switch($page){
     break;
 }
 
-/*
-========================================
-CHATBOT
-========================================
-*/
+/* CHATBOT */
 if ($page == 'TrangChu') {
     $chatbotFile = __DIR__ . '/../app/views/customer/Chatbot.php';
     if (file_exists($chatbotFile)) {
@@ -99,11 +87,7 @@ if ($page == 'TrangChu') {
     }
 }
 
-/*
-========================================
-FOOTER
-========================================
-*/
+/* FOOTER */
 $footerFile = __DIR__ . '/../app/views/layouts/footer.php';
 if (file_exists($footerFile)) {
     include $footerFile;
