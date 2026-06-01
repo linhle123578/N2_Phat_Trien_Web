@@ -1,16 +1,4 @@
 <?php
-/**
- * View: OrderDetail
- * Nhận data từ OrderDetailController qua extract($data)
- * KHÔNG chứa logic DB hay xử lý POST — tất cả đã chuyển sang Controller
- *
- * Các biến được inject:
- *   $order_id, $order, $items,
- *   $payment, $shipment, $address,
- *   $customer_phone, $customer_name,
- *   $order_count, $can_return, $is_returned,
- *   $subtotal, $total_amount, $discount
- */
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
 $header_output = ob_get_clean();
@@ -23,9 +11,6 @@ $extra_head = '
 ';
 $header_output = str_replace('</head>', $extra_head . '</head>', $header_output);
 echo $header_output;
-
-// Alias ngắn cho helper tĩnh của controller
-// (Controller đã được require trước khi render, nên class luôn tồn tại)
 $ctrl = 'OrderDetailController';
 ?>
 
@@ -40,8 +25,6 @@ $ctrl = 'OrderDetailController';
     </nav>
 
     <div class="profile-layout">
-
-        <!-- ── SIDEBAR ──────────────────────────────── -->
         <aside class="profile-sidebar">
             <div class="sidebar-card">
                 <div class="sidebar-title">MENU TÀI KHOẢN</div>
@@ -72,10 +55,8 @@ $ctrl = 'OrderDetailController';
             </div>
         </aside>
 
-        <!-- ── MAIN ─────────────────────────────────── -->
         <div class="od-main">
 
-            <!-- Nút quay lại + trạng thái -->
             <div class="od-topbar">
                 <a href="../../../app/views/customer/OrderHistory.php" class="btn-back">
                     <i class="bi bi-arrow-left me-1"></i>Quay lại
@@ -85,7 +66,6 @@ $ctrl = 'OrderDetailController';
                 </span>
             </div>
 
-            <!-- ── 1. Thông tin đơn ───────────────── -->
             <div class="section-card od-section">
                 <div class="od-section-title">Thông tin đơn</div>
                 <div class="od-info-table">
@@ -149,7 +129,6 @@ $ctrl = 'OrderDetailController';
                 </div>
             </div>
 
-            <!-- ── 2. Timeline ────────────────────── -->
             <?php
             $steps = [
                 'pending'   => 'Chờ xác nhận',
@@ -203,7 +182,6 @@ $ctrl = 'OrderDetailController';
             </div>
             <?php endif; ?>
 
-            <!-- ── 3. Sản phẩm ───────────────────── -->
             <div class="section-card od-section">
                 <div class="od-section-title">Sản phẩm</div>
                 <?php foreach ($items as $item):
@@ -227,7 +205,6 @@ $ctrl = 'OrderDetailController';
                 <?php endforeach; ?>
             </div>
 
-            <!-- ── 4. Thanh toán ─────────────────── -->
             <div class="section-card od-section">
                 <div class="od-section-title">Thanh toán</div>
                 <div class="od-payment-table">
@@ -286,7 +263,6 @@ $ctrl = 'OrderDetailController';
                 </div>
             </div>
 
-            <!-- ── 5. Actions ────────────────────── -->
             <div class="od-actions-bar">
 
                 <?php if ($order['order_status'] === 'pending'): ?>
@@ -353,7 +329,7 @@ document.getElementById('btnLogout')?.addEventListener('click', (e) => {
     }
 });
 
-// Mua lại: thêm từng sản phẩm vào giỏ rồi chuyển sang trang giỏ hàng
+// Mua lại
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
     var cartUrl     = '../../../app/controllers/customer/CartController.php';
