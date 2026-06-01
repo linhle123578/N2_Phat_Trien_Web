@@ -1,18 +1,15 @@
-/* ── Không gian tên cô lập để bảo vệ tuyệt đối Header/Footer ── */
 .login-body-content {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background-color: #fefbe9; /* Nền phẳng nhẹ nhàng toàn trang giống mẫu */
+    background-color: #fefbe9;
     margin: 0;
     padding: 0;
 }
 
-/* ── Wrapper chính tạo khoảng cách dưới Header ── */
 .login-container-wrapper {
-    padding-top: 140px;   /* Đẩy khoảng cách an toàn tránh cấn Header */
+    padding-top: 140px;  
     padding-bottom: 90px;
 }
 
-/* Khối hộp kép chứa cả Ảnh và Form */
 .login-split-box {
     background: #ffffff;
     border-radius: 16px;  
@@ -22,13 +19,11 @@
     margin: 0 auto;
 }
 
-/* Đảm bảo 2 cột bằng nhau tuyệt đối, ảnh sát viền */
 .login-split-box .row.no-gutters {
     display: flex;
     flex-wrap: wrap;
 }
 
-/* Bên Trái: Cố định ảnh sát viền hoàn toàn */
 .login-image-side {
     background: url('../../../Media/LogIn.png') no-repeat center center;
     background-size: cover;
@@ -37,18 +32,15 @@
     min-height: 520px;   
 }
 
-/* Đảm bảo thẻ div chứa cột ảnh có chiều cao co giãn theo thẻ Row */
 .col-img-container {
     display: flex;
     align-items: stretch;
 }
 
-/* Bên Phải: Khối chứa Form nhập liệu */
 .login-form-side {
     padding: 45px 40px;
 }
 
-/* SỬA ĐỔI: Căn giữa hoàn toàn 2 dòng tiêu đề */
 .form-title {
     font-weight: 800;
     color: #183a1d;        
@@ -223,7 +215,7 @@
     background-color: #f7fafc;
 }
 
-/* Responsive di động */
+/* Responsive */
 @media (max-width: 767.98px) {
     .col-img-container {
         display: none !important;
