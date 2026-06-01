@@ -4,7 +4,7 @@ require_once __DIR__ . "/../../models/CartModel.php";
 class CartController
 {
 
-    // Hàm hiển thị giao diện giỏ hàng
+    // Hiển thị giao diện giỏ hàng
     public function index()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -18,7 +18,6 @@ class CartController
         $items = $cartModel->getCartItems($_SESSION['customer_id']);
         $total_items = count($items);
 
-        // Đẩy dữ liệu ra view
         require_once "../app/views/customer/cart.php";
     }
 
@@ -39,8 +38,7 @@ class CartController
         }
     }
 
-    // Hàm xử lý thanh toán khi form submit
-    // Hàm xử lý khi form giỏ hàng submit
+    // Hàm xử lý thanh toán khi form giỏ hàng submit
     public function checkout()
     {
         if (session_status() === PHP_SESSION_NONE) session_start();
@@ -62,8 +60,7 @@ class CartController
         exit();
         }
 
-        // MỚI: Thay vì tạo đơn hàng luôn, ta lưu danh sách mua vào Session
-        // Để mang dữ liệu này sang Trang Thanh Toán (Checkout)
+        // Lưu danh sách mua vào Session, mang dữ liệu này sang Trang Thanh Toán (Checkout)
         $_SESSION['checkout_items'] = [];
 
         foreach ($selected as $product_id) {
@@ -75,7 +72,7 @@ class CartController
             }
         }
 
-        // Chuyển hướng sang trang Checkout để user nhập địa chỉ, chọn ship/thanh toán
+        // Chuyển hướng sang trang Checkout
         header("Location: CheckoutController.php");
         exit();
     }
