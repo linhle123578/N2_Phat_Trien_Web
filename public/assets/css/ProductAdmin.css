@@ -11,12 +11,10 @@ body {
 
 .admin-wrapper { min-height: 100vh; }
 
-
-
-/* ── MAIN CONTENT ── */
+/* MAIN CONTENT */
 .main-content { background-color: #fefbe9; min-width: 0; margin-left: 220px; }
 
-/* ── HEADER ── */
+/* HEADER */
 .admin-header {
     background: #fefbe9;
     position: sticky;
@@ -53,14 +51,14 @@ body {
     border: 2px solid #fff;
 }
 
-/* ── BREADCRUMB ── */
+/* BREADCRUMB */
 .breadcrumb-item a          { color: #6B7280; font-size: .78rem; text-decoration: none; }
 .breadcrumb { margin-bottom: 0; line-height: 1.4; }
 .breadcrumb-item a:hover    { color: #374151; }
 .breadcrumb-item.active     { font-size: .82rem; color: #183a1d; font-weight: 600; }
 .breadcrumb-item + .breadcrumb-item::before { color: #9CA3AF; }
 
-/* ── ALERT COUNTERS ── */
+/* ALERT COUNTERS */
 .alert-counters-row {
     display: flex;
     gap: 1rem;
@@ -93,7 +91,7 @@ body {
 .alert-card-number { font-size: 1.75rem; font-weight: 800; line-height: 1.1; color: #1F2937; }
 .alert-card-label  { font-size: .82rem; color: #6B7280; font-weight: 500; margin-top: 2px; }
 
-/* ── TOOLBAR ── */
+/* TOOLBAR */
 .toolbar-wrapper {
     background: #fefbe9;
     padding: .9rem 1.25rem;
@@ -106,7 +104,7 @@ body {
     margin-bottom: 1rem;
 }
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn-add-product {
     background: #183a1d;
     border: none;
@@ -137,7 +135,7 @@ body {
     color: #fff;
 }
 
-/* ── TABLE CARD ── */
+/* TABLE CARD */
 .card { border-radius: 14px !important; overflow: hidden; }
 
 /* TABLE HEADER */
@@ -228,7 +226,7 @@ body {
 .btn-action-delete { color: #6B7280; background: #F3F4F6; }
 .btn-action-delete:hover { background: #FEE2E2; color: #DC2626; transform: translateY(-1px); }
 
-/* ── PAGINATION ── */
+/* PAGINATION */
 .page-link {
     color: #374151;
     border-radius: 8px !important;
@@ -244,7 +242,7 @@ body {
 .page-item.active .page-link { background: #183a1d; border-color: #183a1d; color: #fff; }
 .page-item.disabled .page-link { color: #D1D5DB; border-color: #E5E7EB; background: #F9FAFB; }
 
-/* ── FORM / MODAL ── */
+/* FORM / MODAL */
 .modal-content { border-radius: 18px !important; }
 .form-control:focus, .form-select:focus {
     border-color: #183a1d;
@@ -304,7 +302,7 @@ body {
 
 @keyframes toastSlide { from { opacity:0; transform: translateX(40px); } to { opacity:1; transform: translateX(0); } }
 
-/* ── RESPONSIVE ── */
+/* RESPONSIVE */
 @media (max-width: 991.98px) {
     .alert-card { flex-direction: column; text-align: center; }
     .alert-counters-row { flex-direction: column; }
