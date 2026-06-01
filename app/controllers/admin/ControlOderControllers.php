@@ -14,9 +14,7 @@ class OrderController {
 
     public function index() {
 
-        // ======================
         // HANDLE RETURN
-        // ======================
 
         if (
             isset($_POST['handle_return'])
@@ -30,32 +28,24 @@ class OrderController {
             header(
                 "Location: index.php"
             );
-
             exit;
         }
 
-        // ======================
         // DELETE ORDER
-        // ======================
 
         if (
             isset($_POST['delete_order'])
         ) {
-
             $this->model->deleteOrder(
                 $_POST['order_id']
             );
-
             header(
                 "Location: index.php"
             );
-
             exit;
         }
 
-        // ======================
         // UPDATE STATUS
-        // ======================
 
         if (
             isset($_POST['update_status'])
@@ -73,9 +63,8 @@ class OrderController {
             exit;
         }
 
-        // ======================
+    
         // GET DATA
-        // ======================
 
         $search =
             $_GET['search']
@@ -129,34 +118,26 @@ class OrderController {
         $pendingReturns =
             $this->model->getPendingReturns();
 
-        // ======================
         // MAP STATUS
-        // ======================
 
         $statusMap = [
-
-            // Tiếng Việt (chuẩn)
             'Chờ xác nhận' => [
                 'label' => 'Chờ xác nhận',
                 'class' => 'badge-pending'
             ],
-
             'Đang giao' => [
                 'label' => 'Đang giao',
                 'class' => 'badge-shipping'
             ],
-
             'Hoàn thành' => [
                 'label' => 'Hoàn thành',
                 'class' => 'badge-completed'
             ],
-
             'Đã hủy' => [
                 'label' => 'Đã hủy',
                 'class' => 'badge-cancel'
             ],
 
-            // Tiếng Anh (dữ liệu cũ nạp sẵn trong DB)
             'pending'   => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
             'Pending'   => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
             'shipping'  => ['label' => 'Đang giao',    'class' => 'badge-shipping'],
@@ -169,7 +150,7 @@ class OrderController {
             'canceled'  => ['label' => 'Đã hủy',       'class' => 'badge-cancel'],
         ];
 
-        // Chỉ dùng trong <select> — 4 giá trị tiếng Việt chuẩn
+        // Chỉ dùng trong <select>
         $statusMapVi = [
             'Chờ xác nhận' => ['label' => 'Chờ xác nhận', 'class' => 'badge-pending'],
             'Đang giao'    => ['label' => 'Đang giao',     'class' => 'badge-shipping'],
@@ -177,7 +158,7 @@ class OrderController {
             'Đã hủy'       => ['label' => 'Đã hủy',        'class' => 'badge-cancel'],
         ];
 
-        // Chuẩn hoá tiếng Anh → tiếng Việt để select đúng option
+        // Chuẩn hoá tiếng Anh → tiếng Việt
         $statusNormalize = [
             'pending'   => 'Chờ xác nhận',
             'Pending'   => 'Chờ xác nhận',
@@ -197,22 +178,18 @@ class OrderController {
                 'label' => 'Đang xử lý',
                 'class' => 'rs-pending'
             ],
-
             'Đã hoàn tiền' => [
                 'label' => 'Đã hoàn tiền',
                 'class' => 'rs-refunded'
             ],
-
             'Đã đổi hàng' => [
                 'label' => 'Đã đổi hàng',
                 'class' => 'rs-exchanged'
             ],
-
             'Đã hủy đơn' => [
                 'label' => 'Đã hủy đơn',
                 'class' => 'rs-cancelled'
             ],
-
             'Từ chối' => [
                 'label' => 'Từ chối',
                 'class' => 'rs-rejected'
