@@ -9,13 +9,13 @@ class ProfileAdminController
     public function __construct($conn)
     {
         $this->model = new ProfileAdminModel($conn);
-        // Fallback for demo, in real app take from session
+        // Fallback for demo
         $this->admin_id = $_SESSION['admin_id'] ?? 'ADM001';
     }
 
     public function index()
     {
-        // 1. Prepare default admin info
+        // 1. Ddmin info
         $admin = [
             'admin_id'   => $this->admin_id,
             'full_name'  => 'Admin Farm2Home',
@@ -78,7 +78,6 @@ class ProfileAdminController
             }
         }
 
-        // 4. Render View
         require_once __DIR__ . '/../../views/admin/ProfileAdmin.php';
     }
 }
