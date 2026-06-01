@@ -46,7 +46,6 @@ $price = fn($n) => OrderHistoryController::formatPrice((float)$n);
 
 $BASE_URL = '/n2_phat_trien_web';
 
-// ── Header ─────────────────────────────────────────────
 ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -65,7 +64,6 @@ $BASE_URL = '/n2_phat_trien_web';
 
    <div class="profile-layout">
 
-       <!-- ── SIDEBAR ──────────────────────────────── -->
        <aside class="profile-sidebar">
            <div class="sidebar-card">
                <div class="sidebar-title">MENU TÀI KHOẢN</div>
@@ -96,7 +94,6 @@ $BASE_URL = '/n2_phat_trien_web';
            </div>
        </aside>
 
-       <!-- ── MAIN ─────────────────────────────────── -->
        <div class="oh-main">
 
            <div class="oh-page-header">
@@ -106,7 +103,6 @@ $BASE_URL = '/n2_phat_trien_web';
                </div>
            </div>
 
-           <!-- Tab filter -->
            <div class="oh-tabs">
                <?php
                $tab_labels = [
@@ -143,7 +139,7 @@ $BASE_URL = '/n2_phat_trien_web';
                    $status = $order['order_status'] ?? '';
                    $oid    = $order['order_id'];
 
-                   // Đơn đã giao: kiểm tra còn trong 3 ngày không
+                   // Đơn đã giao
                    $can_return    = $return_eligible[$oid] ?? false;
                    $is_returned   = $has_returned[$oid] ?? false;
                    // Tính số giờ còn lại để hiển thị countdown (nếu đang eligible)
@@ -224,7 +220,7 @@ $BASE_URL = '/n2_phat_trien_web';
                             </div>
                            <div class="oh-actions">
 
-                               <!-- NÚT TRẢ HÀNG: chỉ hiện nếu đã giao trong vòng 3 ngày -->
+                               <!-- NÚT TRẢ HÀNG -->
                                <?php if (($status === 'delivered' || $status === 'Đã giao' || $status === 'Hoàn thành' || $status === 'completed') && $can_return): ?>
                                <a href="ReturnRequest.php?order_id=<?= $e($oid) ?>"
                                   class="btn-oh btn-oh-return">
@@ -283,7 +279,7 @@ $BASE_URL = '/n2_phat_trien_web';
 <script src="../../../public/assets/js/OrderHistory.js"></script>
 
 <script>
-// Mua lại: thêm từng sản phẩm vào giỏ rồi chuyển sang trang giỏ hàng
+// Mua lại
 function rebuyOrder(items) {
     if (!items || items.length === 0) return;
     var cartUrl = '../../../app/controllers/customer/CartController.php';
@@ -312,7 +308,6 @@ function rebuyOrder(items) {
 }
 </script>
 
-<!-- Modal đăng xuất -->
 <div id="logoutOverlay" style="
    display:none;position:fixed;top:0;left:0;right:0;bottom:0;
    background:rgba(0,0,0,0.55);z-index:99999;
