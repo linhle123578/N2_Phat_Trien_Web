@@ -1,11 +1,6 @@
 <?php
 //session_start();
 ob_start();
-/*
-=========================================================
- FARM2HOME SMART AI CHATBOT
-=========================================================
-*/
 
 if (!function_exists('contactAdminButton')) {
     function contactAdminButton()
@@ -44,7 +39,6 @@ if (!function_exists('getFaqButtons')) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot'])) {
 
-    // Xóa toàn bộ output cũ để tránh lỗi JSON
     if (ob_get_length()) ob_clean();
     
     header('Content-Type: application/json; charset=utf-8');
@@ -55,10 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
     $message = trim($_POST['message'] ?? '');
     $msg = mb_strtolower($message, 'UTF-8');
     $context = trim($_POST['context'] ?? '');
-
-    /* =========================================================
-       CONNECT DATABASE
-    ========================================================= */
 
     $conn = mysqli_init();
 
@@ -93,10 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         ? mysqli_real_escape_string($conn, $customer_id)
         : null;
 
-    /* =========================================================
-       FUNCTION REPLY
-    ========================================================= */
-
     function reply($text, $set_context = null, $clear_context = false)
     {
         $response = ["reply" => $text];
@@ -109,10 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         echo json_encode($response, JSON_UNESCAPED_UNICODE);
         exit;
     }
-
-    /* =========================================================
-       HELLO
-    ========================================================= */
 
     if (
         str_contains($msg, 'xin chào') ||
@@ -127,9 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         ");
     }
 
-    /* =========================================================
-       ĐƠN HÀNG CỦA TÔI
-    ========================================================= */
+    //ĐƠN HÀNG CỦA TÔI
 
     if (
         str_contains($msg, 'đơn hàng') ||
@@ -174,9 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         ");
     }
 
-    /* =========================================================
-       VẬN CHUYỂN
-    ========================================================= */
+    //VẬN CHUYỂN
 
     if (
         str_contains($msg, 'vận chuyển') ||
@@ -223,9 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         ");
     }
 
-    /* =========================================================
-       SẢN PHẨM BÁN CHẠY
-    ========================================================= */
+    //SẢN PHẨM BÁN CHẠY
 
     if (
         str_contains($msg, 'bán chạy') ||
@@ -286,9 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         reply($html);
     }
 
-    /* =========================================================
-       GỢI Ý SẢN PHẨM
-    ========================================================= */
+    //GỢI Ý SẢN PHẨM
 
     if (
         str_contains($msg, 'gợi ý') ||
@@ -335,9 +309,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         reply($html);
     }
 
-    /* =========================================================
-       TÌM GIÁ
-    ========================================================= */
+    // TÌM GIÁ
     if ($context === 'asking_price') {
         $search = mysqli_real_escape_string($conn, $msg);
         $sql = "SELECT * FROM product WHERE LOWER(product_name) LIKE '%$search%'";
@@ -362,9 +334,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         reply("Bạn muốn hỏi giá sản phẩm nào? (Vui lòng nhập tên sản phẩm, ví dụ: 'rau', 'cà chua'...)", 'asking_price');
     }
 
-    /* =========================================================
-       TỒN KHO
-    ========================================================= */
+    //TỒN KHO
 
     if (
         str_contains($msg, 'còn hàng') ||
@@ -401,9 +371,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['farm2home_chatbot']))
         }
     }
 
-    /* =========================================================
-       FALLBACK
-    ========================================================= */
+    //FALLBACK
 
     reply("
         Xin lỗi, AI chưa hiểu rõ yêu cầu này của bạn. 😔<br><br>
