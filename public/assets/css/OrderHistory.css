@@ -26,7 +26,7 @@ body {
     font-size: 0.92rem;
 }
 
-/* ── BREADCRUMB ─────────────────────────────────────────── */
+/* BREADCRUMB */
 .profile-breadcrumb {
     padding: 10px 0 4px;
     font-size: 0.82rem;
@@ -37,7 +37,7 @@ body {
 .profile-breadcrumb .sep { margin: 0 6px; }
 .profile-breadcrumb .current { color: var(--green-dark); font-weight: 700; }
 
-/* ── LAYOUT ─────────────────────────────────────────────── */
+/* LAYOUT */
 .profile-layout {
     display: flex;
     gap: 22px;
@@ -45,7 +45,7 @@ body {
     padding-bottom: 60px;
 }
 
-/* ── SIDEBAR ────────────────────────────────────────────── */
+/* SIDEBAR */
 .profile-sidebar {
     width: 220px;
     flex-shrink: 0;
@@ -140,13 +140,13 @@ body {
 
 .sidebar-logout a:hover { background: #fef2f2; }
 
-/* ── MAIN ───────────────────────────────────────────────── */
+/* MAIN */
 .oh-main {
     flex: 1;
     min-width: 0;
 }
 
-/* ── PAGE HEADER ────────────────────────────────────────── */
+/* PAGE HEADER */
 .oh-page-header {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -180,7 +180,7 @@ body {
     color: var(--green-dark);
 }
 
-/* ── TABS ───────────────────────────────────────────────── */
+/* TABS */
 .oh-tabs {
     display: flex;
     gap: 8px;
@@ -230,7 +230,7 @@ body {
     background: rgba(255,255,255,0.3);
 }
 
-/* ── EMPTY STATE ────────────────────────────────────────── */
+/* EMPTY STATE */
 .oh-empty {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -248,7 +248,7 @@ body {
 }
 .oh-empty p { margin: 0; font-size: 0.9rem; }
 
-/* ── ORDER CARD ─────────────────────────────────────────── */
+/* ORDER CARD*/
 .oh-order-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -445,7 +445,7 @@ body {
 .btn-cancel-order { color: #c0392b; }
 .btn-cancel-order:hover { border-color: #c0392b; background: #fef2f2; color: #c0392b; }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
+/* RESPONSIVE */
 @media (max-width: 860px) {
     .profile-layout { flex-direction: column; gap: 14px; }
     .profile-sidebar { width: 100%; position: static; }
