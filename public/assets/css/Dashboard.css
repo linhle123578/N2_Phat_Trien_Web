@@ -16,10 +16,10 @@ body {
 
 .admin-wrapper { min-height: 100vh; }
 
-/* ── MAIN CONTENT ── */
+/* MAIN CONTENT */
 .main-content { background-color: #fefbe9; min-width: 0; margin-left: 220px; }
 
-/* ── HEADER ── */
+/* HEADER */
 .admin-header {
     background: #fefbe9;
     position: sticky;
@@ -59,7 +59,7 @@ body {
     border: 2px solid #fff;
 }
 
-/* ── BREADCRUMB ── */
+/* BREADCRUMB */
 .breadcrumb-item a          { color: #6B7280; font-size: .78rem; text-decoration: none; }
 .breadcrumb { margin-bottom: 0; line-height: 1.4; }
 .breadcrumb-item a:hover    { color: #374151; }
@@ -182,7 +182,7 @@ body {
 .sales-count-pill { background-color: #f1eedd; color: var(--primary-green); font-weight: 700; padding: 6px 14px; border-radius: 20px; }
 .text-revenue-color { color: var(--accent-orange); font-size: 1.05rem; }
 
-/* ── ĐÁP ỨNG THIẾT BỊ DI ĐỘNG (RESPONSIVE) ── */
+/* RESPONSIVE */
 @media (max-width: 991.98px) {
     .sidebar { transform: translateX(-100%); }
     .sidebar.open { transform: translateX(0); }
