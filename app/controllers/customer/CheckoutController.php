@@ -145,9 +145,7 @@ class CheckoutController
         require_once __DIR__ . "/../../views/customer/Checkout.php";
     }
 
-    // ----------------------------------------------------------------
     // 2. Xử lý đặt hàng (AJAX POST từ Checkout.js)
-    // ----------------------------------------------------------------
     public function process()
     {
         set_error_handler(function($errno, $errstr, $errfile, $errline) {
@@ -197,15 +195,10 @@ class CheckoutController
         // Calculate subtotal
         $subtotal = 0;
         foreach ($cart as $item) {
-            $subtotal += ($item['quantity'] * $item['unit_price']); // assuming cart items have quantity and unit_price
+            $subtotal += ($item['quantity'] * $item['unit_price']);
         }
         
-        // Wait, the checkout items might not have unit_price in session, 
-        // usually total_amount comes from frontend, but let's just use what frontend sends and validate it later or just trust it for now.
-        $total_amount   = (int)($data['total_amount']  ?? 0); // Still taking from frontend, but we should make sure shipping fee is aligned.
-        
-        // Let's rely on total_amount from frontend since it was already working that way, 
-        // but we make sure we capture $shipment_id.
+        $total_amount   = (int)($data['total_amount']  ?? 0);
 
         $address_id     = trim($data['address_id']     ?? '');
         $new_address    = $data['new_address']         ?? null;
@@ -241,7 +234,7 @@ class CheckoutController
         ];
         $_SESSION['last_order_shipping'] = $shipping_fee;
 
-        // ── MoMo: chỉ lưu pending_order, KHÔNG tạo đơn ──
+        // MoMo: chỉ lưu pending_order, KHÔNG tạo đơn
         if ($payment_method === 'momo') {
             $_SESSION['pending_order'] = [
                 'name'         => $name,
@@ -298,7 +291,7 @@ class CheckoutController
             $pid = $item['product_id'];
             $qty = (int)($item['quantity'] ?? 1);
 
-            // [FIX] Ưu tiên map theo product_id vì session thường không có cart_item_id
+            //  Ưu tiên map theo product_id vì session thường không có cart_item_id
             $cartItemId = $item['cart_item_id'] ?? null;
             $price = ($cartItemId && isset($price_map[$cartItemId])) ? $price_map[$cartItemId] : ($price_map[$pid] ?? 0);
 
@@ -321,7 +314,7 @@ class CheckoutController
             unset($_SESSION['checkout_items']);
         }
         $_SESSION['last_order_id']       = $order_id;
-        $_SESSION['last_order_shipping'] = $shipping_fee; // dùng bởi MomoPaymentController
+        $_SESSION['last_order_shipping'] = $shipping_fee;
 
         if ($payment_method === 'momo') {
             echo json_encode([
@@ -346,7 +339,6 @@ class CheckoutController
     }
 }
 
-// ---- Kích hoạt controller ----
 $checkoutController = new CheckoutController();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $checkoutController->process();
