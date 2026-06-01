@@ -19,7 +19,7 @@ body {
     color: #333;
 }
 
-/* ===== NAVBAR ===== */
+/* NAVBAR */
 .custom-navbar {
     background-color: var(--cream);
     padding-top: 15px;
@@ -37,7 +37,7 @@ body {
 .icon-badge { position: absolute; top: -5px; right: -8px; background-color: #f04e4e; color: white; font-size: 0.65rem; font-weight: 700; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
 .nav-divider { height: 24px; border-right: 1px solid #dcdcdc; margin: 0 15px; }
 
-/* ===== BREADCRUMB ===== */
+/* BREADCRUMB */
 .breadcrumb-section {
     background-color: var(--cream);
     border-bottom: 1px solid rgba(24,58,29,0.08);
@@ -50,11 +50,11 @@ body {
 .breadcrumb-item.active { color: var(--green-dark); font-weight: 600; }
 .breadcrumb-item + .breadcrumb-item::before { content: '>'; color: #aaa; }
 
-/* ===== MAIN CONTENT ===== */
+/* MAIN CONTENT */
 main { flex: 1; }
 .page-wrapper { background-color: var(--cream); padding: 30px 0 50px; }
 
-/* ===== PRODUCT CARD ===== */
+/* PRODUCT CARD */
 .product-card { 
     background: transparent; 
     border-radius: 16px; 
@@ -68,7 +68,6 @@ main { flex: 1; }
     overflow: hidden;
 }
 
-/* Khung ảnh bên trái màu trắng */
 .left-image-panel {
     background-color: #ffffff;
     display: flex;
@@ -83,7 +82,6 @@ main { flex: 1; }
     width: 100%;
 }
 
-/* Khung thông tin bên phải màu vàng nền */
 .right-info-panel {
     background-color: var(--cream);
 }
@@ -132,7 +130,7 @@ main { flex: 1; }
 .tab-btn.active { background: var(--green-dark); color: var(--cream); }
 .tab-content-panel p { font-size: 0.93rem; line-height: 1.7; color: #444; }
 
-/* ===== RELATED PRODUCTS ===== */
+/* RELATED PRODUCTS */
 .related-card { background: #fff; border-radius: 16px; padding: 24px 28px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 .section-title { font-size: 1.15rem; font-weight: 800; color: var(--green-dark); margin-bottom: 20px; }
 .product-item { background: #fff; border-radius: 14px; border: 1.5px solid #eee; overflow: hidden; transition: box-shadow 0.2s, transform 0.2s; }
@@ -155,7 +153,7 @@ main { flex: 1; }
     color: inherit !important;
 }
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 .footer-custom { background-color: var(--green-dark); color: var(--cream); padding-top: 60px; padding-bottom: 20px; margin-top: auto; }
 .footer-custom a { color: var(--cream); text-decoration: none; transition: opacity 0.3s ease; }
 .footer-custom a:hover { opacity: 0.8; color: var(--cream); }
