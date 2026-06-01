@@ -29,10 +29,8 @@ echo $extra_head;
                 <p class="momo-page-subtitle">Vui lòng sử dụng ứng dụng MoMo để quét mã</p>
             </div>
 
-            <!-- Bento Grid -->
             <div class="momo-bento">
 
-                <!-- ── LEFT: Chi tiết đơn hàng ── -->
                 <div class="momo-order-panel">
 
                     <div class="momo-order-heading">
@@ -45,7 +43,6 @@ echo $extra_head;
                         <h2>Chi tiết đơn hàng</h2>
                     </div>
 
-                    <!-- Items -->
                     <div class="momo-order-items">
                         <?php if (!empty($order_products)): ?>
                             <?php foreach ($order_products as $prod): ?>
@@ -76,7 +73,6 @@ echo $extra_head;
                         <?php endif; ?>
                     </div>
 
-                    <!-- Summary -->
                     <div class="momo-summary-block">
                         <div class="summary-row">
                             <span class="label">Tổng tiền hàng</span>
@@ -95,7 +91,6 @@ echo $extra_head;
 
                 </div>
 
-                <!-- ── RIGHT: QR Code ── -->
                 <div class="momo-qr-panel">
 
                     <div class="qr-card-frame" id="qr-card-frame">
@@ -150,11 +145,9 @@ echo $extra_head;
         </div>
     </main>
 
-=======
     <?php include __DIR__ . '/../layouts/footer.php'; ?>
->>>>>>> b0de28287d8381b6f88c230b9818ee9e6a08010f
 
-    <!-- Success Modal -->
+    //Success Modal
     <div class="momo-success-modal" id="momo-success-modal">
         <div class="success-modal-card">
             <div class="success-check-circle">✅</div>
