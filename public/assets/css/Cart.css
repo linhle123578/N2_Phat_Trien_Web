@@ -1,4 +1,4 @@
-/* ── Global base ─────────────────────────────── */
+/* Global base */
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     background-color: #fefbe9;
@@ -9,13 +9,13 @@ body {
 
 
 
-/* ── Page layout ─────────────────────────────── */
+/* Page layout */
 .cart-main {
     padding-top: 100px;
     padding-bottom: 80px;
 }
 
-/* ── Page title ─────────────────────────────── */
+/* Page title */
 .cart-page-title {
     font-size: 1.8rem;
     font-weight: 800;
@@ -30,7 +30,7 @@ body {
     margin-left: 6px;
 }
 
-/* ── Cart item card ─────────────────────────── */
+/* Cart item card */
 .cart-item {
     background: #ffffff;
     border-radius: 14px;
@@ -59,7 +59,7 @@ body {
     gap: 14px;
 }
 
-/* ── Checkbox ───────────────────────────────── */
+/* Checkbox */
 .item-checkbox {
     width: 18px;
     height: 18px;
@@ -69,7 +69,7 @@ body {
     cursor: pointer;
 }
 
-/* ── Product image ──────────────────────────── */
+/* Product image */
 .cart-item-img {
     width: 110px;
     height: 110px;
@@ -132,7 +132,7 @@ body {
     gap: 8px;
 }
 
-/* ── Delete button ──────────────────────────── */
+/* Delete button */
 .delete-btn {
     background: none;
     border: none;
@@ -148,7 +148,7 @@ body {
     color: #ba1a1a;
 }
 
-/* ── Quantity control ───────────────────────── */
+/* Quantity control */
 .qty-control {
     display: inline-flex;
     align-items: center;
@@ -185,7 +185,7 @@ body {
     color: #1c1c12;
 }
 
-/* ── Item price ─────────────────────────────── */
+/* Item price */
 .cart-item-price {
     text-align: right;
 }
@@ -203,7 +203,7 @@ body {
     margin: 0;
 }
 
-/* ── Back link ──────────────────────────────── */
+/* Back link  */
 .back-link {
     display: inline-flex;
     align-items: center;
@@ -221,9 +221,7 @@ body {
     text-decoration: none;
 }
 
-/* ═══════════════════════════════════════
-   ORDER SUMMARY SIDEBAR
-═══════════════════════════════════════ */
+/* ORDER SUMMARY SIDEBAR */
 
 .summary-sticky {
     position: sticky;
