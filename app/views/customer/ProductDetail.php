@@ -28,12 +28,12 @@ mysqli_set_charset($conn, "utf8");
 $current_id = isset($_GET['id']) ? $_GET['id'] : '';
 
 if (empty($current_id)) {
-    // Nếu không truyền ID trên URL, tự động lấy sản phẩm đầu tiên trong database để hiển thị
+    // Tự động lấy sản phẩm đầu tiên trong database để hiển thị
     $query = "SELECT * FROM product LIMIT 1";
     $result = mysqli_query($conn, $query);
     $product = mysqli_fetch_assoc($result);
 } else {
-    // Ngược lại, lấy đúng sản phẩm có ID được chọn (dùng Prepared Statement để bảo mật)
+    // Lấy đúng sản phẩm có ID được chọn
     $query = "SELECT * FROM product WHERE product_id = ?";
     $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "s", $current_id);
@@ -47,7 +47,7 @@ if (!$product) {
     die("Sản phẩm không tồn tại hoặc cơ sở dữ liệu chưa có dữ liệu!");
 }
 
-// 3. Lấy các sản phẩm liên quan (Cùng danh mục category_id và loại trừ sản phẩm hiện tại)
+// Lấy các sản phẩm liên quan
 $query_related = "SELECT * FROM product WHERE category_id = ? AND product_id != ? LIMIT 4";
 $stmt_related = mysqli_prepare($conn, $query_related);
 mysqli_stmt_bind_param($stmt_related, "ss", $product['category_id'], $product['product_id']);

@@ -2,10 +2,6 @@
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
 
-/**
- * Entry point: ReturnRequest.php
- * File gộp chung form và success page.
- */
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

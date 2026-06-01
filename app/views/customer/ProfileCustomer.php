@@ -4,8 +4,6 @@ include_once __DIR__ . '/../layouts/header.php';
 ?>
 ﻿<?php
 
-
-// -- DB connection ------------------------------------------------------------
 $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
         mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
@@ -21,7 +19,7 @@ mysqli_real_connect(
 );
 mysqli_set_charset($conn, "utf8mb4");
 
-// -- Load customer + account data ---------------------------------------------
+// -- Tải dữ liệu customer + account ---------------------------------------------
 $session_customer_id = $_SESSION['customer_id'] ?? 'CUS005';
 
 $customer = [
@@ -35,7 +33,6 @@ $customer = [
 ];
 
 try {
-    // FIX: join d?ng theo schema: customer.account_id = account.account_id
     $sql = "
         SELECT c.customer_id, c.full_name, c.phone, c.gender,
                a.email, a.account_id
@@ -67,8 +64,7 @@ try {
     mysqli_stmt_close($stmt2);
 } catch (Exception $e) {}
 
-// -- Load addresses ------------------------------------------------------------
-// FIX: đúng định dạng các cột trong DB: province, district, ward, street_address, address_type
+// -- Tải địa chỉ ------------------------------------------------------------
 $addresses = [];
 try {
     $sql_addr = "SELECT address_id, receiver_name, address_type,
@@ -84,7 +80,7 @@ try {
     mysqli_stmt_close($stmt3);
 } catch (Exception $e) {}
 
-// -- Handle POST ---------------------------------------------------------------
+// -- Xử lý POST ---------------------------------------------------------------
 $msg_profile  = '';
 $msg_password = '';
 $msg_address  = '';
@@ -101,7 +97,6 @@ function pc_db_connect() {
     return $c;
 }
 
-// Helper: load l?i địa chỉ sau POST
 function reload_addresses(string $cid): array {
     $list = [];
     try {
@@ -122,7 +117,7 @@ function reload_addresses(string $cid): array {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    // -- Lưu thông tin c? nhận (không cần avatar) -----------------------------
+    // -- Lưu thông tin customer -----------------------------
     if (isset($_POST['save_profile'])) {
         $fn  = trim($_POST['full_name'] ?? '');
         $ph  = trim($_POST['phone']     ?? '');
@@ -200,7 +195,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // -- Thêm địa chỉ ---------------------------------------------------------
-    // FIX: INSERT d?ng các cột DB: province, district, ward, street_address, address_type
     if (isset($_POST['add_address'])) {
         $r_name    = trim($_POST['receiver_name']   ?? '');
         $r_phone   = trim($_POST['addr_phone']      ?? '');
@@ -268,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $addresses = reload_addresses($cid);
     }
 
-    // ?? X�a Địa chỉ ??????????????????????????????????????????????????????????
+    // ?? Xóa Địa chỉ 
     if (isset($_POST['delete_address'])) {
         $addr_id = trim($_POST['address_id'] ?? '');
         $cid     = $customer['customer_id'];
@@ -290,7 +284,7 @@ mysqli_close($conn);
 
 function e(string $s): string { return htmlspecialchars($s, ENT_QUOTES, 'UTF-8'); }
 
-// // Build full address string t? c�c c?t ri�ng ????????????????????????????????
+// Địa chỉ đầy đủ string từ các cột riêng lẻ
 function build_full_address(array $addr): string {
     $parts = array_filter([
         $addr['street_address'] ?? '',
@@ -360,7 +354,7 @@ echo $extra_head;
         <!-- -- MAIN CONTENT ------------------------------- -->
         <div class="profile-main-solo">
 
-        <!-- -- Section 1: Personal Info -------------------- -->
+        <!-- -- Personal Info -------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-person-fill"></i></div>
@@ -378,7 +372,6 @@ echo $extra_head;
             <?php endif; ?>
 
             <form method="POST" action="">
-                <!-- Đã xoá phần avatar theo yêu cầu -->
                 <div class="form-body-pad">
                     <div class="row g-3">
                         <div class="col-sm-6">
@@ -430,7 +423,7 @@ echo $extra_head;
             </form>
         </div>
 
-        <!-- -- Section 2: Addresses ------------------------- -->
+        <!-- -- Addresses ------------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-geo-alt-fill"></i></div>
@@ -452,7 +445,6 @@ echo $extra_head;
                 <div class="pc-alert pc-alert-danger mx-22 mb-3"><i class="bi bi-exclamation-circle-fill me-2"></i>Lỗi DB: <?= htmlspecialchars($msg_address) ?></div>
             <?php endif; ?>
 
-            <!-- FIX: Form thêm địa chỉ khớp với schema DB -->
             <div class="add-addr-form" id="addAddrForm" style="display:none;">
                 <form method="POST" action="">
                     <div class="row g-3">
@@ -543,7 +535,6 @@ echo $extra_head;
                                     <span class="badge bg-secondary"><?= e($addr['address_type']) ?></span>
                                 </div>
                             <?php endif; ?>
-                            <!-- Ghép địa chỉ đầy đủ từ các cột riêng -->
                             <div class="addr-text"><?= e(build_full_address($addr)) ?></div>
                         </div>
                         <div class="addr-actions">
@@ -575,7 +566,7 @@ echo $extra_head;
             </div>
         </div>
 
-        <!-- -- Section 3: Password -------------------------- -->
+        <!-- -- Password -------------------------- -->
         <div class="section-card">
             <div class="section-card-header">
                 <div class="sec-icon"><i class="bi bi-shield-lock-fill"></i></div>
@@ -653,7 +644,7 @@ echo $extra_head;
 <script src="../../../public/assets/js/ProfileCustomer.js"></script>
 
 
-<!-- ── Modal xác nhận đăng xuất (đặt ngoài mọi thứ, trước </body>) ── -->
+<!-- ── Modal xác nhận đăng xuất  ── -->
 <div id="logoutOverlay" style="
     display:none;
     position:fixed;

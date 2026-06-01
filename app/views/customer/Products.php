@@ -5,7 +5,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// 1. Bộ lọc định tuyến ngầm điều hướng xử lý dữ liệu database qua Controller đám mây
+// Bộ lọc định tuyến ngầm điều hướng xử lý dữ liệu database qua Controller
 if (!isset($cat_result) || !isset($prod_result)) {
     $queryString = !empty($_SERVER['QUERY_STRING']) ? '?' . $_SERVER['QUERY_STRING'] : '';
     header("Location: ../../../app/controllers/customer/ProductController.php" . $queryString);
@@ -26,7 +26,7 @@ if (!isset($cat_result) || !isset($prod_result)) {
 ?>
 
 <?php
-    // Bắt buộc set lại biến page để header nhận diện đúng menu đang active (do trang này xài redirect URL)
+    // Bắt buộc set lại biến page để header nhận diện đúng menu đang active 
     if (!isset($_GET['page'])) {
         $_GET['page'] = 'products';
     }
@@ -99,7 +99,6 @@ if (!isset($cat_result) || !isset($prod_result)) {
                         </div>
                     <?php else: ?>
                         <?php 
-                        // Chỉ dùng 1 vòng lặp while duy nhất để tránh lỗi trôi dữ liệu
                         while ($product = mysqli_fetch_assoc($prod_result)): 
                             $unit_display = !empty($product['unit']) ? htmlspecialchars($product['unit']) : 'kg';
                         ?>

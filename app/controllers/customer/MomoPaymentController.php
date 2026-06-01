@@ -3,9 +3,9 @@
 require_once __DIR__ . "/../../models/OrderModel.php";
 
 define('MOMO_LIVE_MODE',     true);
-define('MOMO_PARTNER_CODE',  'MOMO_PARTNER_CODE'); // <-- Thay bằng Partner Code thật của bạn
-define('MOMO_ACCESS_KEY',    'MOMO_ACCESS_KEY');   // <-- Thay bằng Access Key thật của bạn
-define('MOMO_SECRET_KEY',    'MOMO_SECRET_KEY');   // <-- Thay bằng Secret Key thật của bạn
+define('MOMO_PARTNER_CODE',  'MOMONPYO20260523_TEST'); // <-- Thay bằng Partner Code thật của bạn
+define('MOMO_ACCESS_KEY',    'NSnc24IkFHNNbf9M');   // <-- Thay bằng Access Key thật của bạn
+define('MOMO_SECRET_KEY',    'JV9rVpwP4lA00Y2igeFqWlsb1bxNfUIl');   // <-- Thay bằng Secret Key thật của bạn
 define('MOMO_ENDPOINT',      'https://test-payment.momo.vn/v2/gateway/api/create');
 define('MOMO_QUERY_ENDPOINT', 'https://test-payment.momo.vn/v2/gateway/api/query');
 

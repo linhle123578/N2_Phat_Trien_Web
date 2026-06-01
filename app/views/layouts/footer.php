@@ -1,5 +1,3 @@
-<!-- app/views/layouts/footer.php -->
-
  <footer class="footer-custom">
     <div class="container">
       <div class="row">

@@ -2,12 +2,6 @@
 ob_start();
 include_once __DIR__ . '/../layouts/header.php';
 
-/*
-|--------------------------------------------------------------------------
-| CONNECT DATABASE TIDB
-|--------------------------------------------------------------------------
-*/
-
 $conn = mysqli_init();
 
 mysqli_ssl_set(
@@ -19,7 +13,6 @@ mysqli_ssl_set(
     NULL
 );
 
-// Bỏ qua xác thực chứng chỉ SSL (fix lỗi XAMPP Windows)
 mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 
 mysqli_real_connect(
@@ -35,11 +28,7 @@ mysqli_real_connect(
 
 mysqli_set_charset($conn, "utf8mb4");
 
-/*
-|--------------------------------------------------------------------------
-| QUERY SẢN PHẨM NỔI BẬT
-|--------------------------------------------------------------------------
-*/
+/* TRUY VẤN SẢN PHẨM NỔI BẬT */
 
 $sql = "
 SELECT 
@@ -83,11 +72,11 @@ while ($row = mysqli_fetch_assoc($result)) {
 $isLoggedIn = isset($_SESSION['customer_id']);
 ?>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <link rel="stylesheet"
-          href="../../../public/assets/css/Trang_chu.css"/>
+    href="../../../public/assets/css/Trang_chu.css" />
 
 <title>Farm2Home - Nông Sản Sạch</title>
 
@@ -105,8 +94,8 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom active">
 
                 <img class="hero-bg"
-     src="../../../Media/canh_dong_3.jpg"
-     alt="">
+                    src="../../../Media/canh_dong_3.jpg"
+                    alt="">
 
                 <div class="hero-overlay">
 
@@ -132,8 +121,8 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             <div class="carousel-item-custom">
 
                 <img class="hero-bg"
-                     src="../../../Media/canh_dong_2.jpg"
-                     alt="">
+                    src="../../../Media/canh_dong_2.jpg"
+                    alt="">
 
                 <div class="hero-overlay">
 
@@ -161,11 +150,11 @@ $isLoggedIn = isset($_SESSION['customer_id']);
         <div class="dots-wrapper">
 
             <button class="dot-custom active"
-                    onclick="goToSlide(0)">
+                onclick="goToSlide(0)">
             </button>
 
             <button class="dot-custom"
-                    onclick="goToSlide(1)">
+                onclick="goToSlide(1)">
             </button>
 
         </div>
@@ -185,23 +174,23 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                     <div class="about-small-imgs">
 
                         <img src="../../../Media/canh_dong_1.jpg"
-                             alt=""
-                             class="img-fluid rounded-20 shadow-sm"
-                             style="height: 240px; object-fit: cover; width: 100%;">
+                            alt=""
+                            class="img-fluid rounded-20 shadow-sm"
+                            style="height: 240px; object-fit: cover; width: 100%;">
 
                         <img src="../../../Media/canh_dong_5.jpg"
-                             alt=""
-                             class="img-fluid rounded-20 shadow-sm"
-                             style="height: 240px; object-fit: cover; width: 100%;">
+                            alt=""
+                            class="img-fluid rounded-20 shadow-sm"
+                            style="height: 240px; object-fit: cover; width: 100%;">
 
                     </div>
 
                     <div class="about-large-img">
 
                         <img src="../../../Media/canh_dong_4.jpg"
-                             alt=""
-                             class="img-fluid rounded-20 shadow-lg"
-                             style="height: 495px; object-fit: cover; width: 100%;">
+                            alt=""
+                            class="img-fluid rounded-20 shadow-lg"
+                            style="height: 495px; object-fit: cover; width: 100%;">
 
                     </div>
 
@@ -216,7 +205,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                 </h2>
 
                 <p class="text-muted mb-5"
-                   style="line-height: 1.8; font-size: 1.05rem;">
+                    style="line-height: 1.8; font-size: 1.05rem;">
 
                     Farm2Home ra đời với sứ mệnh là cầu nối trực tiếp,
                     phá vỡ mọi rào cản trung gian để đưa nông sản tươi ngon
@@ -241,8 +230,8 @@ $isLoggedIn = isset($_SESSION['customer_id']);
             </h2>
 
             <a href="../../../app/views/customer/Products.php"
-               class="font-weight-bold text-dark border-bottom"
-               style="text-decoration: none;">
+                class="font-weight-bold text-dark border-bottom"
+                style="text-decoration: none;">
 
                 Xem tất cả →
 
@@ -263,7 +252,7 @@ $isLoggedIn = isset($_SESSION['customer_id']);
                             <div class="product-img-wrap">
 
                                 <span class="badge-custom"
-                                      style="background: var(--orange-sub);">
+                                    style="background: var(--orange-sub);">
 
                                     <?= htmlspecialchars($product['category_name']) ?>
 
@@ -271,10 +260,9 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 
                                 <a href="../../../app/views/customer/ProductDetail.php?id=<?= $product['product_id'] ?>">
                                     <img
-        src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>"
-        alt="<?= htmlspecialchars($product['product_name']) ?>"
-        style="width:100%; height:250px; object-fit:cover;"
-    >
+                                        src="../../../Media/<?= htmlspecialchars($product['product_image']) ?>"
+                                        alt="<?= htmlspecialchars($product['product_name']) ?>"
+                                        style="width:100%; height:250px; object-fit:cover;">
                                 </a>
 
                             </div>
@@ -360,7 +348,6 @@ $isLoggedIn = isset($_SESSION['customer_id']);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-
     let currentSlide = 0;
 
     const slides = document.querySelectorAll('.carousel-item-custom');
@@ -385,7 +372,6 @@ $isLoggedIn = isset($_SESSION['customer_id']);
         goToSlide(currentSlide + 1);
 
     }, 5000);
-
 </script>
 <script src="../../../public/assets/js/Products.js"></script>
 <?php include_once __DIR__ . '/../layouts/footer.php'; ?>
