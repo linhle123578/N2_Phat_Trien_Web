@@ -1,8 +1,5 @@
 <?php
-/**
- * Controller: ReturnRequestController
- * Quản lý luồng hiển thị form và xử lý submit yêu cầu trả hàng
- */
+
 class ReturnRequestController
 {
     private $model;
@@ -17,9 +14,9 @@ class ReturnRequestController
         $this->customer_id = $_SESSION['customer_id'] ?? 'CUS001';
     }
 
-    /**
-     * GET: Hiển thị form yêu cầu trả hàng
-     */
+   
+    // GET: Hiển thị form yêu cầu trả hàng
+     
     public function showForm(): void
     {
         $order_id = trim($_GET['order_id'] ?? '');
@@ -56,9 +53,8 @@ class ReturnRequestController
         $this->render('return_request_form', $data);
     }
 
-    /**
-     * POST: Xử lý submit form
-     */
+    //POST: Xử lý submit form
+
     public function handleSubmit(): void
     {
         $order_id = trim($_POST['order_id'] ?? '');
@@ -119,7 +115,7 @@ class ReturnRequestController
         ]);
 
         if ($return_id) {
-            // Thành công → hiển thị trang xác nhận
+            // Thành công thì hiển thị trang xác nhận
             $return_info = $this->model->getReturnById($return_id);
             $data = compact('return_id', 'return_info', 'order_id');
             $this->render('return_request_success', $data);
@@ -135,9 +131,7 @@ class ReturnRequestController
         }
     }
 
-    /**
-     * Dispatch request theo method
-     */
+    // Dispatch request theo method
     public function dispatch(): void
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -147,7 +141,7 @@ class ReturnRequestController
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────
+    // Helpers
 
     private function render(string $view, array $data = []): void
     {
