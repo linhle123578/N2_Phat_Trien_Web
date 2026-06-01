@@ -27,7 +27,7 @@ if (!$conn) {
 
 $action = $_POST['action'] ?? '';
 
-// Hàm xử lý upload ảnh an toàn
+// Xử lý upload ảnh
 function handleImageUpload($file) {
     if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
         return null;
@@ -74,7 +74,7 @@ if ($action === 'add') {
         exit;
     }
 
-    // Tự động sinh Product ID mới nhất
+    // Tự động sinh Product ID
     $res = mysqli_query($conn, "SELECT product_id FROM product ORDER BY CAST(SUBSTRING(product_id, 3) AS UNSIGNED) DESC LIMIT 1");
     $newIdStr = 'SP001';
     if ($row = mysqli_fetch_assoc($res)) {
@@ -82,7 +82,7 @@ if ($action === 'add') {
         $newIdStr = 'SP' . str_pad($lastNum + 1, 3, '0', STR_PAD_LEFT);
     }
 
-    // Xử lý file upload nếu có
+    // Xử lý file upload
     if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
         $uploadRes = handleImageUpload($_FILES['image_file']);
         if (isset($uploadRes['error'])) {
@@ -117,7 +117,7 @@ if ($action === 'add') {
         exit;
     }
 
-    // Xử lý file upload nếu có
+    // Xử lý file upload
     if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
         $uploadRes = handleImageUpload($_FILES['image_file']);
         if (isset($uploadRes['error'])) {
