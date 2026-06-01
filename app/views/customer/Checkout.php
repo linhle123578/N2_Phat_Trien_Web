@@ -12,7 +12,6 @@ include_once __DIR__ . '/../layouts/header.php';
     echo $extra_head;
 
 
-    // [FIX 1] Chuẩn hoá: dùng key 'fullname', 'phone', 'address' từ controller
     $display_name    = htmlspecialchars($customer_info['fullname'] ?? 'Khách hàng');
     $display_phone   = htmlspecialchars(ltrim($customer_info['phone'] ?? '', '0'));
     $display_address = htmlspecialchars($customer_info['address'] ?? 'Vui lòng cập nhật địa chỉ');
@@ -29,7 +28,6 @@ include_once __DIR__ . '/../layouts/header.php';
                         <h3 class="section-title mb-3">📍 ĐỊA CHỈ NHẬN HÀNG</h3>
                         <div class="inner-card p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
                             <div>
-                                <!-- [FIX 1] Dùng biến đã chuẩn hoá từ trên -->
                                 <p class="fw-bold mb-1 fs-5" id="display-name"
                                    data-name="<?= $display_name ?>"
                                    data-phone="<?= $display_phone ?>">
