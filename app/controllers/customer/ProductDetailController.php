@@ -9,7 +9,7 @@ class ProductDetailController
     {
         $this->model = new ProductDetailModel($conn);
     }
-
+//
     public function index()
     {
         $current_id = $_GET['id'] ?? '';
