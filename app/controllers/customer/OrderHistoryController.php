@@ -1,8 +1,5 @@
 <?php
-/**
- * Controller: OrderHistoryController
- * Nhận request → gọi Model → truyền data xuống View
- */
+
 require_once __DIR__ . '/../../models/OrderHistoryModel.php';
 
 class OrderHistoryController
@@ -10,19 +7,16 @@ class OrderHistoryController
     private $model;
     private string $customer_id;
 
-    // Các tab hợp lệ
     private const ALLOWED_TABS = ['all', 'pending', 'confirmed', 'shipping', 'delivered', 'completed', 'cancelled'];
 
     public function __construct($conn)
     {
         $this->model = new OrderHistoryModel($conn);
-        // Ưu tiên GET (để test dễ dàng), sau đó session, fallback về CUS001
+        // Ưu tiên GET (để test dễ dàng), sau đó session, fallback về CUS005
         $this->customer_id = trim($_GET['customer_id'] ?? $_SESSION['customer_id'] ?? 'CUS005');
     }
 
-    /**
-     * Action chính: hiển thị trang lịch sử đơn hàng
-     */
+
     public function index(): void
     {
         // 1. Validate tab
@@ -36,7 +30,7 @@ class OrderHistoryController
         $order_ids   = array_column($orders, 'order_id');
         $order_items = $this->model->getOrderItems($order_ids);
 
-        // 3. Tính trạng thái trả hàng cho từng đơn "delivered"
+        // 3. Tính trạng thái trả hàng cho từng đơn delivered
         $return_eligible = [];
         $has_returned = [];
         foreach ($orders as $order) {
@@ -57,13 +51,10 @@ class OrderHistoryController
         $this->render('OrderHistory', $data);
     }
 
-    /**
-     * Helper: load view và inject data
-     */
+    // load view và inject data
     private function render(string $view, array $data = []): void
     {
         extract($data);
-        // __DIR__ = app/controllers/customer → ../../views/customer
         $view_path = __DIR__ . "/../../views/customer/{$view}.php";
         if (!file_exists($view_path)) {
             http_response_code(404);
@@ -75,9 +66,7 @@ class OrderHistoryController
 
     }
 
-    /**
-     * Action: Mua lại đơn hàng
-     */
+    // Action: Mua lại đơn hàng
     public function rebuy(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -116,8 +105,7 @@ class OrderHistoryController
         exit;
     }
 
-    // ── Helper tĩnh dùng trong View ──────────────────────
-
+    // Helper tĩnh dùng trong View 
     public static function statusLabel(string $s): string
     {
         return match($s) {
