@@ -1,4 +1,4 @@
-/* ── Global Page Reset ── */
+/* Global Page Reset */
 .signup-page {
     font-family: 'Plus Jakarta Sans', sans-serif;
     display: flex;
@@ -7,7 +7,7 @@
     background-color: #fefbe9;
 }
 
-/* ── Content Wrapper ── */
+/* Content Wrapper */
 .signup-wrapper {
     background: url('../../../Media/Background_SignUp.png') no-repeat center center;
     background-size: cover;
@@ -29,7 +29,7 @@
     z-index: -1;
 }
 
-/* ── Thẻ Card chứa Form ── */
+/* Thẻ Card chứa Form */
 .signup-card {
     background: #ffffff;
     border-radius: 18px;
@@ -49,12 +49,11 @@
 .form-subtitle {
     color: #6c757d;
     font-size: 0.95rem;
-    margin-bottom: 25px; /* Khoảng cách từ sub-title xuống trường đầu tiên */
+    margin-bottom: 25px;
 }
 
-/* ── ĐỒNG BỘ KHOẢNG CÁCH GIỮA CÁC TRƯỜNG (FIX LỆCH) ── */
 .form-group-custom {
-    margin-bottom: 16px; /* Khoảng cách đều tăm tắp giữa tất cả các hàng dữ liệu */
+    margin-bottom: 16px;
 }
 
 .field-label {
@@ -65,7 +64,7 @@
     display: block;
 }
 
-/* ── Custom Input Group ── */
+/* Custom Input Group */
 .input-group-custom {
     position: relative;
     display: flex;
@@ -98,7 +97,7 @@
     box-shadow: 0 0 0 4px rgba(24, 58, 29, 0.1);
 }
 
-/* ── Icon ẩn/hiện mật khẩu & Check trùng ── */
+/* Icon ẩn/hiện mật khẩu & Check trùng */
 .toggle-eye {
     position: absolute;
     right: 14px;
@@ -119,7 +118,7 @@
     font-size: 1.1rem;
 }
 
-/* ── Khu vực Giới tính (Radio) ── */
+/* Khu vực Giới tính (Radio) */
 .gender-wrapper {
     display: flex;
     gap: 20px;
@@ -142,7 +141,7 @@
     height: 16px;
 }
 
-/* ── Checkbox điều khoản ── */
+/* Checkbox điều khoản */
 .terms-wrapper {
     display: flex;
     align-items: flex-start;
@@ -166,22 +165,21 @@
     margin: 0;
 }
 
-/* ── THÔNG BÁO LỖI (TỐI ƯU KHÔNG BỊ CHIẾM DIỆN TÍCH TRỐNG) ── */
+/* THÔNG BÁO LỖI (TỐI ƯU KHÔNG BỊ CHIẾM DIỆN TÍCH TRỐNG)  */
 .invalid-msg {
     font-size: 0.8rem;
     color: #dc3545;
     margin-top: 4px;
     font-weight: 500;
-    min-height: 0px; /* Bỏ min-height cố định để không đẩy giãn khoảng cách khi không có lỗi */
+    min-height: 0px;
     display: block;
 }
 
-/* Thêm khoảng trống nhỏ cho hàng lỗi dưới cụm Row của Bootstrap */
 .row .invalid-msg {
     margin-bottom: 2px;
 }
 
-/* ── Button Đăng ký ── */
+/* Button Đăng ký */
 .btn-signup-submit {
     background-color: #183a1d;
     color: white;
@@ -202,7 +200,7 @@
     box-shadow: 0 6px 15px rgba(24, 58, 29, 0.25);
 }
 
-/* ── Điều hướng Đăng nhập ── */
+/* Điều hướng Đăng nhập */
 .text-redirect {
     color: #6c757d;
     font-size: 0.95rem;
