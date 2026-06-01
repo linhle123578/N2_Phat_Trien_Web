@@ -2,7 +2,7 @@
 $currentPage = basename($_SERVER['PHP_SELF']);
 $pendingReturns = $pendingReturns ?? 0;
 ?>
-<!-- SIDEBAR -->
+
 <div class="sidebar" id="sidebar">
     <div class="sidebar-logo" style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding-bottom: 24px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,.1);">
         <img src="../../../Media/Logo-trang.png" alt="Logo Farm2Home" style="width: 160px; height: auto; object-fit: contain;">
