@@ -1,11 +1,10 @@
-/* ===== ROOT (QUAN TRỌNG) ===== */
 :root {
     --sidebar: #1e3a2f;
     --accent: #c8b84a;
     --text-muted: rgba(255,255,255,.6);
 }
 
-/* ===== SIDEBAR ===== */
+/* SIDEBAR */
 .sidebar {
     width: 220px;
     background: var(--sidebar);
@@ -20,7 +19,7 @@
     transition: transform .3s ease;
 }
 
-/* ===== LOGO ===== */
+/*LOGO*/
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -59,7 +58,7 @@
     opacity: .6;
 }
 
-/* ===== NAV BUTTON ===== */
+/* NAV BUTTON */
 .nav-btn {
     width: 100%;
     display: flex;
@@ -98,7 +97,7 @@
     font-size: 19px;
 }
 
-/* ===== NOTIF ===== */
+/* NOTIF */
 .notif-dot {
     margin-left: auto;
     min-width: 18px;
@@ -117,14 +116,14 @@
     justify-content: center;
 }
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 .sidebar-footer {
     margin-top: auto;
     padding-top: 14px;
     border-top: 1px solid rgba(255,255,255,.1);
 }
 
-/* ===== OVERLAY MOBILE ===== */
+/* OVERLAY MOBILE */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -137,7 +136,7 @@
     display: block;
 }
 
-/* ===== RESPONSIVE ===== */
+/* RESPONSIVE */
 @media (max-width: 991px) {
     .sidebar {
         transform: translateX(-100%);
