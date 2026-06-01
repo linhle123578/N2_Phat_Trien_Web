@@ -208,6 +208,9 @@ body {
 .pu-id i { margin-right: 4px; }
 
 /── INPUT GROUP */
+.pc-input-group {
+    align-items: stretch;
+}
 .pc-input-group .input-group-text {
     background: #f8fafc;
     border-color: var(--border);
@@ -215,6 +218,10 @@ body {
     color: var(--text-muted);
     border-radius: var(--radius-input) 0 0 var(--radius-input);
     padding: 0 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
 }
 .pc-input-group .form-control,
 .pc-input-group .form-select {
@@ -227,6 +234,10 @@ body {
     box-shadow: none !important;
     transition: border-color 0.15s;
     background: #fff;
+    min-height: 44px;
+}
+.pc-input-group .form-control {
+    height: 44px;
 }
 .pc-input-group .form-control:not(:last-child) {
     border-right: none;

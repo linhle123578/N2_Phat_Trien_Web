@@ -112,7 +112,7 @@ class OrderDetailController
     {
         $order_id = trim($_POST['order_id'] ?? $_GET['id'] ?? '');
         if (!$order_id) {
-            header("Location: OrderDetailController.php");
+            header("Location: /N2_Phat_Trien_Web/app/controllers/customer/OrderDetailController.php");
             exit;
         }
 
@@ -131,7 +131,7 @@ class OrderDetailController
             mysqli_stmt_close($stmt);
         }
 
-        header("Location: OrderDetailController.php?id=" . urlencode($order_id));
+        header("Location: /../../controllers/customer/OrderDetailController.php?id=" . urlencode($order_id));
         exit;
     }
 
@@ -140,7 +140,7 @@ class OrderDetailController
     {
         $order_id = trim($_POST['order_id'] ?? $_GET['id'] ?? '');
         if (!$order_id) {
-            header("Location: OrderDetailController.php");
+            header("Location: /../../controllers/customer/OrderDetailController.php");
             exit;
         }
 
@@ -150,7 +150,7 @@ class OrderDetailController
         mysqli_stmt_execute($stmt);
         mysqli_stmt_close($stmt);
 
-        header("Location: OrderDetailController.php?id=" . urlencode($order_id));
+        header("Location: /../../controllers/customer/OrderDetailController.php?id=" . urlencode($order_id));
         exit;
     }
 

@@ -264,9 +264,9 @@ $BASE_URL = '/n2_phat_trien_web';
                                <?php endif; ?>
 
                                <a href="../../../app/controllers/customer/OrderDetailController.php?id=<?= $e($oid) ?>"
-                                   class="btn-oh btn-oh-primary">
-                                    Chi tiết
-                                </a>
+                                    class="btn-oh btn-oh-primary">
+                                     Chi tiết
+                                 </a>
 
                            </div>
                        </div>

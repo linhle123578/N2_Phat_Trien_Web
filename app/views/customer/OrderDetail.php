@@ -349,7 +349,7 @@ $ctrl = 'OrderDetailController';
 document.getElementById('btnLogout')?.addEventListener('click', (e) => {
     e.preventDefault();
     if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-        window.location.href = '../../../app/controllers/customer/LogOutController.php';
+    window.location.href = '../../../app/controllers/customer/LogoutController.php';
     }
 });
 
