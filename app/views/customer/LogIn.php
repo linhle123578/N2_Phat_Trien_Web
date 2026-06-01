@@ -1,17 +1,16 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) session_start();
 
-    // ===== XỬ LÝ LOGIN =====
+    // XỬ LÝ LOGIN
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $identity = $_POST['identity'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Tạm thời fix cứng admin và customer để test
     if (!empty($identity) && !empty($password)) {
         if ($identity === 'admin' && $password === 'admin') {
             $_SESSION['role'] = 'admin';
-            $_SESSION['admin_id'] = 1; // Thêm id ảo cho admin
+            $_SESSION['admin_id'] = 1; 
             $_SESSION['user'] = [
                 'name' => 'Admin Manager',
                 'identity' => $identity
@@ -20,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } else {
             $_SESSION['role'] = 'customer';
-            $_SESSION['customer_id'] = 1; // Thêm id ảo cho customer
+            $_SESSION['customer_id'] = 1; 
             $_SESSION['user'] = [
                 'name' => $identity,
                 'identity' => $identity
@@ -30,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // sai dữ liệu
     echo "Sai tài khoản hoặc mật khẩu";
     exit();
 }
